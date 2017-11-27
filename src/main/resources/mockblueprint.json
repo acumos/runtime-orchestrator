@@ -1,0 +1,73 @@
+{
+	"name": "CompositeSolution1",
+	"version": "1.0.0",
+	"orchestrator": {
+		"name": "Runtime Orchestrator",
+		"version": "1.0.0",
+		"image": "url of the docker image of the pre built runtime orchestrator"
+	},
+	"input_operation_signatures": [
+		{
+			"operation": "transform"
+		},
+		{
+			"operation": "predict"
+		}
+	],
+	"nodes": [
+		{
+			"container_name": "Aggregator-1",
+			"image": "url of the docker image of the named node",
+			"depends_on": [
+				{
+					"name": "Predictor-1",
+					"operation_signature": {
+						"operation": "predict"
+					}
+				},
+				{
+					"name": "Predictor-2",
+					"operation_signature": {
+						"operation": "aggregate"
+					}
+				}
+			]
+		},
+		{
+			"container_name": "Predictor-1",
+			"image": "url of the docker image of the named node",
+			"depends_on": [
+				{
+					"name": "Classifier-1",
+					"operation_signature": {
+						"operation": "classify"
+					}
+				},
+				{
+					"name": "Classifier-2",
+					"operation_signature": {
+						"operation": "classify"
+					}
+				}
+			]
+		},
+		{
+			"container_name": "Classifier-1",
+			"image": "url of the docker image of the named node",
+			"depends_on": [
+				{
+					"name": "Alarm Generator-1",
+					"operation_signature": {
+						"operation": "generate"
+					}
+				},
+				{
+					"name": "Alarm Generator-2",
+					"operation_signature": {
+						"operation": "generate"
+					}
+				}
+			]
+		}
+	]
+}

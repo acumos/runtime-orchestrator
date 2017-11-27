@@ -1,0 +1,44 @@
+{
+	"docker_info_list": [
+		{
+			"container_name": "Normalizer",
+			"ip_address": "lt-thsiung-hp.research.att.com",
+			"port": "9222"
+		},
+		{
+			"container_name": "Predictor-1",
+			"ip_address": "lt-thsiung-hp.research.att.com",
+			"port": "9222"
+		},
+		{
+			"container_name": "Predictor-2",
+			"ip_address": "lt-thsiung-hp.research.att.com",
+			"port": "9222"
+		},
+		{
+			"container_name": "Aggregator-1",
+			"ip_address": "lt-thsiung-hp.research.att.com",
+			"port": "9222"
+		},
+		{
+			"container_name": "Classifier-1",
+			"ip_address": "lt-thsiung-hp.research.att.com",
+			"port": "9222"
+		},
+		{
+			"container_name": "Classifier-2",
+			"ip_address": "lt-thsiung-hp.research.att.com",
+			"port": "9222"
+		},
+		{
+			"container_name": "Alarm Generator-1",
+			"ip_address": "lt-thsiung-hp.research.att.com",
+			"port": "9222"
+		},
+		{
+			"container_name": "Alarm Generator-2",
+			"ip_address": "lt-thsiung-hp.research.att.com",
+			"port": "9222"
+		}
+	]
+}
