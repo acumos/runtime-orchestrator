@@ -1,0 +1,112 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "308a3660_ddb913c5",
+        "filename": "README.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2017-11-27T13:26:56Z",
+      "side": 1,
+      "message": "Please add docs/ subdirectory with content as documented by Farheen and Lorraine.  Need release notes at a minimum.",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 25
+      },
+      "revId": "cd82117fe85464c9902c5ec701567d3c7427a412",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "44d967a0_d3a54597",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2017-11-27T13:26:56Z",
+      "side": 1,
+      "message": "You might delete this unused property client.version",
+      "revId": "cd82117fe85464c9902c5ec701567d3c7427a412",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2e0db08e_edef84ec",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2017-11-27T13:26:56Z",
+      "side": 1,
+      "message": "Swagger is missing, please add the io.springfox dependencies springfox-swagger2 and springfox-swagger-ui",
+      "revId": "cd82117fe85464c9902c5ec701567d3c7427a412",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f469cf8d_b88c8cce",
+        "filename": "src/main/java/org/acumos/bporchestrator/BlueprintOrchestratorApplication.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2017-11-27T13:26:56Z",
+      "side": 1,
+      "message": "Does this endpoint enforce any security?",
+      "revId": "cd82117fe85464c9902c5ec701567d3c7427a412",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0cc2175c_f394ed74",
+        "filename": "src/main/resources/image_classifier_1.0.0.json",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2017-11-27T13:26:56Z",
+      "side": 1,
+      "message": "Why is this image-classifier file put in src/main/resources?  Maybe it belongs in src/test/resources?",
+      "revId": "cd82117fe85464c9902c5ec701567d3c7427a412",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8a70544f_c49b14e0",
+        "filename": "src/test/java/org/acumos/bporchestrator/AppTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2017-11-27T13:26:56Z",
+      "side": 1,
+      "message": "Please add test cases to cover the code.",
+      "revId": "cd82117fe85464c9902c5ec701567d3c7427a412",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    }
+  ]
+}
