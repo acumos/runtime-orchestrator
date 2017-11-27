@@ -1,0 +1,61 @@
+{
+  "name": "name of the composite solution",
+  "version": "version of the composite solution",
+  "orchestrator": {
+    "name": "Orchestrator Name",
+    "version": "version",
+    "image": "url of the docker image of the pre built runtime orchestrator"
+  },
+  "input_operation_signatures": [
+    {
+      "operation_signature": "JSON representation of the input operation signature"
+    },
+    {
+      "operation_signature": "JSON representation of the input operation signature"
+    }
+  ],
+  "nodes": [
+    {
+      "container_name": "Aggregator-1",
+      "image": "url of the docker image of the named node",
+      "depends_on": [
+        {
+          "name": "Predictor-1",
+          "operation_signature": "JSON representation of Protobuf rpc predict (DataFrame) returns (Prediction)"
+        },
+        {
+          "name": "Predictor-2",
+          "operation_signature": "JSON representation of operation signatures in Protbuf.json file"
+        }
+      ]
+    },
+    {
+      "container_name": "Predictor-1",
+      "image": "url of the docker image of the named node",
+      "depends_on": [
+        {
+          "name": "Classifier-1",
+          "operation_signature": "JSON representation of classify (Prediction) returns (Classification)"
+        },
+        {
+          "name": "Classifier-2",
+          "operation_signature": "JSON representation of operation signatures in Protbuf.json file"
+        }
+      ]
+    },
+    {
+      "container_name": "Classifier-1",
+      "image": "url of the docker image of the named node",
+      "depends_on": [
+        {
+          "name": "Alarm Generator-1",
+          "operation_signature": "JSON representation of operation signatures in Protbuf.json file"
+        },
+        {
+          "name": "Alarm Generator-2",
+          "operation_signature": "JSON representation of operation signatures in Protbuf.json file"
+        }
+      ]
+    }
+  ]
+}

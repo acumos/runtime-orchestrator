@@ -1,0 +1,65 @@
+{
+  "syntax": "proto3",
+  "packageName": "",
+  "listOfMessages": [
+    {
+      "messageName": "DataFrame",
+      "messageargumentList": [
+        {
+          "rule": "",
+          "type": "string",
+          "name": "mime_type",
+          "tag": "1"
+        },
+        {
+          "rule": "",
+          "type": "string",
+          "name": "binary_stream",
+          "tag": "2"
+        }
+      ]
+    },
+    {
+      "messageName": "Prediction",
+      "messageargumentList": [
+        {
+          "rule": "repeated",
+          "type": "int64",
+          "name": "image",
+          "tag": "1"
+        },
+        {
+          "rule": "repeated",
+          "type": "string",
+          "name": "class",
+          "tag": "2"
+        },
+        {
+          "rule": "repeated",
+          "type": "double",
+          "name": "score",
+          "tag": "3"
+        }
+      ]
+    }
+  ],
+  "service": {
+    "name": "ImageClassifier",
+    "listOfOperations": [
+      {
+        "operationType": "rpc",
+        "operatioName": "transform",
+        "listOfInputMessages": [
+          {
+            "inputMessageName": "DataFrame"
+          }
+        ],
+        "listOfOutputMessages": [
+          {
+            "outPutMessageName": "Prediction"
+          }
+        ]
+      }
+    ]
+  }
+}
