@@ -93,6 +93,23 @@
     },
     {
       "key": {
+        "uuid": "a1e62b77_2fd51235",
+        "filename": "src/main/resources/mockdockerinfo.json",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2017-11-27T13:28:29Z",
+      "side": 1,
+      "message": "Please remove this ATT host name",
+      "revId": "cd82117fe85464c9902c5ec701567d3c7427a412",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8a70544f_c49b14e0",
         "filename": "src/test/java/org/acumos/bporchestrator/AppTest.java",
         "patchSetId": 1
