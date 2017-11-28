@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "d09533ad_28040d8a",
+        "filename": "LICENSE.txt",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2017-11-28T20:42:57Z",
+      "side": 1,
+      "message": "Correction: this should be the content on our wiki.  This file is missing a copyright statement with owners and date.  Please update.",
+      "parentUuid": "70a0618e_094a6a07",
+      "revId": "2e520e4146cd445653d021c7f3d7be20bcf70b20",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "450454c1_88d0421d",
         "filename": "docs/index.rst",
         "patchSetId": 2
