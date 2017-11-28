@@ -1,0 +1,157 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "70a0618e_094a6a07",
+        "filename": "LICENSE.txt",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2017-11-28T14:42:12Z",
+      "side": 1,
+      "message": "This should probably be the full Apache 2.0 license text.",
+      "revId": "2e520e4146cd445653d021c7f3d7be20bcf70b20",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "450454c1_88d0421d",
+        "filename": "docs/index.rst",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2017-11-28T14:42:12Z",
+      "side": 1,
+      "message": "Please use a valid index.rst at the top level, which should generate a table of contents etc.",
+      "revId": "2e520e4146cd445653d021c7f3d7be20bcf70b20",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27dcf416_0cfb0592",
+        "filename": "docs/release-notes.md",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2017-11-28T14:42:12Z",
+      "side": 1,
+      "message": "Please rename to release-notes.rst and add minimal statement of \"November 2017 release 1.0 initial release to community\" or something like that.",
+      "revId": "2e520e4146cd445653d021c7f3d7be20bcf70b20",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "29d91c80_670ad14c",
+        "filename": "docs/runtime-orchestrator.md",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2017-11-28T14:42:12Z",
+      "side": 1,
+      "message": "Please rename to use .rst suffix and use RST markup.",
+      "revId": "2e520e4146cd445653d021c7f3d7be20bcf70b20",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "93791bfb_22a07f32",
+        "filename": "docs/tutorials/index.rst",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2017-11-28T14:42:12Z",
+      "side": 1,
+      "message": "remove this, there is no tutorial",
+      "revId": "2e520e4146cd445653d021c7f3d7be20bcf70b20",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c74fff24_8ff09e8a",
+        "filename": "pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2017-11-28T14:42:12Z",
+      "side": 1,
+      "message": "Because this is a REST endpoint, I would like to see use of springfox.io dependencies to publish Swagger UI",
+      "revId": "2e520e4146cd445653d021c7f3d7be20bcf70b20",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6c647460_5b460752",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2017-11-28T14:42:12Z",
+      "side": 1,
+      "message": "Add @ApiOperation annotation for Swagger",
+      "revId": "2e520e4146cd445653d021c7f3d7be20bcf70b20",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c6f29c7f_aec2bd5d",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2017-11-28T14:42:12Z",
+      "side": 1,
+      "message": "Add @ApiOperation annotation",
+      "revId": "2e520e4146cd445653d021c7f3d7be20bcf70b20",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d3b9481e_6622fb50",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2017-11-28T14:42:12Z",
+      "side": 1,
+      "message": "Add @ApiOperation annotation",
+      "revId": "2e520e4146cd445653d021c7f3d7be20bcf70b20",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    }
+  ]
+}
