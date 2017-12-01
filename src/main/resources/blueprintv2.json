@@ -1,0 +1,74 @@
+/*-
+ * ===============LICENSE_START=======================================================
+ * Acumos
+ * ===================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property & Tech Mahindra. All rights reserved.
+ * ===================================================================================
+ * This Acumos software file is distributed by AT&T and Tech Mahindra
+ * under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *  
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *  
+ * This file is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ===============LICENSE_END=========================================================
+ */
+
+{
+  "name": "name of the composite solution",
+  "version": "version of the composite solution",
+  "orchestrator": {
+  "name": "Orchestrator Name",
+  "version": "version",
+  "image": "url of the docker image of the pre built runtime orchestrator"
+  },
+  "input_operation_signature": "JSON representation of the input operation signature",
+  "nodes": [
+    {
+      "container_name": "Aggregator-1",
+      "image": "url of the docker image of the named node",
+      "depends_on": [
+        {
+          "name": "Predictor-1",
+		  "operation_signature": "JSON representation of Protobuf rpc predict (DataFrame) returns (Prediction)"
+        },
+        {
+          "name": "Predictor-2",
+		  "operation_signature": "JSON representation of operation signatures in Protbuf.json file"
+        }
+      ]
+    },
+    {
+      "container_name": "Predictor-1",
+      "image": "url of the docker image of the named node",
+      "depends_on": [
+        {
+          "name": "Classifier-1",
+		  "operation_signature": "JSON representation of classify (Prediction) returns (Classification)"
+        },
+        {
+          "name": "Classifier-2",
+		  "operation_signature": "JSON representation of operation signatures in Protbuf.json file"
+        }
+      ]
+    },
+    {
+      "container_name": "Classifier-1",
+      "image": "url of the docker image of the named node",
+      "depends_on": [
+        {
+          "name": "Alarm Generator-1",
+		  "operation_signature": "JSON representation of operation signatures in Protbuf.json file"
+        },
+        {
+          "name": "Alarm Generator-2",
+		  "operation_signature": "JSON representation of operation signatures in Protbuf.json file"
+        }
+      ]
+    }
+  ]
+}

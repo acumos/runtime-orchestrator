@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+message DataFrame {
+  repeated string mime_type = 1;
+  repeated string binary_stream = 2;
+}
+
+message Prediction {
+  repeated int64 idx = 1;
+  repeated string class = 2;
+  repeated double prediction = 3;
+}
+
+service Model {
+  rpc transform (DataFrame) returns (Prediction);
+}
