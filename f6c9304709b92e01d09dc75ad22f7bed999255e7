@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "10a5ce52_6e913f17",
+        "filename": "README.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2017-12-01T21:03:01Z",
+      "side": 1,
+      "message": "Suggest you shorten this file drastically, and point people to the docs/ area",
+      "revId": "f6c9304709b92e01d09dc75ad22f7bed999255e7",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "13864e0b_e5f43311",
+        "filename": "docs/release-notes.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2017-12-01T21:03:01Z",
+      "side": 1,
+      "message": "at least add the minimum: version 1.0 December 2017",
+      "revId": "f6c9304709b92e01d09dc75ad22f7bed999255e7",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "656cf2b7_94bc3606",
+        "filename": "docs/tutorials/index.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2017-12-01T21:03:01Z",
+      "side": 1,
+      "message": "Remove these 3 lines; you don\u0027t have the files",
+      "revId": "f6c9304709b92e01d09dc75ad22f7bed999255e7",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "14de7817_5a3f1a6a",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2017-12-01T21:03:01Z",
+      "side": 1,
+      "message": "Please replace this invalid entry with:\n\n\u003corganizationName\u003e\u003c![CDATA[AT\u0026T Intellectual Property \u0026 Tech Mahindra. All rights reserved.]]\u003e\u003c/organizationName\u003e\n\nThen re-run the license plugin to update files",
+      "revId": "f6c9304709b92e01d09dc75ad22f7bed999255e7",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "22288630_158c84ff",
+        "filename": "src/license/licenses.properties_1117558984906995",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2017-12-01T21:03:01Z",
+      "side": 1,
+      "message": "Please delete this unneeded file",
+      "revId": "f6c9304709b92e01d09dc75ad22f7bed999255e7",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b3791347_6c70966e",
+        "filename": "src/main/java/org/acumos/bporchestrator/BlueprintOrchestratorApplication.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2017-12-01T21:03:01Z",
+      "side": 1,
+      "message": "This license looks ugly - please see my comment on POM and update all",
+      "revId": "f6c9304709b92e01d09dc75ad22f7bed999255e7",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    }
+  ]
+}
