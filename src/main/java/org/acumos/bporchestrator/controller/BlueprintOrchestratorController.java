@@ -68,7 +68,7 @@ public class BlueprintOrchestratorController {
 	 * @param operation
 	 *            This specifies the input_operation_signature the orchestrator
 	 *            should invoke on the first node base on blueprint.json
-	 * @return
+	 * @return Byte stream
 	 */
 	@ApiOperation(value = "operation on the first node in the chain", response = byte.class, responseContainer = "Page")
 	@RequestMapping(path = "/{operation}", consumes = { "application/octet-stream" }, produces = {

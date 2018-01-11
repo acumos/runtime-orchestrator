@@ -31,7 +31,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * 
  */
 public class Blueprint implements Serializable {
-	
+
 	private static final long serialVersionUID = -8199926375109170778L;
 
 	@JsonProperty("name")
@@ -58,15 +58,17 @@ public class Blueprint implements Serializable {
 
 	/**
 	 * Standard POJO constructor initialized with field
+	 * 
 	 * @param name
-	 * 			Name of the blueprint
+	 *            Name of the blueprint
 	 * @param version
-	 * 			Version of the blueprint
+	 *            Version of the blueprint
 	 * @param nodes
-	 * 			List of nodes of model
+	 *            List of nodes of model
 	 * @param inputs
-	 * 			contains the operation to invoke on the first node
+	 *            contains the operation to invoke on the first node
 	 * @param orchestrator
+	 *            Orchestrator
 	 */
 	public Blueprint(String name, String version, List<Node> nodes, List<OperationSignature> inputs,
 			Orchestrator orchestrator) {

@@ -31,21 +31,25 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Orchestrator implements Serializable {
 
 	private static final long serialVersionUID = 964690784032387784L;
-	
+
 	@JsonProperty("name")
 	private String name = null;
-	
+
 	@JsonProperty("version")
 	private String version = null;
-	
+
 	@JsonProperty("image")
 	private String image = null;
-	
+
 	/**
 	 * Constructor method
+	 * 
 	 * @param name
+	 *            Name
 	 * @param version
+	 *            Version
 	 * @param image
+	 *            Image
 	 */
 	public Orchestrator(String name, String version, String image) {
 		super();
@@ -60,7 +64,6 @@ public class Orchestrator implements Serializable {
 	public Orchestrator() {
 		super();
 	}
-
 
 	public String getName() {
 		return name;
@@ -90,5 +93,5 @@ public class Orchestrator implements Serializable {
 	public String toString() {
 		return "Orchestrator [name=" + name + ", version=" + version + ", image=" + image + "]";
 	}
-	
+
 }

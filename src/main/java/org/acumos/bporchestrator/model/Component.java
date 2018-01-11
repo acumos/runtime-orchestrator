@@ -27,12 +27,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Dependent of each Model Node in the blueprint.json
  */
 public class Component implements Serializable {
-	
+
 	private static final long serialVersionUID = 5749775315078650369L;
 
 	@JsonProperty("name")
 	private String name = null;
-	
+
 	@JsonProperty("operation_signature")
 	private OperationSignature operationSignature = null;
 
@@ -45,8 +45,11 @@ public class Component implements Serializable {
 
 	/**
 	 * Component Constructor
+	 * 
 	 * @param name
+	 *            Name
 	 * @param operationSignature
+	 *            Operation signature
 	 */
 	public Component(String name, OperationSignature operationSignature) {
 		super();
