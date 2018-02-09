@@ -40,7 +40,7 @@ public class Blueprint implements Serializable {
 	@JsonProperty("version")
 	private String version = null;
 
-	@JsonProperty("nodes")
+	@JsonProperty("models")
 	private List<Node> nodes = null;
 
 	@JsonProperty("input_operation_signatures")

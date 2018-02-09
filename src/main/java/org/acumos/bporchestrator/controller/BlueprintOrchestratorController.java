@@ -79,7 +79,7 @@ public class BlueprintOrchestratorController {
 
 		results = null;
 		try {
-			logger.info("Receiving /notify request: " + Arrays.toString(binaryStream));
+			logger.info("Receiving /" + operation + " request: " + Arrays.toString(binaryStream));
 			if (blueprint == null) {
 				logger.error("Empty blueprint JSON");
 				return new ResponseEntity<>(results, HttpStatus.PARTIAL_CONTENT);
@@ -120,8 +120,13 @@ public class BlueprintOrchestratorController {
 					}
 					urlBase = "http://" + d.getIpAddress() + ":" + d.getPort() + "/";
 					url = urlBase + os.getOperation();
-					logger.info("Notifying first node " + container + " POST: " + url);
-					output = httpPost(url, binaryStream);
+					if (node.getNodeType().equalsIgnoreCase("Probe")) {
+						logger.info("Notifying first probe " + container + " POST: " + url);
+						output = httpPost(url, binaryStream, node.getProtoUrl(), node.getMessageName());
+					} else {
+						logger.info("Notifying first node " + container + " POST: " + url);
+						output = httpPost(url, binaryStream);
+					}
 					notifyNext(output, node);
 				}
 			}
@@ -167,15 +172,27 @@ public class BlueprintOrchestratorController {
 			OperationSignature os = dependent.getOperationSignature();
 			if (os != null) {
 				url = urlBase + os.getOperation();
-				logger.info("Sending POST request to dependent " + dcontainer + " url " + url);
-				output = httpPost(url, input);
+
 				Node next = blueprint.getNodebyContainer(dcontainer);
 				if (next == null) {
 					logger.info("Reaching last node - " + dcontainer + " - in the path ");
 					logger.info("Appending output of " + dcontainer + " to data sink");
+					logger.info("Sending POST request to dependent " + dcontainer + " url " + url);
+					output = httpPost(url, input);
 					appendResults(output);
-				} else
+				} else {
+					if (next.getNodeType().equalsIgnoreCase("Probe")) {
+						logger.info("Sending POST request to dependent Probe " + dcontainer + " url [" + url
+								+ "] protourl = [" + next.getProtoUrl() + "] messageName = [" + next.getMessageName()
+								+ "]");
+						output = httpPost(url, input, next.getProtoUrl(), next.getMessageName());
+					} else {
+						logger.info("Sending POST request to dependent " + dcontainer + " url " + url);
+						output = httpPost(url, input);
+					}
 					notifyNext(output, next);
+
+				}
 
 			} else {
 				logger.error(dcontainer + " has empty Operation Signature");
@@ -195,13 +212,13 @@ public class BlueprintOrchestratorController {
 	 */
 	@ApiOperation(value = "Endpoint for the deployer to put blueprint JSON", response = Map.class, responseContainer = "Page")
 	@RequestMapping(value = "/putBlueprint", consumes = { "application/json" }, method = RequestMethod.PUT)
-	public static ResponseEntity<Map<String,String>> putBlueprint(
+	public static ResponseEntity<Map<String, String>> putBlueprint(
 			@ApiParam(value = "Blueprint JSON", required = true) @Valid @RequestBody Blueprint blueprintReq) {
 		logger.info("Receiving /putBlueprint request: " + blueprintReq.toString());
 
 		TaskManager.setBlueprint(blueprintReq);
 		blueprint = TaskManager.getBlueprint();
-		
+
 		logger.info("Returning HttpStatus.OK from putBlueprint");
 		Map<String, String> results = new LinkedHashMap<>();
 		results.put("status", "ok");
@@ -218,13 +235,13 @@ public class BlueprintOrchestratorController {
 	 */
 	@ApiOperation(value = "Endpoint for the deployer to push docker Info JSON", response = Map.class, responseContainer = "Page")
 	@RequestMapping(value = "/putDockerInfo", consumes = { "application/json" }, method = RequestMethod.PUT)
-	public static ResponseEntity<Map<String,String>> putDockerInfo(
+	public static ResponseEntity<Map<String, String>> putDockerInfo(
 			@ApiParam(value = "Docker Info JSON", required = true) @Valid @RequestBody DockerInfoList dockerListReq) {
 		logger.info("Receiving /putDockerInfo request: " + dockerListReq.toString());
 
 		TaskManager.setDockerList(dockerListReq);
 		dockerList = TaskManager.getDockerList();
-		
+
 		logger.info("Returning HttpStatus.OK from putBlueprint");
 		Map<String, String> results = new LinkedHashMap<>();
 		results.put("status", "ok");
@@ -232,7 +249,32 @@ public class BlueprintOrchestratorController {
 		return new ResponseEntity<>(results, HttpStatus.OK);
 	}
 
+	/**
+	 * Sending HTTP POST request to Models
+	 * 
+	 * @param url
+	 * @param binaryStream
+	 * @return
+	 * @throws IOException
+	 */
 	private byte[] httpPost(String url, byte[] binaryStream) throws IOException {
+		return httpPost(url, binaryStream, null, null);
+	}
+
+	/**
+	 * Sending HTTP POST request to Models and Probes
+	 * 
+	 * @param url
+	 *            : url of the node
+	 * @param binaryStream
+	 * @param protoUrl
+	 *            : probe specific data
+	 * @param messageName
+	 *            : probe specific data
+	 * @return
+	 * @throws IOException
+	 */
+	private byte[] httpPost(String url, byte[] binaryStream, String protoUrl, String messageName) throws IOException {
 
 		URL obj = new URL(url);
 
@@ -240,6 +282,10 @@ public class BlueprintOrchestratorController {
 
 		con.setRequestMethod("POST");
 		con.setRequestProperty("Content-Type", "application/octet-stream;");
+		if (protoUrl != null)
+			con.setRequestProperty("PROTO-URL", protoUrl);
+		if (messageName != null)
+			con.setRequestProperty("Message-Name", messageName);
 		con.setDoOutput(true);
 		OutputStream out = con.getOutputStream();
 		out.write(binaryStream);

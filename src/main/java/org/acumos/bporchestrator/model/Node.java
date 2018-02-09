@@ -29,7 +29,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Model Node in the composite solution as specified in the blueprint.json
  */
 public class Node implements Serializable {
-	
+
 	private static final long serialVersionUID = 1900236928331958666L;
 
 	@JsonProperty("container_name")
@@ -40,6 +40,15 @@ public class Node implements Serializable {
 
 	@JsonProperty("depends_on")
 	private ArrayList<Component> dependsOn = null;
+
+	@JsonProperty("proto_url")
+	private String protoUrl = null;
+
+	@JsonProperty("node_type")
+	private String nodeType = null;
+
+	@JsonProperty("message_name")
+	private String messageName = null;
 
 	/**
 	 * Standard POJO no-arg constructor
@@ -80,8 +89,33 @@ public class Node implements Serializable {
 		return this;
 	}
 
+	public String getProtoUrl() {
+		return protoUrl;
+	}
+
+	public void setProtoUrl(String protoUrl) {
+		this.protoUrl = protoUrl;
+	}
+
+	public String getNodeType() {
+		return nodeType;
+	}
+
+	public void setNodeType(String nodeType) {
+		this.nodeType = nodeType;
+	}
+
+	public String getMessageName() {
+		return messageName;
+	}
+
+	public void setMessageName(String messageName) {
+		this.messageName = messageName;
+	}
+	
 	@Override
 	public String toString() {
-		return "Node [containerName=" + containerName + ", image=" + image + ", dependsOn=" + dependsOn + "]";
+		return "Node [containerName=" + containerName + ", image=" + image + ", dependsOn=" + dependsOn + ", protoUrl="
+				+ protoUrl + ", nodeType=" + nodeType + ", messageName=" + messageName + "]";
 	}
 }
