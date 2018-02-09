@@ -120,9 +120,12 @@ public class BlueprintOrchestratorController {
 					}
 					urlBase = "http://" + d.getIpAddress() + ":" + d.getPort() + "/";
 					url = urlBase + os.getOperation();
-					if (node.getNodeType().equalsIgnoreCase("Probe")) {
-						logger.info("Notifying first probe " + container + " POST: " + url);
-						output = httpPost(url, binaryStream, node.getProtoUrl(), node.getMessageName());
+					Node thisNode = blueprint.getNodebyContainer(container);
+					if (thisNode.getNodeType().equalsIgnoreCase("Probe")) {
+						logger.info("Notifying first probe " + container + " POST: " + url + " proto url = ["
+								+ thisNode.getProtoUrl() + "] message Name = [" + thisNode.getMessageName() + "]");
+
+						output = httpPost(url, binaryStream, thisNode.getProtoUrl(), thisNode.getMessageName());
 					} else {
 						logger.info("Notifying first node " + container + " POST: " + url);
 						output = httpPost(url, binaryStream);
