@@ -5,7 +5,7 @@
 
 	<groupId>org.acumos.runtime-orchestrator</groupId>
 	<artifactId>blueprint-orchestrator</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>BlueprintOrchestrator</name>
@@ -225,7 +225,7 @@
 					</images>
 				</configuration>
 				<!-- build Docker images in install phase, push in deploy phase -->
-				<executions>
+ 				<executions>
 					<execution>
 						<goals>
 							<goal>build</goal>
@@ -233,6 +233,7 @@
 						</goals>
 					</execution>
 				</executions>
+
 			</plugin>
 
 		</plugins>
