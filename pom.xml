@@ -208,7 +208,7 @@
 							<!-- Specify a tag to avoid default tag "latest" -->
 							<name>blueprint-orchestrator:${project.version}</name>
 							<build>
-								<from>frolvlad/alpine-oraclejdk8:slim</from>
+								<from>openjdk:8-jdk</from>
 								<tags>
 									<!-- Add tag with build number -->
 									<tag>${project.version}-b${build.number}</tag>
