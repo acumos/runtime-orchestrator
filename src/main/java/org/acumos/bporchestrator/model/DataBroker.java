@@ -21,61 +21,61 @@
 package org.acumos.bporchestrator.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Dependent of each Model Node in the blueprint.json
+ * Representation of data brokers object under training clients. This is NOT a
+ * representation or Node type Data Broker.
  */
-public class Component implements Serializable {
 
-	private static final long serialVersionUID = 5749775315078650369L;
+public class DataBroker implements Serializable {
+	private final static long serialVersionUID = -5917310849172760370L;
 
 	@JsonProperty("name")
 	private String name = null;
-
 	@JsonProperty("operation_signature")
 	private OperationSignature operationSignature = null;
 
 	/**
-	 * Standard POJO no-arg constructor
+	 * No args constructor for use in serialization
+	 * 
 	 */
-	public Component() {
+	public DataBroker() {
 		super();
 	}
 
 	/**
-	 * Component Constructor
 	 * 
-	 * @param name
-	 *            Name
 	 * @param operationSignature
-	 *            Operation signature
+	 * @param name
+	 *            Name of the data source
 	 */
-	public Component(String name, OperationSignature operationSignature) {
+	public DataBroker(String name, OperationSignature operationSignature) {
 		super();
 		this.name = name;
 		this.operationSignature = operationSignature;
 	}
 
+	@JsonProperty("name")
 	public String getName() {
 		return name;
 	}
 
+	@JsonProperty("name")
 	public void setName(String name) {
 		this.name = name;
 	}
 
+	@JsonProperty("operation_signature")
 	public OperationSignature getOperationSignature() {
 		return operationSignature;
 	}
 
+	@JsonProperty("operation_signature")
 	public void setOperationSignature(OperationSignature operationSignature) {
 		this.operationSignature = operationSignature;
-	}
-
-	@Override
-	public String toString() {
-		return "Component [name=" + name + ", operationSignature=" + operationSignature + "]";
 	}
 
 }

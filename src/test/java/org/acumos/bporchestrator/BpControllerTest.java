@@ -20,13 +20,22 @@
 
 package org.acumos.bporchestrator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.acumos.bporchestrator.model.Blueprint;
-import org.acumos.bporchestrator.model.Component;
+import org.acumos.bporchestrator.model.ConnectedTo;
+import org.acumos.bporchestrator.model.DataBroker;
 import org.acumos.bporchestrator.model.DockerInfo;
 import org.acumos.bporchestrator.model.DockerInfoList;
+import org.acumos.bporchestrator.model.InputPort;
+import org.acumos.bporchestrator.model.MlModel;
 import org.acumos.bporchestrator.model.Node;
 import org.acumos.bporchestrator.model.OperationSignature;
+import org.acumos.bporchestrator.model.OperationSignatureList;
 import org.acumos.bporchestrator.model.Orchestrator;
+import org.acumos.bporchestrator.model.ProbeIndicator;
+import org.acumos.bporchestrator.model.TrainingClient;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -41,7 +50,7 @@ import org.springframework.web.client.HttpStatusCodeException;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-public class BpControllerTest extends AbstractControllerTest{
+public class BpControllerTest extends AbstractControllerTest {
 	private static Logger logger = LoggerFactory.getLogger(BpControllerTest.class);
 
 	@Test
@@ -53,58 +62,153 @@ public class BpControllerTest extends AbstractControllerTest{
 			docker1.setContainer("image_classifier1");
 			docker1.setIpAddress("52.191.113.56");
 			docker1.setPort("8123");
-			
+
 			DockerInfo docker2 = new DockerInfo();
 			docker2.setContainer("image_good_classifier1");
 			docker2.setIpAddress("52.191.113.56");
 			docker2.setPort("8234");
-			
+
 			DockerInfoList dockerList = new DockerInfoList();
 			dockerList.addDockerInfo(docker1);
 			dockerList.addDockerInfo(docker2);
-			
+
 			doPut("/putDockerInfo", dockerList, DockerInfoList.class);
-			
+
 			logger.info("Done testing /putDockerInfo PUT end point");
-			
+
 			// Test /putBlueprint PUT end point
 			logger.info("Testing /putBlueprint PUT method");
-			Blueprint bp =  new Blueprint();
-			Orchestrator orch = new Orchestrator();
-			orch.setName("Runtime Orchestrator");
-			orch.setVersion("1.0.0");
-			orch.setImage("the docker image of the runtime orchestrator");
-			bp.setOrchestrator(orch);
-			
+			Blueprint bp = new Blueprint();
+			bp.setName("Runtime Orchestrator");
+			bp.setVersion("1.0.0");
+
+			// Creating Input Port list with 2 input ports and add to the blueprint
+
+			InputPort inp1 = new InputPort();
+			InputPort inp2 = new InputPort();
+
+			OperationSignature ios1 = new OperationSignature();
+			ios1.setOperationName("classify");
+
+			OperationSignature ios2 = new OperationSignature();
+			ios2.setOperationName("predict");
+
+			inp1.setContainerName("image_mood_classifier1");
+			inp1.setOperationSignature(ios1);
+
+			inp2.setContainerName("image_classifier1");
+			inp2.setOperationSignature(ios2);
+
+			List<InputPort> inputportslist = new ArrayList<>();
+			inputportslist.add(inp1);
+			inputportslist.add(inp2);
+
+			bp.setInputPorts(inputportslist);
+
+			// Creating node1 and add to the blueprint
 			Node node1 = new Node();
-			
-			// Initialize a Component {"name": "image_mood_classifier1", "operation_signature": { "operation": "classify" }}
-			Component comp1 = new Component();
-			comp1.setName("image_mood_classifier1");
-			
-			// Use "operation_signature": { "operation": "classify"}
-			OperationSignature os =  new OperationSignature();
-			os.setOperation("classify");
-			comp1.setOperationSignature(os);
-			
+
 			node1.setContainerName("image_classifier1");
+			node1.setNodeType("MLModel");
 			node1.setImage("cognita-nexus01:8001/image_classifier:1");
-			node1.addDependsOn(comp1);
-			
+			node1.setProtoUri("www.somewhere.com/protourilink");
+
+			OperationSignatureList test_osl1 = new OperationSignatureList();
+			OperationSignature test_os_a = new OperationSignature();
+
+			test_os_a.setOperationName("classify");
+			test_os_a.setInputMessageName("someinputmsg");
+			test_os_a.setOutputMessageName("someoutputmsg");
+
+			test_osl1.setOperationSignature(test_os_a);
+
+			ConnectedTo conto = new ConnectedTo();
+			conto.setContainerName("somecontainer");
+			OperationSignature test_os_b = new OperationSignature();
+			test_os_b.setOperationName("someoperation");
+			conto.setOperationSignature(test_os_b);
+
+			ArrayList<ConnectedTo> listofconnto1 = new ArrayList<ConnectedTo>();
+			listofconnto1.add(conto);
+			test_osl1.setConnectedTo(listofconnto1);
+
+			ArrayList<OperationSignatureList> lofosl1 = new ArrayList<OperationSignatureList>();
+			node1.setOperationSignatureList(lofosl1);
+
+			// Creating node2 and add to the blueprint
 			Node node2 = new Node();
+
 			node2.setContainerName("image_mood_classifier1");
+			node2.setNodeType("MLModel");
 			node2.setImage("cognita-nexus01:8001/image_mood_classifier:1");
-			
-			Component comp2 = new Component();
-			node2.addDependsOn(comp2);
+			node2.setProtoUri("www.somewhere.com/protourilink2");
+
+			OperationSignatureList test_osl2 = new OperationSignatureList();
+			OperationSignature test_os_c = new OperationSignature();
+
+			test_os_c.setOperationName("predict");
+			test_os_c.setInputMessageName("someotherinputmsg");
+			test_os_c.setOutputMessageName("someotheroutputmsg");
+
+			test_osl2.setOperationSignature(test_os_c);
+
+			ConnectedTo conto2 = new ConnectedTo();
+			conto2.setContainerName("someothercontainer");
+			OperationSignature test_os_d = new OperationSignature();
+			test_os_d.setOperationName("someotheroperation");
+			conto2.setOperationSignature(test_os_d);
+
+			ArrayList<ConnectedTo> listofconnto2 = new ArrayList<ConnectedTo>();
+			listofconnto2.add(conto2);
+			test_osl2.setConnectedTo(listofconnto2);
+
+			ArrayList<OperationSignatureList> lofosl2 = new ArrayList<OperationSignatureList>();
+			node2.setOperationSignatureList(lofosl2);
+
 			bp.addNode(node1);
 			bp.addNode(node2);
-			bp.setName("Real1");
-			bp.setVersion("1.1.0");
 			
-			OperationSignature inputOs = new OperationSignature();
-			inputOs.setOperation("classify");
-			bp.addInput(inputOs);
+			// Create list of Probe indicators and add to the blueprint
+			
+			ProbeIndicator testpbindicator = new ProbeIndicator();
+			testpbindicator.setValue("false");
+			
+			ArrayList<ProbeIndicator> testlistofprobeIndicators = new ArrayList<ProbeIndicator>();
+			testlistofprobeIndicators.add(testpbindicator);
+			
+			bp.setProbeIndicator(testlistofprobeIndicators);
+			
+			
+			//BELOW STUFF CAN BE ADDED ONCE WE START USING TRAINING CLIENT.
+			/* 
+			
+			TrainingClient testtc = new TrainingClient();
+			testtc.setContainerName("trainingclientname");
+			testtc.setImage("some_image");
+			
+			
+			
+			DataBroker testdb1 = new DataBroker();
+			testdb1.setName("nameofdatabroker");
+			OperationSignature dbops = new OperationSignature();
+			dbops.setOperationName("getimage");
+			
+			testtc.setDataBrokers(testdb1);
+			
+			
+			
+			MlModel testmlmodel1 = new MlModel();
+			testmlmodel1.setName("mlmodelname");
+			OperationSignature mlops = new OperationSignature();
+			dbops.setOperationName("predictimage");
+			testmlmodel1.setOperationSignature(mlops);
+			
+			testtc.setMlModel(testmlmodel1);
+			
+			List<TrainingClient> listoftesttc = new List<TrainingClient>();
+			listoftesttc.add(testtc);
+			
+			*/
 			
 			doPut("/putBlueprint", bp, Blueprint.class);
 			logger.info("Done testing /putBlueprint PUT end point");

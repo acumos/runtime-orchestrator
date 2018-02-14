@@ -22,33 +22,33 @@ package org.acumos.bporchestrator.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Model Node in the composite solution as specified in the blueprint.json
+ * Representation of a Node in the composite solution as specified in the
+ * blueprint.json
  */
+
 public class Node implements Serializable {
 
-	private static final long serialVersionUID = 1900236928331958666L;
-
 	@JsonProperty("container_name")
-	private String containerName = null;
-
-	@JsonProperty("image")
-	private String image = null;
-
-	@JsonProperty("depends_on")
-	private ArrayList<Component> dependsOn = null;
-
-	@JsonProperty("proto_url")
-	private String protoUrl = null;
-
+	private String container = null;
 	@JsonProperty("node_type")
 	private String nodeType = null;
-
-	@JsonProperty("message_name")
-	private String messageName = null;
+	@JsonProperty("image")
+	private String image = null;
+	@JsonProperty("proto_uri")
+	private String protoUri = null;
+	@JsonProperty("operation_signature_list")
+	private ArrayList<OperationSignatureList> operationSignatureList = null; // OperationSignatureList itself is NOT a list.
+	@JsonProperty("script")
+	private String script = null;
+	@JsonProperty("mapping_table")
+	private MappingTable mappingTable = null;
+	@JsonProperty("data_sources")
+	private List<DataSource> dataSources = null;
 
 	/**
 	 * Standard POJO no-arg constructor
@@ -57,65 +57,126 @@ public class Node implements Serializable {
 		super();
 	}
 
-	public String getContainerName() {
-		return containerName;
-	}
-
-	public void setContainerName(String containerName) {
-		this.containerName = containerName;
-	}
-
-	public String getImage() {
-		return image;
-	}
-
-	public void setImage(String image) {
+	/**
+	 * 
+	 * @param operationSignatureList
+	 *            List of operations supported by the node
+	 * @param mappingTable
+	 *            Required by the data broker
+	 * @param protoUri
+	 *            Url of protofile : required to be passed to the Probe
+	 * @param container
+	 *            Name of the container
+	 * @param image
+	 *            Url of the docker image of the named node in Nexus. Information
+	 *            consumed by deployer
+	 * @param dataSources
+	 *            Required by the data broker
+	 * @param script
+	 *            Required by the data broker
+	 * @param nodeType
+	 *            Type of the node: DataMapper or MLModel or DataBroker or
+	 *            TrainingClient or Probe
+	 * 
+	 */
+	public Node(String container, String nodeType, String image, String protoUri,
+			ArrayList<OperationSignatureList> operationSignatureList, String script, MappingTable mappingTable,
+			List<DataSource> dataSources) {
+		super();
+		this.container = container;
+		this.nodeType = nodeType;
 		this.image = image;
+		this.protoUri = protoUri;
+		this.operationSignatureList = operationSignatureList;
+		this.script = script;
+		this.mappingTable = mappingTable;
+		this.dataSources = dataSources;
 	}
 
-	public ArrayList<Component> getDependsOn() {
-		return dependsOn;
+	@JsonProperty("container_name")
+	public String getContainerName() {
+		return container;
 	}
 
-	public void setDependsOn(ArrayList<Component> dependsOn) {
-		this.dependsOn = dependsOn;
+	@JsonProperty("container_name")
+	public void setContainerName(String container) {
+		this.container = container;
 	}
 
-	public Node addDependsOn(Component component) {
-		if (this.dependsOn == null) {
-			this.dependsOn = new ArrayList<>();
-		}
-		this.dependsOn.add(component);
-		return this;
-	}
-
-	public String getProtoUrl() {
-		return protoUrl;
-	}
-
-	public void setProtoUrl(String protoUrl) {
-		this.protoUrl = protoUrl;
-	}
-
+	@JsonProperty("node_type")
 	public String getNodeType() {
 		return nodeType;
 	}
 
+	@JsonProperty("node_type")
 	public void setNodeType(String nodeType) {
 		this.nodeType = nodeType;
 	}
 
-	public String getMessageName() {
-		return messageName;
+	@JsonProperty("image")
+	public String getImage() {
+		return image;
 	}
 
-	public void setMessageName(String messageName) {
-		this.messageName = messageName;
+	@JsonProperty("image")
+	public void setImage(String image) {
+		this.image = image;
 	}
-	
+
+	@JsonProperty("proto_uri")
+	public String getProtoUri() {
+		return protoUri;
+	}
+
+	@JsonProperty("proto_uri")
+	public void setProtoUri(String protoUri) {
+		this.protoUri = protoUri;
+	}
+
+	@JsonProperty("operation_signature_list")
+	public ArrayList<OperationSignatureList> getOperationSignatureList() {
+		return operationSignatureList;
+	}
+
+	@JsonProperty("operation_signature_list")
+	public void setOperationSignatureList(ArrayList<OperationSignatureList> operationSignatureList) {
+		this.operationSignatureList = operationSignatureList;
+	}
+
+	@JsonProperty("script")
+	public String getScript() {
+		return script;
+	}
+
+	@JsonProperty("script")
+	public void setScript(String script) {
+		this.script = script;
+	}
+
+	@JsonProperty("mapping_table")
+	public MappingTable getMappingTable() {
+		return mappingTable;
+	}
+
+	@JsonProperty("mapping_table")
+	public void setMappingTable(MappingTable mappingTable) {
+		this.mappingTable = mappingTable;
+	}
+
+	@JsonProperty("data_sources")
+	public List<DataSource> getDataSources() {
+		return dataSources;
+	}
+
+	@JsonProperty("data_sources")
+	public void setDataSources(List<DataSource> dataSources) {
+		this.dataSources = dataSources;
+	}
+
 	@Override
 	public String toString() {
-		return "Node [containerName=" + containerName + ", image=" + image + ", dependsOn=" + dependsOn + ", protoUrl="
-				+ protoUrl + ", nodeType=" + nodeType + ", messageName=" + messageName + "]";
+		return "Node [container=" + container + ", image=" + image + ", protoUri=" + protoUri + ", nodeType=" + nodeType
+				+ "]";
 	}
+
 }
