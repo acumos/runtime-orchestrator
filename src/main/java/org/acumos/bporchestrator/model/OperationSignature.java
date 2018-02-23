@@ -48,7 +48,7 @@ public class OperationSignature implements Serializable {
 	}
 
 	/**
-	 * 
+	 * Standard POJO constructor initialized with field
 	 * @param operationName
 	 *            This is the operation name
 	 * @param inputMessageName

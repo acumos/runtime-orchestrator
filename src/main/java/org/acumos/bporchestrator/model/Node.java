@@ -43,7 +43,7 @@ public class Node implements Serializable {
 	private String protoUri = null;
 	@JsonProperty("operation_signature_list")
 	private ArrayList<OperationSignatureList> operationSignatureList = null; // OperationSignatureList itself is NOT a
-																				// list.
+																				// Arraylist.
 	@JsonProperty("script")
 	private String script = null;
 	@JsonProperty("mapping_table")
@@ -59,7 +59,6 @@ public class Node implements Serializable {
 	}
 
 	/**
-	 * 
 	 * @param operationSignatureList
 	 *            List of operations supported by the node
 	 * @param mappingTable

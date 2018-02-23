@@ -27,7 +27,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Representation of Operation Signature list of a Node. IMPORTANT: This itself
- * is NOT list.
+ * is NOT an Arraylist.
  */
 
 public class OperationSignatureList implements Serializable {
@@ -46,6 +46,7 @@ public class OperationSignatureList implements Serializable {
 	}
 
 	/**
+	 * Standard POJO constructor initialized with field
 	 * 
 	 * @param operationSignature
 	 *            This is the operation signature
