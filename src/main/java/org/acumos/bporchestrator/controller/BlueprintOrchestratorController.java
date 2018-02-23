@@ -380,7 +380,6 @@ public class BlueprintOrchestratorController {
 			// Unblock the data source if it has not been unlocked. If counter is 0 then it
 			// means we are traversing this loop for the 1st time.
 			if (sentunblocking == false && counter == 1) {
-				unblockdatasource("http://127.0.0.1:9221/blockunblock");
 				sentunblocking = true;
 			}
 
