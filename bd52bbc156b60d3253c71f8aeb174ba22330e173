@@ -211,6 +211,24 @@
     },
     {
       "key": {
+        "uuid": "ad9b3d2b_2dfbaef1",
+        "filename": "src/main/java/org/acumos/bporchestrator/model/Node.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-02-23T20:07:55Z",
+      "side": 1,
+      "message": "An ArrayList is-a List.  It\u0027s generally better to declare the least restrictive type.  Look at what you did for dataSources below.",
+      "parentUuid": "c8163a71_651e94b6",
+      "revId": "bd52bbc156b60d3253c71f8aeb174ba22330e173",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "985f0fee_f4e1e529",
         "filename": "src/main/java/org/acumos/bporchestrator/model/OperationSignature.java",
         "patchSetId": 1
