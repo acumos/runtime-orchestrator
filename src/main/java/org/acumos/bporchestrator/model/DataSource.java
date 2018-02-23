@@ -44,7 +44,9 @@ public class DataSource implements Serializable {
 	/**
 	 * 
 	 * @param operationSignature
+	 * 		This is the operation signature
 	 * @param name
+	 * 		This is the name of the source
 	 */
 	public DataSource(String name, OperationSignature operationSignature) {
 		super();

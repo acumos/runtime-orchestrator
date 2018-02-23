@@ -62,7 +62,7 @@ public class Blueprint implements Serializable {
 	 *            Name of the blueprint
 	 * @param version
 	 *            Version of the blueprint
-	 * @param input_ports
+	 * @param inputPorts
 	 *            Name of the input ports of the composite model
 	 * @param nodes
 	 *            List of nodes of model
@@ -70,8 +70,6 @@ public class Blueprint implements Serializable {
 	 *            Indicates presence of Probe in the composite solution
 	 * @param trainingClients
 	 *            Training clients
-	 * @param orchestrator
-	 *            Orchestrator
 	 * 
 	 */
 	public Blueprint(String name, String version, List<InputPort> inputPorts, List<Node> nodes,

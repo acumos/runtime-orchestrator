@@ -50,8 +50,11 @@ public class OperationSignature implements Serializable {
 	/**
 	 * 
 	 * @param operationName
+	 *            This is the operation name
 	 * @param inputMessageName
+	 *            This is the input msg name
 	 * @param outputMessageName
+	 *            This is the output msg name
 	 */
 	public OperationSignature(String operationName, String inputMessageName, String outputMessageName) {
 		super();

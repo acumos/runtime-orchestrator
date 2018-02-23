@@ -42,7 +42,8 @@ public class Node implements Serializable {
 	@JsonProperty("proto_uri")
 	private String protoUri = null;
 	@JsonProperty("operation_signature_list")
-	private ArrayList<OperationSignatureList> operationSignatureList = null; // OperationSignatureList itself is NOT a list.
+	private ArrayList<OperationSignatureList> operationSignatureList = null; // OperationSignatureList itself is NOT a
+																				// list.
 	@JsonProperty("script")
 	private String script = null;
 	@JsonProperty("mapping_table")

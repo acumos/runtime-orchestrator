@@ -44,7 +44,10 @@ public class MlModel implements Serializable {
 	/**
 	 * 
 	 * @param operationSignature
+	 *            This is the operation signature
 	 * @param name
+	 *            This is the model name
+	 * 
 	 */
 	public MlModel(String name, OperationSignature operationSignature) {
 		super();

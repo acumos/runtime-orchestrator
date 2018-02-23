@@ -222,7 +222,7 @@
 					</images>
 				</configuration>
 				<!-- build Docker images in install phase, push in deploy phase -->
-				<executions>
+				<!-- <executions>
 					<execution>
 						<goals>
 							<goal>build</goal>
@@ -230,7 +230,7 @@
 						</goals>
 					</execution>
 				</executions>
-
+ -->
 			</plugin>
 
 		</plugins>

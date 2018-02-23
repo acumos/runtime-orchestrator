@@ -48,9 +48,13 @@ public class TrainingClient implements Serializable {
 	/**
 	 * 
 	 * @param dataBrokers
+	 *            This is the databroker
 	 * @param containerName
+	 *            This is is the container name
 	 * @param image
+	 *            This is the image
 	 * @param mlModels
+	 *            This is the mlmodels to train.
 	 */
 	public TrainingClient(String containerName, String image, List<DataBroker> dataBrokers, List<MlModel> mlModels) {
 		super();
@@ -99,7 +103,5 @@ public class TrainingClient implements Serializable {
 	public void setMlModels(List<MlModel> mlModels) {
 		this.mlModels = mlModels;
 	}
-
-	
 
 }

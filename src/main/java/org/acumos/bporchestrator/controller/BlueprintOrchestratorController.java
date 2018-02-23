@@ -324,7 +324,20 @@ public class BlueprintOrchestratorController {
 	 * MAIN LOGIC AND LOOPING
 	 *****************************/
 
-	// TODO
+	/**
+	 * Notifying more nodes
+	 * 
+	 * @param output
+	 *            : output stream of the node
+	 * 
+	 * @param n
+	 *            : current node object
+	 * @param oprn
+	 *            : current operation
+	 * @return: returns byte[] type
+	 * 
+	 */
+
 	public byte[] notifynextnode(byte[] output, Node n, String oprn) {
 
 		// Find dependents of the node. If the dependent is null, then send the output
@@ -458,9 +471,14 @@ public class BlueprintOrchestratorController {
 	 *            : url of probe
 	 * @param msg_name
 	 *            : input message name
-	 * @param Node
+	 * @param n
 	 *            : the node object
-	 * @return
+	 * @param pb_c_name
+	 *            : probe container name
+	 *
+	 * @return : returns byte[] type
+	 * @throws IOException
+	 *             : IO exception
 	 */
 
 	public byte[] contactProbe(byte[] binaryStream, String probeurl, String pb_c_name, String msg_name, Node n)
@@ -476,6 +494,8 @@ public class BlueprintOrchestratorController {
 	/**
 	 * Contacting a node
 	 * 
+	 * @param binaryStream
+	 *            : binary message
 	 * @param url
 	 *            : url of the data broker
 	 * @param name
@@ -550,9 +570,10 @@ public class BlueprintOrchestratorController {
 	 *            : Node
 	 * @param sent_ops
 	 *            : Operation name.
-	 * @return
+	 * @return : returns byte[] type
 	 * 
-	 * @throws IOException
+	 * @throws Exception
+	 *             : Exception
 	 */
 
 	public ArrayList<ConnectedTo> findconnectedto(Node n, String sent_ops) throws Exception {
@@ -620,9 +641,12 @@ public class BlueprintOrchestratorController {
 	 * Sending HTTP POST request to Models
 	 * 
 	 * @param url
+	 *            : url to post to
 	 * @param binaryStream
-	 * @return
+	 *            : the binary message
+	 * @return: returns byte[]
 	 * @throws IOException
+	 *             : IO exception
 	 */
 	private byte[] httpPost(String url, byte[] binaryStream) throws IOException {
 		return httpPost(url, binaryStream, null, null);
@@ -634,12 +658,14 @@ public class BlueprintOrchestratorController {
 	 * @param url
 	 *            : url of the node
 	 * @param binaryStream
+	 *            : the binary message
 	 * @param protoUrl
 	 *            : probe specific data
 	 * @param messageName
 	 *            : probe specific data
-	 * @return
+	 * @return: returns byte[] type
 	 * @throws IOException
+	 *             : IOException
 	 */
 	private byte[] httpPost(String url, byte[] binaryStream, String protoUrl, String messageName) throws IOException {
 
@@ -678,6 +704,9 @@ public class BlueprintOrchestratorController {
 	 * 
 	 * @param url
 	 *            : url to get
+	 * @return : returns byte[] type
+	 * @throws IOException
+	 *             : IO exception
 	 */
 
 	public byte[] httpGet(String url) throws IOException {
