@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "030c54cc_716d3d90",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 40
+      },
+      "writtenOn": "2018-02-23T17:47:39Z",
+      "side": 1,
+      "message": "Uncommenting. had commented to build it locally.",
+      "parentUuid": "38ac64d1_87f88254",
+      "revId": "bd52bbc156b60d3253c71f8aeb174ba22330e173",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "98511cbc_cad3f719",
         "filename": "src/main/java/org/acumos/bporchestrator/model/Blueprint.java",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2018-02-23T17:08:19Z",
       "side": 1,
       "message": "If no args you don\u0027t have to call super()",
+      "revId": "bd52bbc156b60d3253c71f8aeb174ba22330e173",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f00fac68_071ddea9",
+        "filename": "src/main/java/org/acumos/bporchestrator/model/Blueprint.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 40
+      },
+      "writtenOn": "2018-02-23T17:47:39Z",
+      "side": 1,
+      "message": "I used a service to generate POJOs. It came by default. Harmless I think.",
+      "parentUuid": "98511cbc_cad3f719",
       "revId": "bd52bbc156b60d3253c71f8aeb174ba22330e173",
       "serverId": "655300a2-7a56-4504-9153-881edd907bea",
       "unresolved": false
@@ -87,6 +123,24 @@
     },
     {
       "key": {
+        "uuid": "e005342d_642328b0",
+        "filename": "src/main/java/org/acumos/bporchestrator/model/MlModel.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 40
+      },
+      "writtenOn": "2018-02-23T17:47:39Z",
+      "side": 1,
+      "message": "This is for future. Blueprint currently has them but just doesn\u0027t use them.",
+      "parentUuid": "9d66f517_0f83ad1a",
+      "revId": "bd52bbc156b60d3253c71f8aeb174ba22330e173",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c9a7bb4c_4e45ce82",
         "filename": "src/main/java/org/acumos/bporchestrator/model/MlModel.java",
         "patchSetId": 1
@@ -98,6 +152,24 @@
       "writtenOn": "2018-02-23T17:08:19Z",
       "side": 1,
       "message": "This is the default - no need to annotate like this",
+      "revId": "bd52bbc156b60d3253c71f8aeb174ba22330e173",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "68fcedee_d1de59aa",
+        "filename": "src/main/java/org/acumos/bporchestrator/model/MlModel.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 40
+      },
+      "writtenOn": "2018-02-23T17:47:39Z",
+      "side": 1,
+      "message": "you mean if the json property name and the variable name for the method is same, it will automatically bind? No need for JsonProperty in that case?",
+      "parentUuid": "c9a7bb4c_4e45ce82",
       "revId": "bd52bbc156b60d3253c71f8aeb174ba22330e173",
       "serverId": "655300a2-7a56-4504-9153-881edd907bea",
       "unresolved": false
@@ -121,6 +193,24 @@
     },
     {
       "key": {
+        "uuid": "13a11080_52483d16",
+        "filename": "src/main/java/org/acumos/bporchestrator/model/Node.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 40
+      },
+      "writtenOn": "2018-02-23T17:47:39Z",
+      "side": 1,
+      "message": "Why? I want an arraylist here. Changing the comment beside to match",
+      "parentUuid": "c8163a71_651e94b6",
+      "revId": "bd52bbc156b60d3253c71f8aeb174ba22330e173",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "985f0fee_f4e1e529",
         "filename": "src/main/java/org/acumos/bporchestrator/model/OperationSignature.java",
         "patchSetId": 1
@@ -132,6 +222,24 @@
       "writtenOn": "2018-02-23T17:08:19Z",
       "side": 1,
       "message": "No need",
+      "revId": "bd52bbc156b60d3253c71f8aeb174ba22330e173",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dfff5eba_02387795",
+        "filename": "src/main/java/org/acumos/bporchestrator/model/OperationSignature.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 40
+      },
+      "writtenOn": "2018-02-23T17:47:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "985f0fee_f4e1e529",
       "revId": "bd52bbc156b60d3253c71f8aeb174ba22330e173",
       "serverId": "655300a2-7a56-4504-9153-881edd907bea",
       "unresolved": false
@@ -172,6 +280,24 @@
     },
     {
       "key": {
+        "uuid": "24b47083_4528fbbd",
+        "filename": "src/main/java/org/acumos/bporchestrator/model/OperationSignature.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 40
+      },
+      "writtenOn": "2018-02-23T17:47:39Z",
+      "side": 1,
+      "message": "I dont control these Json field names. Deployment controls the names. I have to use what they give me.",
+      "parentUuid": "efc53ee0_82d14d78",
+      "revId": "bd52bbc156b60d3253c71f8aeb174ba22330e173",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "764d8e5e_3fd26403",
         "filename": "src/main/java/org/acumos/bporchestrator/model/OperationSignatureList.java",
         "patchSetId": 1
@@ -183,6 +309,24 @@
       "writtenOn": "2018-02-23T17:08:19Z",
       "side": 1,
       "message": "Probably should be List, not ArrayList",
+      "revId": "bd52bbc156b60d3253c71f8aeb174ba22330e173",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "44517b1d_0ca8df61",
+        "filename": "src/main/java/org/acumos/bporchestrator/model/OperationSignatureList.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 40
+      },
+      "writtenOn": "2018-02-23T17:47:39Z",
+      "side": 1,
+      "message": "ok",
+      "parentUuid": "764d8e5e_3fd26403",
       "revId": "bd52bbc156b60d3253c71f8aeb174ba22330e173",
       "serverId": "655300a2-7a56-4504-9153-881edd907bea",
       "unresolved": false
@@ -206,6 +350,24 @@
     },
     {
       "key": {
+        "uuid": "68c56ea6_a7812229",
+        "filename": "src/main/java/org/acumos/bporchestrator/model/OperationSignatureList.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 40
+      },
+      "writtenOn": "2018-02-23T17:47:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "05bc3331_137144f7",
+      "revId": "bd52bbc156b60d3253c71f8aeb174ba22330e173",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9b5f6252_c691f278",
         "filename": "src/main/java/org/acumos/bporchestrator/model/TrainingClient.java",
         "patchSetId": 1
@@ -217,6 +379,24 @@
       "writtenOn": "2018-02-23T17:08:19Z",
       "side": 1,
       "message": "Not needed",
+      "revId": "bd52bbc156b60d3253c71f8aeb174ba22330e173",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3c9f9d94_e1f41997",
+        "filename": "src/main/java/org/acumos/bporchestrator/model/TrainingClient.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 40
+      },
+      "writtenOn": "2018-02-23T17:47:39Z",
+      "side": 1,
+      "message": "Will be used in the future with a newer version of the blueprint the Design studio is coming with",
+      "parentUuid": "9b5f6252_c691f278",
       "revId": "bd52bbc156b60d3253c71f8aeb174ba22330e173",
       "serverId": "655300a2-7a56-4504-9153-881edd907bea",
       "unresolved": false
