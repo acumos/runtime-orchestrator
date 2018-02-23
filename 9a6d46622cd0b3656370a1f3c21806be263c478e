@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2fe80b06_86117d2e",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 383,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-02-23T21:46:10Z",
+      "side": 1,
+      "message": "please remove code, don\u0027t comment",
+      "revId": "9a6d46622cd0b3656370a1f3c21806be263c478e",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    }
+  ]
+}
