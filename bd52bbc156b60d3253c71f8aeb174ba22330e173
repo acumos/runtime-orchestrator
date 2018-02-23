@@ -1,0 +1,225 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "38ac64d1_87f88254",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-02-23T17:08:19Z",
+      "side": 1,
+      "message": "Why did you comment out the docker build?  This will break at Jenkins",
+      "revId": "bd52bbc156b60d3253c71f8aeb174ba22330e173",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "98511cbc_cad3f719",
+        "filename": "src/main/java/org/acumos/bporchestrator/model/Blueprint.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-02-23T17:08:19Z",
+      "side": 1,
+      "message": "If no args you don\u0027t have to call super()",
+      "revId": "bd52bbc156b60d3253c71f8aeb174ba22330e173",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6f8d5dad_601a7295",
+        "filename": "src/main/java/org/acumos/bporchestrator/model/DataSource.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-02-23T17:08:19Z",
+      "side": 1,
+      "message": "Not needed",
+      "revId": "bd52bbc156b60d3253c71f8aeb174ba22330e173",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e52d4bac_8e5adf98",
+        "filename": "src/main/java/org/acumos/bporchestrator/model/DataSource.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-02-23T17:08:19Z",
+      "side": 1,
+      "message": "Not needed",
+      "revId": "bd52bbc156b60d3253c71f8aeb174ba22330e173",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9d66f517_0f83ad1a",
+        "filename": "src/main/java/org/acumos/bporchestrator/model/MlModel.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-02-23T17:08:19Z",
+      "side": 1,
+      "message": "Not needed",
+      "revId": "bd52bbc156b60d3253c71f8aeb174ba22330e173",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c9a7bb4c_4e45ce82",
+        "filename": "src/main/java/org/acumos/bporchestrator/model/MlModel.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-02-23T17:08:19Z",
+      "side": 1,
+      "message": "This is the default - no need to annotate like this",
+      "revId": "bd52bbc156b60d3253c71f8aeb174ba22330e173",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c8163a71_651e94b6",
+        "filename": "src/main/java/org/acumos/bporchestrator/model/Node.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-02-23T17:08:19Z",
+      "side": 1,
+      "message": "Declare as List, not ArrayList",
+      "revId": "bd52bbc156b60d3253c71f8aeb174ba22330e173",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "985f0fee_f4e1e529",
+        "filename": "src/main/java/org/acumos/bporchestrator/model/OperationSignature.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-02-23T17:08:19Z",
+      "side": 1,
+      "message": "No need",
+      "revId": "bd52bbc156b60d3253c71f8aeb174ba22330e173",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7cb1a7ef_b9451ca0",
+        "filename": "src/main/java/org/acumos/bporchestrator/model/OperationSignature.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-02-23T17:08:19Z",
+      "side": 1,
+      "message": "No need",
+      "revId": "bd52bbc156b60d3253c71f8aeb174ba22330e173",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "efc53ee0_82d14d78",
+        "filename": "src/main/java/org/acumos/bporchestrator/model/OperationSignature.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-02-23T17:08:19Z",
+      "side": 1,
+      "message": "Why use snake_case here?  Why not use standard JSON camelCase ?",
+      "revId": "bd52bbc156b60d3253c71f8aeb174ba22330e173",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "764d8e5e_3fd26403",
+        "filename": "src/main/java/org/acumos/bporchestrator/model/OperationSignatureList.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-02-23T17:08:19Z",
+      "side": 1,
+      "message": "Probably should be List, not ArrayList",
+      "revId": "bd52bbc156b60d3253c71f8aeb174ba22330e173",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "05bc3331_137144f7",
+        "filename": "src/main/java/org/acumos/bporchestrator/model/OperationSignatureList.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-02-23T17:08:19Z",
+      "side": 1,
+      "message": "What?",
+      "revId": "bd52bbc156b60d3253c71f8aeb174ba22330e173",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9b5f6252_c691f278",
+        "filename": "src/main/java/org/acumos/bporchestrator/model/TrainingClient.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-02-23T17:08:19Z",
+      "side": 1,
+      "message": "Not needed",
+      "revId": "bd52bbc156b60d3253c71f8aeb174ba22330e173",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    }
+  ]
+}
