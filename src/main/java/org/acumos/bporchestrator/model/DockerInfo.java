@@ -34,11 +34,11 @@ public class DockerInfo implements Serializable {
 	private static final long serialVersionUID = 6384817901582893495L;
 
 	@JsonProperty("container_name")
-	private String container = null;
-
+	private String container = null; 
+	
 	@JsonProperty("ip_address")
 	private String ipAddress = null;
-
+	
 	@JsonProperty("port")
 	private String port = null;
 

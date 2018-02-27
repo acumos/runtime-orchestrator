@@ -36,18 +36,17 @@ public class Blueprint implements Serializable {
 
 	@JsonProperty("name")
 	private String name = null;
-
 	@JsonProperty("version")
 	private String version = null;
-
-	@JsonProperty("models")
+	@JsonProperty("input_ports")
+	private List<InputPort> inputPorts = null;
+	@JsonProperty("nodes")
 	private List<Node> nodes = null;
+	@JsonProperty("probeIndicator")
+	private ArrayList<ProbeIndicator> probeIndicator = null;
+	@JsonProperty("training_clients")
+	private List<TrainingClient> trainingClients = null;
 
-	@JsonProperty("input_operation_signatures")
-	private List<OperationSignature> inputs = null;
-
-	@JsonProperty("orchestrator")
-	private Orchestrator orchestrator = null;
 
 	/**
 	 * Standard POJO no-arg constructor
@@ -63,65 +62,85 @@ public class Blueprint implements Serializable {
 	 *            Name of the blueprint
 	 * @param version
 	 *            Version of the blueprint
+	 * @param inputPorts
+	 *            Name of the input ports of the composite model
 	 * @param nodes
 	 *            List of nodes of model
-	 * @param inputs
-	 *            contains the operation to invoke on the first node
-	 * @param orchestrator
-	 *            Orchestrator
+	 * @param probeIndicator
+	 *            Indicates presence of Probe in the composite solution
+	 * @param trainingClients
+	 *            Training clients
+	 * 
 	 */
-	public Blueprint(String name, String version, List<Node> nodes, List<OperationSignature> inputs,
-			Orchestrator orchestrator) {
+	public Blueprint(String name, String version, List<InputPort> inputPorts, List<Node> nodes,
+			ArrayList<ProbeIndicator> probeIndicator, List<TrainingClient> trainingClients) {
 		super();
 		this.name = name;
 		this.version = version;
+		this.inputPorts = inputPorts;
 		this.nodes = nodes;
-		this.inputs = inputs;
-		this.orchestrator = orchestrator;
+		this.probeIndicator = probeIndicator;
+		this.trainingClients = trainingClients;
 	}
 
-	public List<OperationSignature> getInputs() {
-		return inputs;
-	}
-
-	public void setInputs(List<OperationSignature> inputs) {
-		this.inputs = inputs;
-	}
-
-	public Blueprint addInput(OperationSignature os) {
-		if (this.inputs == null) {
-			this.inputs = new ArrayList<>();
-		}
-		this.inputs.add(os);
-		return this;
-	}
-
+	@JsonProperty("name")
 	public String getName() {
 		return name;
 	}
 
+	@JsonProperty("name")
 	public void setName(String name) {
 		this.name = name;
 	}
 
+	@JsonProperty("version")
 	public String getVersion() {
 		return version;
 	}
 
+	@JsonProperty("version")
 	public void setVersion(String version) {
 		this.version = version;
 	}
 
-	public Orchestrator getOrchestrator() {
-		return orchestrator;
+	@JsonProperty("input_ports")
+	public List<InputPort> getInputPorts() {
+		return inputPorts;
 	}
 
-	public void setOrchestrator(Orchestrator orchestrator) {
-		this.orchestrator = orchestrator;
+	@JsonProperty("input_ports")
+	public void setInputPorts(List<InputPort> inputPorts) {
+		this.inputPorts = inputPorts;
 	}
 
+	@JsonProperty("nodes")
 	public List<Node> getNodes() {
 		return nodes;
+	}
+
+	@JsonProperty("nodes")
+	public void setNodes(List<Node> nodes) {
+		this.nodes = nodes;
+	}
+
+	@JsonProperty("probeIndicator")
+	public ArrayList<ProbeIndicator> getProbeIndicator() {
+		return probeIndicator;
+	}
+
+	@JsonProperty("probeIndicator")
+	public void setProbeIndicator(ArrayList<ProbeIndicator> probeIndicator) {
+		this.probeIndicator = probeIndicator;
+	}
+
+	@JsonProperty("training_clients")
+	public List<TrainingClient> getTrainingClients() {
+		return trainingClients;
+	}
+
+	@JsonProperty("training_clients")
+	public void setTrainingClients(List<TrainingClient> trainingClients) {
+		this.trainingClients = trainingClients;
 	}
 
 	public Node getNodebyContainer(String container) {
@@ -130,10 +149,6 @@ public class Blueprint implements Serializable {
 				return node;
 		}
 		return null;
-	}
-
-	public void setNodes(List<Node> nodes) {
-		this.nodes = nodes;
 	}
 
 	public Blueprint addNode(Node node) {
@@ -147,8 +162,7 @@ public class Blueprint implements Serializable {
 	@Override
 	public String toString() {
 
-		return "Blueprint [name=" + name + ", version=" + version + ", nodes=" + nodes + ", orchestrator="
-				+ orchestrator + "]";
+		return "Blueprint [name=" + name + ", version=" + version + ", nodes=" + nodes + "]";
 	}
 
 }
