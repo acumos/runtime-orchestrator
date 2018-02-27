@@ -21,77 +21,45 @@
 package org.acumos.bporchestrator.model;
 
 import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Blueprint Orchestrator class
- *
+ * Representation of Probe Indicator in the blueprint.json
  */
-public class Orchestrator implements Serializable {
-
-	private static final long serialVersionUID = 964690784032387784L;
-
-	@JsonProperty("name")
-	private String name = null;
-
-	@JsonProperty("version")
-	private String version = null;
-
-	@JsonProperty("image")
-	private String image = null;
+public class ProbeIndicator implements Serializable {
+	private final static long serialVersionUID = 6463163730071836107L;
+	@JsonProperty("value")
+	private String value;
 
 	/**
-	 * Constructor method
+	 * Standard POJO no-arg constructor
+	 */
+	public ProbeIndicator() {
+		super();
+	}
+
+	/**
 	 * 
-	 * @param name
-	 *            Name
-	 * @param version
-	 *            Version
-	 * @param image
-	 *            Image
+	 * @param value
+	 *            Indicates whether Probe is present in the solution.
 	 */
-	public Orchestrator(String name, String version, String image) {
+	public ProbeIndicator(String value) {
 		super();
-		this.name = name;
-		this.version = version;
-		this.image = image;
+		this.value = value;
 	}
 
-	/**
-	 * POJO no-arg constructor
-	 */
-	public Orchestrator() {
-		super();
+	@JsonProperty("value")
+	public String getValue() {
+		return value;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getVersion() {
-		return version;
-	}
-
-	public void setVersion(String version) {
-		this.version = version;
-	}
-
-	public String getImage() {
-		return image;
-	}
-
-	public void setImage(String image) {
-		this.image = image;
+	@JsonProperty("value")
+	public void setValue(String value) {
+		this.value = value;
 	}
 
 	@Override
 	public String toString() {
-		return "Orchestrator [name=" + name + ", version=" + version + ", image=" + image + "]";
+		return "ProbeIndicator [value=" + value + "]";
 	}
-
 }

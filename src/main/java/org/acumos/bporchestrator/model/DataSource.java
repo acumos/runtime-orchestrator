@@ -21,77 +21,57 @@
 package org.acumos.bporchestrator.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-/**
- * Blueprint Orchestrator class
- *
- */
-public class Orchestrator implements Serializable {
+public class DataSource implements Serializable {
 
-	private static final long serialVersionUID = 964690784032387784L;
-
+	private final static long serialVersionUID = -4657840573214474196L;
 	@JsonProperty("name")
 	private String name = null;
-
-	@JsonProperty("version")
-	private String version = null;
-
-	@JsonProperty("image")
-	private String image = null;
+	@JsonProperty("operation_signature")
+	private OperationSignature operationSignature = null;
 
 	/**
-	 * Constructor method
+	 * No args constructor for use in serialization
 	 * 
-	 * @param name
-	 *            Name
-	 * @param version
-	 *            Version
-	 * @param image
-	 *            Image
 	 */
-	public Orchestrator(String name, String version, String image) {
+	public DataSource() {
+		super();
+	}
+
+	/**
+	 * 
+	 * @param operationSignature
+	 * 		This is the operation signature
+	 * @param name
+	 * 		This is the name of the source
+	 */
+	public DataSource(String name, OperationSignature operationSignature) {
 		super();
 		this.name = name;
-		this.version = version;
-		this.image = image;
+		this.operationSignature = operationSignature;
 	}
 
-	/**
-	 * POJO no-arg constructor
-	 */
-	public Orchestrator() {
-		super();
-	}
-
+	@JsonProperty("name")
 	public String getName() {
 		return name;
 	}
 
+	@JsonProperty("name")
 	public void setName(String name) {
 		this.name = name;
 	}
 
-	public String getVersion() {
-		return version;
+	@JsonProperty("operation_signature")
+	public OperationSignature getOperationSignature() {
+		return operationSignature;
 	}
 
-	public void setVersion(String version) {
-		this.version = version;
-	}
-
-	public String getImage() {
-		return image;
-	}
-
-	public void setImage(String image) {
-		this.image = image;
-	}
-
-	@Override
-	public String toString() {
-		return "Orchestrator [name=" + name + ", version=" + version + ", image=" + image + "]";
+	@JsonProperty("operation_signature")
+	public void setOperationSignature(OperationSignature operationSignature) {
+		this.operationSignature = operationSignature;
 	}
 
 }
