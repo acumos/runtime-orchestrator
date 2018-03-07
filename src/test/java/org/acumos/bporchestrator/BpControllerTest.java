@@ -56,25 +56,6 @@ public class BpControllerTest extends AbstractControllerTest {
 	@Test
 	public void bpControllerTest() throws Exception {
 		try {
-			// testing /putDockerInfo PUT method
-			logger.info("Testing /putDockerInfo PUT method");
-			DockerInfo docker1 = new DockerInfo();
-			docker1.setContainer("image_classifier1");
-			docker1.setIpAddress("52.191.113.56");
-			docker1.setPort("8123");
-
-			DockerInfo docker2 = new DockerInfo();
-			docker2.setContainer("image_good_classifier1");
-			docker2.setIpAddress("52.191.113.56");
-			docker2.setPort("8234");
-
-			DockerInfoList dockerList = new DockerInfoList();
-			dockerList.addDockerInfo(docker1);
-			dockerList.addDockerInfo(docker2);
-
-			doPut("/putDockerInfo", dockerList, DockerInfoList.class);
-
-			logger.info("Done testing /putDockerInfo PUT end point");
 
 			// Test /putBlueprint PUT end point
 			logger.info("Testing /putBlueprint PUT method");
@@ -167,51 +148,71 @@ public class BpControllerTest extends AbstractControllerTest {
 
 			bp.addNode(node1);
 			bp.addNode(node2);
-			
+
 			// Create list of Probe indicators and add to the blueprint
-			
+
 			ProbeIndicator testpbindicator = new ProbeIndicator();
 			testpbindicator.setValue("false");
-			
+
 			ArrayList<ProbeIndicator> testlistofprobeIndicators = new ArrayList<ProbeIndicator>();
 			testlistofprobeIndicators.add(testpbindicator);
-			
+
 			bp.setProbeIndicator(testlistofprobeIndicators);
-			
-			
-			//BELOW STUFF CAN BE ADDED ONCE WE START USING TRAINING CLIENT.
-			/* 
-			
-			TrainingClient testtc = new TrainingClient();
-			testtc.setContainerName("trainingclientname");
-			testtc.setImage("some_image");
-			
-			
-			
-			DataBroker testdb1 = new DataBroker();
-			testdb1.setName("nameofdatabroker");
-			OperationSignature dbops = new OperationSignature();
-			dbops.setOperationName("getimage");
-			
-			testtc.setDataBrokers(testdb1);
-			
-			
-			
-			MlModel testmlmodel1 = new MlModel();
-			testmlmodel1.setName("mlmodelname");
-			OperationSignature mlops = new OperationSignature();
-			dbops.setOperationName("predictimage");
-			testmlmodel1.setOperationSignature(mlops);
-			
-			testtc.setMlModel(testmlmodel1);
-			
-			List<TrainingClient> listoftesttc = new List<TrainingClient>();
-			listoftesttc.add(testtc);
-			
-			*/
-			
+
+			// BELOW STUFF CAN BE ADDED ONCE WE START USING TRAINING CLIENT.
+			/*
+			 * 
+			 * TrainingClient testtc = new TrainingClient();
+			 * testtc.setContainerName("trainingclientname"); testtc.setImage("some_image");
+			 * 
+			 * 
+			 * 
+			 * DataBroker testdb1 = new DataBroker(); testdb1.setName("nameofdatabroker");
+			 * OperationSignature dbops = new OperationSignature();
+			 * dbops.setOperationName("getimage");
+			 * 
+			 * testtc.setDataBrokers(testdb1);
+			 * 
+			 * 
+			 * 
+			 * MlModel testmlmodel1 = new MlModel(); testmlmodel1.setName("mlmodelname");
+			 * OperationSignature mlops = new OperationSignature();
+			 * dbops.setOperationName("predictimage");
+			 * testmlmodel1.setOperationSignature(mlops);
+			 * 
+			 * testtc.setMlModel(testmlmodel1);
+			 * 
+			 * List<TrainingClient> listoftesttc = new List<TrainingClient>();
+			 * listoftesttc.add(testtc);
+			 * 
+			 */
+
 			doPut("/putBlueprint", bp, Blueprint.class);
 			logger.info("Done testing /putBlueprint PUT end point");
+
+			// testing /putDockerInfo PUT method
+			logger.info("Testing /putDockerInfo PUT method");
+			DockerInfo docker1 = new DockerInfo();
+			docker1.setContainer("image_classifier1");
+			docker1.setIpAddress("52.191.113.56");
+			docker1.setPort("8123");
+
+			DockerInfo docker2 = new DockerInfo();
+			docker2.setContainer("image_good_classifier1");
+			docker2.setIpAddress("52.191.113.56");
+			docker2.setPort("8234");
+
+			DockerInfoList dockerList = new DockerInfoList();
+			dockerList.addDockerInfo(docker1);
+			dockerList.addDockerInfo(docker2);
+
+			doPut("/putDockerInfo", dockerList, DockerInfoList.class);
+
+			logger.info("Done testing /putDockerInfo PUT end point");
+			
+			// testing /hello endpoint
+			logger.info("Testing /hello GET method");
+			doGet("/hello");
 
 		} catch (HttpStatusCodeException ex) {
 			logger.error("controllerTest failed", ex);

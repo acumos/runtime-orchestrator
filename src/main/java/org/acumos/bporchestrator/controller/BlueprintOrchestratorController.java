@@ -20,7 +20,7 @@
 
 package org.acumos.bporchestrator.controller;
 
-import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -43,7 +43,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import org.acumos.bporchestrator.exception.BORuntimeException;
 import org.acumos.bporchestrator.model.*;
 import org.acumos.bporchestrator.util.TaskManager;
 import org.apache.commons.io.IOUtils;
@@ -56,26 +55,9 @@ import io.swagger.annotations.ApiParam;
  */
 @RestController
 public class BlueprintOrchestratorController {
-	private static final Logger logger = LoggerFactory.getLogger(BlueprintOrchestratorController.class);
 
-	private static Blueprint blueprint = null;
-	private static DockerInfoList dockerList = null;
-	private byte[] results = null;
-	boolean validInputOperation = false;
-	boolean dataBrokerPresent = false;
-	boolean probePresent = false;
-	String dataBrokerContName = null;
-	String probeContName = null;
-	ArrayList<OperationSignatureList> ListOfDataBrokerOpSigList = null;
-	ArrayList<OperationSignatureList> ListOfProbeOpSigList = null;
-	String dataBrokerOperation = null;
-	String probeOperation = null;
-	String inpcontainer = null;
-	String inpoperation = null;
-	boolean databrokervisited = false;
-	String probeurl = null;
-	boolean sentunblocking = false; // boolean to check if unblocking request was sent to Data source.
-	int counter = 1;
+	// Logger is a static variable. So same for all threads.
+	private static final Logger logger = LoggerFactory.getLogger(BlueprintOrchestratorController.class);
 
 	/**
 	 * Test endpoint
@@ -111,14 +93,28 @@ public class BlueprintOrchestratorController {
 			@ApiParam(value = "Inital request to start deploying... This binary stream is in protobuf format.", required = false) @Valid @RequestBody byte[] binaryStream,
 			@ApiParam(value = "This operation should match with one of the input operation signatures in blueprint.json", required = true) @PathVariable("operation") String operation) {
 
-		results = null;
+		byte[] results = null;
 
-		// On receiving this request, the data source is blocked. We will need to
-		// unblock it only when we
-		// receive output from the first model.
+		Blueprint blueprint = TaskManager.getBlueprint();
+		DockerInfoList dockerList = TaskManager.getDockerList();
+
+		// Probe related.
+		boolean probePresent = false;
+		String probeContName = null;
+		String probeOperation = null;
+		String probeurl = null;
+		ArrayList<OperationSignatureList> ListOfProbeOpSigList = null;
+
+		// Input node related
+		String inpcontainer = null;
+		String inpoperation = null;
+
+		// On receiving this request, the data source is blocked.
+		// We will need to unblock it only when we receive output from the first model.
 
 		// Check if blueprint and dockerList has been populated.
 		try {
+			logger.info("****************************************************************************");
 			logger.info("Receiving /" + operation + " request: " + Arrays.toString(binaryStream));
 			if (blueprint == null) {
 				logger.error("Empty blueprint JSON");
@@ -129,62 +125,15 @@ public class BlueprintOrchestratorController {
 				return new ResponseEntity<>(results, HttpStatus.PARTIAL_CONTENT);
 			}
 
-			// Check if it is a valid input operation.If not, error.
-
 			List<InputPort> inps = blueprint.getInputPorts();
-			/*
-			 * for (InputPort inport : inps) { if
-			 * (inport.getOperationSignature().getOperationName().equals(operation)) {
-			 * validInputOperation = true; break; } } if (validInputOperation == false) {
-			 * logger.error(
-			 * "The requester called the Model connector at an illegal endpoint which is not in the input_ports section."
-			 * ); return new ResponseEntity<>(results, HttpStatus.PARTIAL_CONTENT); }
-			 */
-
 			List<Node> allnodes = blueprint.getNodes();
 
-			// Check if data broker is present in the composite solution. If yes, get its
-			// container name, and operation.
-			for (Node nd : allnodes) {
-				if (nd.getNodeType().equalsIgnoreCase("Databroker")) {
-					dataBrokerPresent = true;
-					// get its container name : to be used later.
-					dataBrokerContName = nd.getContainerName();
-					// getting its operation name : to be used later ...OR is it always get_image?
-					ListOfDataBrokerOpSigList = nd.getOperationSignatureList();
-					for (OperationSignatureList dbosl : ListOfDataBrokerOpSigList) {
-						dataBrokerOperation = dbosl.getOperationSignature().getOperationName(); // here we are assuming
-																								// databroker will have
-																								// only 1 operation.
-																								// //this can be
-																								// changed.
-					}
-					break;
-				}
-			}
-
 			String urlBase = null;
-			String databrokerurl = null;
-
 			byte[] output = null;
-			byte[] output2 = null;
-
-			// Find the url etc. for this data broker.
-
-			if (dataBrokerPresent == true) {
-				DockerInfo d1 = dockerList.findDockerInfoByContainer(dataBrokerContName);
-
-				if (d1 == null) { // what to do if the deployer passed
-					// incomplete docker info ???
-					logger.error("Cannot find docker info about the data broker" + dataBrokerContName);
-					return new ResponseEntity<>(results, HttpStatus.INTERNAL_SERVER_ERROR);
-				}
-				urlBase = "http://" + d1.getIpAddress() + ":" + d1.getPort() + "/";
-				databrokerurl = urlBase + dataBrokerOperation; // Is this always get_image?
-			}
 
 			// Check if Probe is present in the composite solution. If yes, get its
-			// container name, and operation.
+			// container name, and operation. THIS PROBE DATA WILL BE USED FOR THE DATA
+			// SOURCE CASE ONLY.
 
 			ArrayList<ProbeIndicator> list_of_pb_indicators = blueprint.getProbeIndicator();
 			for (ProbeIndicator pbindicator : list_of_pb_indicators) {
@@ -227,88 +176,52 @@ public class BlueprintOrchestratorController {
 				probeurl = urlBase + probeOperation;
 			}
 
-			/*
-			 * if Databroker in composite solution { make a get request to data broker which
-			 * will send the message. This is your message}
-			 */
-			Node dbnode = blueprint.getNodebyContainer(dataBrokerContName);
-
-			if ((dataBrokerPresent == true) && (databrokervisited == false)) {
-				// make a GET request to the databroker and receive response
-				output = contactdataBroker(databrokerurl, dataBrokerContName);
-				databrokervisited = true;
-
-				/*
-				 * if probe in composite solution { send the input message of every node to
-				 * probe also and wait for a request http OK response. }
-				 */
-
-				if (probePresent == true) {
-					String msgName = "Binary_Stream_is_Null.Ignore_message_and_message_name";
-
-					// There is no message in this 1 case -->(Databroker present and datasource
-					// triggers.)
-					logger.info("Notifying PROBE for node name" + dbnode.getContainerName() + ", inp msg name:"
-							+ msgName + ", msg: " + binaryStream);
-					byte[] out = contactProbe(binaryStream, probeurl, probeContName, msgName, dbnode);
-				}
-
-				notifynextnode(output, dbnode, dataBrokerOperation);
-
-			}
-
-			else {
-
-				// Now call the input node and its operation signature.
-				for (InputPort inport : inps) {
-					if (inport.getOperationSignature().getOperationName().equals(operation)) {
-						inpcontainer = inport.getContainerName();
-						inpoperation = operation;
-						break;
-
-					}
-				}
-
-				String inpmsgname = null;
-
-				Node inpnode = blueprint.getNodebyContainer(inpcontainer);
-				ArrayList<OperationSignatureList> inplosl = inpnode.getOperationSignatureList();
-				for (OperationSignatureList inposl : inplosl) {
-					inpmsgname = inposl.getOperationSignature().getInputMessageName();
+			// Now call the input node and its operation signature.
+			for (InputPort inport : inps) {
+				if (inport.getOperationSignature().getOperationName().equals(operation)) {
+					inpcontainer = inport.getContainerName();
+					inpoperation = operation;
 					break;
+
 				}
-
-				DockerInfo d2 = dockerList.findDockerInfoByContainer(inpcontainer);
-
-				if (d2 == null) { // what to do if the deployer passed
-					// incomplete docker info ???
-					logger.error("Cannot find docker info about the dontainer" + inpcontainer);
-					return new ResponseEntity<>(results, HttpStatus.INTERNAL_SERVER_ERROR);
-				}
-				urlBase = "http://" + d2.getIpAddress() + ":" + d2.getPort() + "/";
-				String inpurl = urlBase + inpoperation; // Is this always get_image?
-
-				output = contactnode(binaryStream, inpurl, inpcontainer);
-
-				// Unblock the data source.
-
-				if (sentunblocking == false) {
-					logger.info("Unblocking data source after receiving output from input node.");
-					sentunblocking = true;
-				}
-
-				/*
-				 * if probe in composite solution { send the input message of every node to
-				 * probe also and wait for a request http OK response. }
-				 */
-				if (probePresent == true) {
-					logger.info("Notifying PROBE for node name " + inpnode.getContainerName() + ", inp msg name:"
-							+ inpmsgname + ", msg: " + binaryStream);
-					byte[] out = contactProbe(binaryStream, probeurl, probeContName, inpmsgname, inpnode);
-				}
-
-				notifynextnode(output, inpnode, inpoperation);
 			}
+
+			String inpmsgname = null;
+
+			Node inpnode = blueprint.getNodebyContainer(inpcontainer);
+			ArrayList<OperationSignatureList> inplosl = inpnode.getOperationSignatureList();
+			for (OperationSignatureList inposl : inplosl) {
+				inpmsgname = inposl.getOperationSignature().getInputMessageName();
+				break;
+			}
+
+			DockerInfo d2 = dockerList.findDockerInfoByContainer(inpcontainer);
+
+			if (d2 == null) { // what to do if the deployer passed
+				// incomplete docker info ???
+				logger.error("Cannot find docker info about the dontainer" + inpcontainer);
+				return new ResponseEntity<>(results, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+			urlBase = "http://" + d2.getIpAddress() + ":" + d2.getPort() + "/";
+			String inpurl = urlBase + inpoperation; // Is this always get_image?
+
+			output = contactnode(binaryStream, inpurl, inpcontainer);
+
+			// Unblock the data source.
+			logger.info("Unblocking data source after receiving output from input node.");
+			// TODO: Write code to unblock the data source asynchronously.
+
+			/*
+			 * if probe in composite solution { send the input message of every node to
+			 * probe also and wait for a request http OK response. }
+			 */
+			if (probePresent == true) {
+				logger.info("Notifying PROBE for node name " + inpnode.getContainerName() + ", inp msg name:"
+						+ inpmsgname + ", msg: " + binaryStream);
+				byte[] out = contactProbe(binaryStream, probeurl, probeContName, inpmsgname, inpnode);
+			}
+
+			notifynextnode(output, inpnode, inpoperation, probePresent, probeContName, probeOperation, probeurl);
 
 		} // try ends for notify method's chunk
 		catch (Exception ex) {
@@ -319,12 +232,11 @@ public class BlueprintOrchestratorController {
 		return new ResponseEntity<>(results, HttpStatus.OK);
 	}
 
-	/*****************************
-	 * MAIN LOGIC AND LOOPING
-	 *****************************/
+	public byte[] notifynextnode(byte[] output, Node n, String oprn, boolean prbpresent, String prbcontainername,
+			String prboperation, String prburl) {
 
-	// TODO
-	public byte[] notifynextnode(byte[] output, Node n, String oprn) {
+		Blueprint blueprint = TaskManager.getBlueprint();
+		DockerInfoList dockerList = TaskManager.getDockerList();
 
 		// Find dependents of the node. If the dependent is null, then send the output
 		// message to the probe and stop looping.
@@ -339,7 +251,8 @@ public class BlueprintOrchestratorController {
 
 		// First time the loop executes (i.e when we call 1st dependent node, the value
 		// of depoutput is output from previous databroker or input node.
-		// Later it will be the output of the contactnode call passed as depoutput2)
+		// Later on on every call it will be the output of the contactnode call passed
+		// as depoutput2)
 		byte[] depoutput = output;
 
 		// for loop here to loop through the dependents.
@@ -355,23 +268,13 @@ public class BlueprintOrchestratorController {
 
 			if (d3 == null) { // what to do if the deployer passed
 				// incomplete docker info ???
-				logger.error("Cannot find docker info about the probe " + probeContName);
+				logger.error("Cannot find docker info about the probe " + prbcontainername);
 			}
 			String depurlBase = "http://" + d3.getIpAddress() + ":" + d3.getPort() + "/";
 			String depurl = depurlBase + depoperation;
 
 			// Contact the dependent node.
 			byte[] depoutput2 = contactnode(depoutput, depurl, depcontainername);
-
-			// Unblock the data source if it has not been unlocked. If counter is 0 then it
-			// means we are traversing this loop for the 1st time.
-			if (sentunblocking == false && counter == 1) {
-				unblockdatasource("http://127.0.0.1:9221/blockunblock");
-				sentunblocking = true;
-			}
-
-			// Increment the counter
-			counter++;
 
 			// Call notifyprobe if indicator is true.
 			// Message name needed for sending to probe. (Find the input message name for
@@ -388,7 +291,7 @@ public class BlueprintOrchestratorController {
 				e1.printStackTrace();
 			}
 
-			if (probePresent == true) {
+			if (prbpresent == true) {
 
 				ArrayList<OperationSignatureList> deplosl = depnode.getOperationSignatureList();
 				for (OperationSignatureList deposl : deplosl) {
@@ -407,7 +310,7 @@ public class BlueprintOrchestratorController {
 					try {
 						logger.info("Notifying PROBE for node name" + depcontainername + ", inp msg name:"
 								+ depinpmsgname + ", msg: " + depoutput);
-						byte[] probeout = contactProbe(depoutput, probeurl, depcontainername, depinpmsgname, depnode);
+						byte[] probeout = contactProbe(depoutput, prburl, depcontainername, depinpmsgname, depnode);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -421,7 +324,7 @@ public class BlueprintOrchestratorController {
 					try {
 						logger.info("Notifying PROBE for node name" + depcontainername + ", inp msg name:"
 								+ depinpmsgname + ", msg: " + depoutput);
-						byte[] probeout = contactProbe(depoutput, probeurl, depcontainername, depinpmsgname, depnode);
+						byte[] probeout = contactProbe(depoutput, prburl, depcontainername, depinpmsgname, depnode);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -429,7 +332,7 @@ public class BlueprintOrchestratorController {
 					try {
 						logger.info("Notifying PROBE for node name" + depcontainername + ", out msg name:"
 								+ depoutmsgname + ", msg: " + depoutput);
-						byte[] probeout2 = contactProbe(depoutput2, probeurl, depcontainername, depoutmsgname, depnode);
+						byte[] probeout2 = contactProbe(depoutput2, prburl, depcontainername, depoutmsgname, depnode);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -440,7 +343,7 @@ public class BlueprintOrchestratorController {
 
 			// Call notifynextnode function
 			if (!(depsofdeps.isEmpty())) {
-				notifynextnode(depoutput2, depnode, depoperation);
+				notifynextnode(depoutput2, depnode, depoperation, prbpresent, prbcontainername, prboperation, prburl);
 			}
 		}
 		return output;
@@ -469,9 +372,13 @@ public class BlueprintOrchestratorController {
 
 	public byte[] contactProbe(byte[] binaryStream, String probeurl, String pb_c_name, String msg_name, Node n)
 			throws IOException {
+
+		Blueprint blueprint = TaskManager.getBlueprint();
+		DockerInfoList dockerList = TaskManager.getDockerList();
+
 		byte[] output2;
 		Node probeNode = blueprint.getNodebyContainer(pb_c_name);
-		logger.info("Notifying probe " + probeContName + " POST: " + probeurl + " proto uri = [" + n.getProtoUri()
+		logger.info("Notifying probe " + pb_c_name + " POST: " + probeurl + " proto uri = [" + n.getProtoUri()
 				+ "] message Name = [" + "Sample message" + "]");
 		output2 = httpPost(probeurl, binaryStream, n.getProtoUri(), msg_name);
 		return output2;
@@ -512,10 +419,16 @@ public class BlueprintOrchestratorController {
 	 */
 
 	public byte[] contactdataBroker(String db_url, String db_c_name) {
-		logger.info("Notifying databroker " + db_c_name + " GET: " + db_url);
+
+		// Find the databroker script
+		Blueprint blueprint = TaskManager.getBlueprint();
+		Node dbnode = blueprint.getNodebyContainer(db_c_name);
+		String scriptstring = dbnode.getScript();
+
+		logger.info("Notifying databroker " + db_c_name + " POST: " + db_url);
 		byte[] output3 = null;
 		try {
-			output3 = httpGet(db_url);
+			output3 = httpPost(db_url, scriptstring);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -523,31 +436,25 @@ public class BlueprintOrchestratorController {
 		return output3;
 	}
 
-	// Function to block the data source
-	public void blockdatasource(String ds_block_unblock_url) {
-		logger.info("Blocking the data source");
+	/*
+	 * // Function to block the data source public void blockdatasource(String
+	 * ds_block_unblock_url) { logger.info("Blocking the data source");
+	 * 
+	 * try { byte[] output4 = httpGet(ds_block_unblock_url); } catch (IOException e)
+	 * { // TODO Auto-generated catch block e.printStackTrace(); }
+	 * 
+	 * }
+	 */
 
-		try {
-			byte[] output4 = httpGet(ds_block_unblock_url);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
-
-	// Function to Unblock the data source
-	public void unblockdatasource(String ds_block_unblock_url) {
-		logger.info("Unblocking the data source");
-
-		try {
-			byte[] output5 = httpGet(ds_block_unblock_url);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
+	/*
+	 * // Function to Unblock the data source public void unblockdatasource(String
+	 * ds_block_unblock_url) { logger.info("Unblocking the data source");
+	 * 
+	 * try { byte[] output5 = httpGet(ds_block_unblock_url); } catch (IOException e)
+	 * { // TODO Auto-generated catch block e.printStackTrace(); }
+	 * 
+	 * }
+	 */
 
 	/**
 	 * Find connectedTo given a Node and its OperationSgnatureList data structure.
@@ -586,12 +493,13 @@ public class BlueprintOrchestratorController {
 	 */
 	@ApiOperation(value = "Endpoint for the deployer to put blueprint JSON", response = Map.class, responseContainer = "Page")
 	@RequestMapping(value = "/putBlueprint", consumes = { "application/json" }, method = RequestMethod.PUT)
-	public static ResponseEntity<Map<String, String>> putBlueprint(
+	public ResponseEntity<Map<String, String>> putBlueprint(
 			@ApiParam(value = "Blueprint JSON", required = true) @Valid @RequestBody Blueprint blueprintReq) {
+		logger.info("****************************************************************************");
 		logger.info("Receiving /putBlueprint request: " + blueprintReq.toString());
 
 		TaskManager.setBlueprint(blueprintReq);
-		blueprint = TaskManager.getBlueprint();
+		Blueprint blueprint = TaskManager.getBlueprint();
 
 		logger.info("Returning HttpStatus.OK from putBlueprint");
 		Map<String, String> results = new LinkedHashMap<>();
@@ -609,18 +517,139 @@ public class BlueprintOrchestratorController {
 	 */
 	@ApiOperation(value = "Endpoint for the deployer to push docker Info JSON", response = Map.class, responseContainer = "Page")
 	@RequestMapping(value = "/putDockerInfo", consumes = { "application/json" }, method = RequestMethod.PUT)
-	public static ResponseEntity<Map<String, String>> putDockerInfo(
+	public ResponseEntity<Map<String, String>> putDockerInfo(
 			@ApiParam(value = "Docker Info JSON", required = true) @Valid @RequestBody DockerInfoList dockerListReq) {
+		logger.info("****************************************************************************");
 		logger.info("Receiving /putDockerInfo request: " + dockerListReq.toString());
 
+		Map<String, String> dbresults = new LinkedHashMap<>();
 		TaskManager.setDockerList(dockerListReq);
-		dockerList = TaskManager.getDockerList();
 
+		Blueprint blueprint = TaskManager.getBlueprint();
+		DockerInfoList dockerList = TaskManager.getDockerList();
+
+		List<Node> allnodes = blueprint.getNodes();
+
+		// DataBroker related.
+		boolean dataBrokerPresent = false;
+		String dataBrokerContName = null;
+		ArrayList<OperationSignatureList> ListOfDataBrokerOpSigList = null;
+		String dataBrokerOperation = null;
+
+		// Probe related.
+		boolean probePresent = false;
+		String probeContName = null;
+		String probeOperation = null;
+		String probeurl = null;
+
+		// Check if data broker is present in the composite solution. If yes, get its
+		// container name, and operation.
+		for (Node nd : allnodes) {
+			if (nd.getNodeType().equalsIgnoreCase("Databroker")) {
+				dataBrokerPresent = true;
+				// get its container name : to be used later.
+				dataBrokerContName = nd.getContainerName();
+				// getting its operation name : to be used later ...OR is it always get_image?
+				ListOfDataBrokerOpSigList = nd.getOperationSignatureList();
+				for (OperationSignatureList dbosl : ListOfDataBrokerOpSigList) {
+					dataBrokerOperation = dbosl.getOperationSignature().getOperationName(); // here we are assuming
+																							// databroker will have
+																							// only 1 operation.
+																							// //this can be
+																							// changed.
+				}
+				break;
+			}
+		}
+
+		String urlBase = null;
+		String databrokerurl = null;
+		byte[] output = null;
+
+		// Find the url etc. for this data broker.
+		if (dataBrokerPresent == true) {
+			DockerInfo d1 = dockerList.findDockerInfoByContainer(dataBrokerContName);
+
+			if (d1 == null) { // what to do if the deployer passed
+				// incomplete docker info ???
+				logger.error("Cannot find docker info about the data broker" + dataBrokerContName);
+				dbresults.put("status", "ok");
+				return new ResponseEntity<>(dbresults, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+			urlBase = "http://" + d1.getIpAddress() + ":" + d1.getPort() + "/";
+			databrokerurl = urlBase + dataBrokerOperation; // Is this always get_image?
+		}
+
+		// Check if Probe is present in the composite solution. If yes, get its
+		// container name, and operation. THIS PROBE DATA WILL BE USED FOR THE DATA
+		// BROKER CASE ONLY. // Checking here again because requests back
+		// to back where taking old probe related values when probe related values were
+		// made class fields.
+
+		// IN CASE OF DATA SOURCE, call to /putDockerInfo will initialize the incorrect
+		// values. Then the
+		// notify function will initialize the correct values.
+
+		ArrayList<ProbeIndicator> list_of_pb_indicators = blueprint.getProbeIndicator();
+		for (ProbeIndicator pbindicator : list_of_pb_indicators) {
+			if (pbindicator.getValue().equalsIgnoreCase("true")) {
+				probePresent = true;
+			}
+		}
+
+		if (probePresent == true) {
+			for (Node nd : allnodes) {
+
+				if (nd.getNodeType().equalsIgnoreCase("probe")) {
+
+					// get its container name : to be used later.
+					probeContName = nd.getContainerName();
+					// getting its operation name : to be used later
+					ArrayList<OperationSignatureList> ListOfProbeOpSigList = nd.getOperationSignatureList();
+					for (OperationSignatureList posl : ListOfProbeOpSigList) {
+						probeOperation = posl.getOperationSignature().getOperationName(); // here we are assuming
+																							// probe will have only
+																							// 1 operation. //this
+																							// can be changed.
+
+					}
+					break;
+				}
+			}
+		}
+
+		// Find the url etc. for the probe
+		if (probePresent == true) {
+			DockerInfo d2 = dockerList.findDockerInfoByContainer(probeContName);
+
+			if (d2 == null) { // what to do if the deployer passed
+				// incomplete docker info ???
+				logger.error("Cannot find docker info about the probe " + probeContName);
+				return new ResponseEntity<>(dbresults, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+			urlBase = "http://" + d2.getIpAddress() + ":" + d2.getPort() + "/";
+			probeurl = urlBase + probeOperation;
+		}
+		/*
+		 * logger.info("Returning HttpStatus.OK from putDockerInfo"); Map<String,
+		 * String> results = new LinkedHashMap<>(); results.put("status", "ok");
+		 */
+
+		/*
+		 * if Databroker in composite solution { make a POST request to data broker
+		 * which will send the message. This is your message}
+		 */
+
+		Node dbnode = blueprint.getNodebyContainer(dataBrokerContName);
+		if (dataBrokerPresent == true) {
+			// make a POST request to the databroker and receive response
+			output = contactdataBroker(databrokerurl, dataBrokerContName);
+			notifynextnode(output, dbnode, dataBrokerOperation, probePresent, probeContName, probeOperation, probeurl);
+
+		}
+		dbresults.put("status", "ok");
 		logger.info("Returning HttpStatus.OK from putDockerInfo");
-		Map<String, String> results = new LinkedHashMap<>();
-		results.put("status", "ok");
-
-		return new ResponseEntity<>(results, HttpStatus.OK);
+		return new ResponseEntity<>(dbresults, HttpStatus.OK);
 	}
 
 	/**
@@ -686,25 +715,29 @@ public class BlueprintOrchestratorController {
 	}
 
 	/**
-	 * Sending HTTP GET request to Models and Probes
+	 * Sending HTTP POST request to the Data Broker
 	 * 
 	 * @param url
 	 *            : url to get
+	 * @param the_script
+	 *            : actual script to be sent to the data broker.
 	 * @return : returns byte[] type
 	 * @throws IOException
 	 *             : IO exception
 	 */
-	public byte[] httpGet(String url) throws IOException {
+	public byte[] httpPost(String url, String the_script) throws IOException {
 		URL obj = new URL(url);
 
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
-		con.setRequestMethod("GET");
-		// con.setDoOutput(true);
-		// OutputStream out = con.getOutputStream();
-		// out.flush();
-		// out.close();
-		logger.info("HTTPS GET Sent ::" + url);
+		con.setRequestMethod("POST");
+		con.setDoOutput(true);
+		DataOutputStream out = new DataOutputStream(con.getOutputStream());
+		out.writeBytes(the_script);
+		out.flush();
+		out.close();
+
+		logger.info("HTTPS POST Sent ::" + url);
 		String responseMessage = con.getResponseMessage();
 		logger.info("GOT RESPONSE Message " + responseMessage);
 		int responseCode = con.getResponseCode();
@@ -712,7 +745,7 @@ public class BlueprintOrchestratorController {
 		if (responseCode == HttpURLConnection.HTTP_OK) {
 			return IOUtils.toByteArray(con.getInputStream());
 		} else {
-			logger.error("ERROR:::::::GET request did not work. " + url);
+			logger.error("ERROR:::::::POST request did not work. " + url);
 		}
 
 		return new byte[0];
