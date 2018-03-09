@@ -42,7 +42,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.acumos.bporchestrator.controller.ModelConnectorDStThread;
+import org.acumos.bporchestrator.PojoClass;
 import org.acumos.bporchestrator.model.*;
 import org.acumos.bporchestrator.util.TaskManager;
 import org.apache.commons.io.IOUtils;
@@ -211,6 +212,26 @@ public class BlueprintOrchestratorController {
 			logger.info("Unblocking data source after receiving output from input node.");
 			// TODO: Write code to unblock the data source asynchronously.
 
+			if (null != output) {
+				PojoClass pojoClass = new PojoClass();
+				// set the all the required attributes.
+				pojoClass.setOutput(output);
+				pojoClass.setInpnode(inpnode);
+				pojoClass.setInpoperation(inpoperation);
+				pojoClass.setProbePresent(probePresent);
+				pojoClass.setProbeContName(probeContName);
+				pojoClass.setProbeOperation(probeOperation);
+				pojoClass.setProbeurl(probeurl);
+				ModelConnectorDStThread modelConnectorDStThread = new ModelConnectorDStThread(pojoClass);
+				Thread thread = new Thread(modelConnectorDStThread);
+				thread.start();
+				return new ResponseEntity<>(results, HttpStatus.OK);
+			}
+
+		
+			
+
+			
 			/*
 			 * if probe in composite solution { send the input message of every node to
 			 * probe also and wait for a request http OK response. }
