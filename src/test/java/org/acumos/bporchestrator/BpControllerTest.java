@@ -20,9 +20,11 @@
 
 package org.acumos.bporchestrator;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.acumos.bporchestrator.controller.BlueprintOrchestratorController;
 import org.acumos.bporchestrator.model.Blueprint;
 import org.acumos.bporchestrator.model.ConnectedTo;
 import org.acumos.bporchestrator.model.DataBroker;
@@ -114,6 +116,7 @@ public class BpControllerTest extends AbstractControllerTest {
 			test_osl1.setConnectedTo(listofconnto1);
 
 			ArrayList<OperationSignatureList> lofosl1 = new ArrayList<OperationSignatureList>();
+			lofosl1.add(test_osl1);
 			node1.setOperationSignatureList(lofosl1);
 
 			// Creating node2 and add to the blueprint
@@ -144,10 +147,38 @@ public class BpControllerTest extends AbstractControllerTest {
 			test_osl2.setConnectedTo(listofconnto2);
 
 			ArrayList<OperationSignatureList> lofosl2 = new ArrayList<OperationSignatureList>();
+			lofosl2.add(test_osl2);
 			node2.setOperationSignatureList(lofosl2);
+
+			// Creating node3 and add to the blueprint
+			Node node3 = new Node();
+
+			node3.setContainerName("Probe1");
+			node3.setNodeType("Probe");
+			node3.setImage("probeimage");
+			node3.setProtoUri("probeprotouri");
+
+			OperationSignatureList test_osl3 = new OperationSignatureList();
+			OperationSignature test_os_e = new OperationSignature();
+
+			test_os_e.setOperationName("data");
+			test_os_e.setInputMessageName("someotherinputmsg");
+			test_os_e.setOutputMessageName("someotheroutputmsg");
+
+			test_osl3.setOperationSignature(test_os_e);
+
+			ArrayList<ConnectedTo> listofconnto3 = new ArrayList<ConnectedTo>();
+			listofconnto3.add(null);
+			test_osl3.setConnectedTo(listofconnto3);
+
+			ArrayList<OperationSignatureList> lofosl3 = new ArrayList<OperationSignatureList>();
+			lofosl3.add(test_osl3);
+			node2.setOperationSignatureList(lofosl3);
 
 			bp.addNode(node1);
 			bp.addNode(node2);
+			bp.addNode(node3);
+			// bp.addNode(node4);
 
 			// Create list of Probe indicators and add to the blueprint
 
@@ -209,7 +240,7 @@ public class BpControllerTest extends AbstractControllerTest {
 			doPut("/putDockerInfo", dockerList, DockerInfoList.class);
 
 			logger.info("Done testing /putDockerInfo PUT end point");
-			
+
 			// testing /hello endpoint
 			logger.info("Testing /hello GET method");
 			doGet("/hello");

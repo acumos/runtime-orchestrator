@@ -42,7 +42,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.acumos.bporchestrator.controller.DSAsyncResponseThread;
+import org.acumos.bporchestrator.MCAttributes;
 import org.acumos.bporchestrator.model.*;
 import org.acumos.bporchestrator.util.TaskManager;
 import org.apache.commons.io.IOUtils;
@@ -56,7 +57,6 @@ import io.swagger.annotations.ApiParam;
 @RestController
 public class BlueprintOrchestratorController {
 
-	// Logger is a static variable. So same for all threads.
 	private static final Logger logger = LoggerFactory.getLogger(BlueprintOrchestratorController.class);
 
 	/**
@@ -207,13 +207,9 @@ public class BlueprintOrchestratorController {
 
 			output = contactnode(binaryStream, inpurl, inpcontainer);
 
-			// Unblock the data source.
-			logger.info("Unblocking data source after receiving output from input node.");
-			// TODO: Write code to unblock the data source asynchronously.
-
 			/*
-			 * if probe in composite solution { send the input message of every node to
-			 * probe also and wait for a request http OK response. }
+			 * if probe in composite solution send the input message of input node to probe
+			 * also and wait for http }
 			 */
 			if (probePresent == true) {
 				logger.info("Notifying PROBE for node name " + inpnode.getContainerName() + ", inp msg name:"
@@ -221,7 +217,26 @@ public class BlueprintOrchestratorController {
 				byte[] out = contactProbe(binaryStream, probeurl, probeContName, inpmsgname, inpnode);
 			}
 
-			notifynextnode(output, inpnode, inpoperation, probePresent, probeContName, probeOperation, probeurl);
+			// Unblock the data source.
+			logger.info("Unblocking data source after receiving output from input node.");
+
+			if (output != null) {
+				MCAttributes mcAttributes = new MCAttributes();
+				// set the all the required attributes.
+				mcAttributes.setOutput(output);
+				mcAttributes.setCurrentnode(inpnode);
+				mcAttributes.setCurrentoperation(inpoperation);
+				mcAttributes.setProbePresent(probePresent);
+				mcAttributes.setProbeContName(probeContName);
+				mcAttributes.setProbeOperation(probeOperation);
+				mcAttributes.setProbeurl(probeurl);
+				// create a thread with the mcAttribute objects
+				DSAsyncResponseThread dsthread = new DSAsyncResponseThread(mcAttributes);
+				Thread thread = new Thread(dsthread);
+				// start the thread.
+				thread.start();
+				return new ResponseEntity<>(results, HttpStatus.OK);
+			}
 
 		} // try ends for notify method's chunk
 		catch (Exception ex) {
@@ -232,6 +247,23 @@ public class BlueprintOrchestratorController {
 		return new ResponseEntity<>(results, HttpStatus.OK);
 	}
 
+	/**
+	 * @param output
+	 *            :The result of the previous node
+	 * @param n
+	 *            :Current node
+	 * @param oprn
+	 *            :Current node's operation which was called
+	 * @param prbpresent
+	 *            :Indicator of probe presence in the blueprint
+	 * @param prbcontainername
+	 *            :Probe's container name if Probe is present
+	 * @param prboperation
+	 *            :Probe's operation name if Probe is present
+	 * @param prburl
+	 *            :Probe's url if Probe is present
+	 * @return byte[] : output stream
+	 */
 	public byte[] notifynextnode(byte[] output, Node n, String oprn, boolean prbpresent, String prbcontainername,
 			String prboperation, String prburl) {
 
@@ -308,8 +340,8 @@ public class BlueprintOrchestratorController {
 				// For any node (if probe is present), contact probe with input message
 				if (!(depsofdeps.isEmpty())) {
 					try {
-						logger.info("Notifying PROBE for node name" + depcontainername + ", inp msg name:"
-								+ depinpmsgname + ", msg: " + depoutput);
+						logger.info("Thread " + Thread.currentThread().getId() + " Notifying PROBE for node name"
+								+ depcontainername + ", inp msg name:" + depinpmsgname + ", msg: " + depoutput);
 						byte[] probeout = contactProbe(depoutput, prburl, depcontainername, depinpmsgname, depnode);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
@@ -378,8 +410,8 @@ public class BlueprintOrchestratorController {
 
 		byte[] output2;
 		Node probeNode = blueprint.getNodebyContainer(pb_c_name);
-		logger.info("Notifying probe " + pb_c_name + " POST: " + probeurl + " proto uri = [" + n.getProtoUri()
-				+ "] message Name = [" + "Sample message" + "]");
+		logger.info("Thread " + Thread.currentThread().getId() + ": " + "Notifying probe " + pb_c_name + " POST: "
+				+ probeurl + " proto uri = [" + n.getProtoUri() + "] message Name = [" + "Sample message" + "]");
 		output2 = httpPost(probeurl, binaryStream, n.getProtoUri(), msg_name);
 		return output2;
 	}
@@ -397,7 +429,7 @@ public class BlueprintOrchestratorController {
 	 */
 
 	public byte[] contactnode(byte[] binaryStream, String url, String name) {
-		logger.info("Notifying node " + name + " POST: " + url);
+		logger.info("Thread " + Thread.currentThread().getId() + ": " + "Notifying node " + name + " POST: " + url);
 		byte[] output4 = null;
 		try {
 			output4 = httpPost(url, binaryStream);
@@ -425,7 +457,8 @@ public class BlueprintOrchestratorController {
 		Node dbnode = blueprint.getNodebyContainer(db_c_name);
 		String scriptstring = dbnode.getScript();
 
-		logger.info("Notifying databroker " + db_c_name + " POST: " + db_url);
+		logger.info("Thread " + Thread.currentThread().getId() + ": " + "Notifying databroker " + db_c_name + " POST: "
+				+ db_url);
 		byte[] output3 = null;
 		try {
 			output3 = httpPost(db_url, scriptstring);
@@ -654,12 +687,28 @@ public class BlueprintOrchestratorController {
 		Node dbnode = blueprint.getNodebyContainer(dataBrokerContName);
 		if (dataBrokerPresent == true) {
 			// make a POST request to the databroker and receive response
-			output = contactdataBroker(databrokerurl, dataBrokerContName);
-			notifynextnode(output, dbnode, dataBrokerOperation, probePresent, probeContName, probeOperation, probeurl);
+			do {
+				output = contactdataBroker(databrokerurl, dataBrokerContName);
+				MCAttributes mcAttributes = new MCAttributes();
+				// set the all the required attributes.
+				mcAttributes.setOutput(output);
+				mcAttributes.setCurrentnode(dbnode);
+				mcAttributes.setCurrentoperation(dataBrokerOperation);
+				mcAttributes.setProbePresent(probePresent);
+				mcAttributes.setProbeContName(probeContName);
+				mcAttributes.setProbeOperation(probeOperation);
+				mcAttributes.setProbeurl(probeurl);
+				// create a thread with the mcAttribute objects
+				DBResponseThread dbthread = new DBResponseThread(mcAttributes);
+				Thread thread = new Thread(dbthread);
+				// start the thread.
+				thread.start();
+
+			} while (output != null);
 
 		}
 		dbresults.put("status", "ok");
-		logger.info("Returning HttpStatus.OK from putDockerInfo");
+		logger.info("Thread " + Thread.currentThread().getId() + ": " + "Returning HttpStatus.OK from putDockerInfo");
 		return new ResponseEntity<>(dbresults, HttpStatus.OK);
 	}
 
@@ -710,15 +759,16 @@ public class BlueprintOrchestratorController {
 		out.write(binaryStream);
 		out.flush();
 		out.close();
-		logger.info("HTTPS POST DeployerRequest Sent ::" + url);
+		logger.info("Thread " + Thread.currentThread().getId() + ": " + "HTTPS POST Sent ::" + url);
 		String responseMessage = con.getResponseMessage();
-		logger.info("GOT RESPONSE Message " + responseMessage);
+		logger.info("Thread " + Thread.currentThread().getId() + ": " + "GOT RESPONSE Message " + responseMessage);
 		int responseCode = con.getResponseCode();
-		logger.info("GOT RESPONSE CODE " + responseCode);
+		logger.info("Thread " + Thread.currentThread().getId() + ": " + "GOT RESPONSE CODE " + responseCode);
 		if (responseCode == HttpURLConnection.HTTP_OK) {
 			return IOUtils.toByteArray(con.getInputStream());
 		} else {
-			logger.error("ERROR:::::::POST request did not work. " + url);
+			logger.error("Thread " + Thread.currentThread().getId() + ": " + "ERROR:::::::POST request did not work. "
+					+ url);
 		}
 
 		return new byte[0];
@@ -748,15 +798,16 @@ public class BlueprintOrchestratorController {
 		out.flush();
 		out.close();
 
-		logger.info("HTTPS POST Sent ::" + url);
+		logger.info("Thread " + Thread.currentThread().getId() + ": " + "HTTPS POST Sent ::" + url);
 		String responseMessage = con.getResponseMessage();
-		logger.info("GOT RESPONSE Message " + responseMessage);
+		logger.info("Thread " + Thread.currentThread().getId() + ": " + "GOT RESPONSE Message " + responseMessage);
 		int responseCode = con.getResponseCode();
-		logger.info("GOT RESPONSE CODE " + responseCode);
+		logger.info("Thread " + Thread.currentThread().getId() + ": " + "GOT RESPONSE CODE " + responseCode);
 		if (responseCode == HttpURLConnection.HTTP_OK) {
 			return IOUtils.toByteArray(con.getInputStream());
 		} else {
-			logger.error("ERROR:::::::POST request did not work. " + url);
+			logger.error("Thread " + Thread.currentThread().getId() + ": " + "ERROR:::::::POST request did not work. "
+					+ url);
 		}
 
 		return new byte[0];
