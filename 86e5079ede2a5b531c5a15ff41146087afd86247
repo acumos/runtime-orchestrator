@@ -1,0 +1,140 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fbec635c_ec2ece7b",
+        "filename": "src/main/java/org/acumos/bporchestrator/PojoClass.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-03-09T18:42:16Z",
+      "side": 1,
+      "message": "Please choose a descriptive name.  POJO is generic. Class is generic.  Two generics do not make a specific.",
+      "revId": "86e5079ede2a5b531c5a15ff41146087afd86247",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "899dffd9_89f6121f",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-03-09T18:42:16Z",
+      "side": 1,
+      "message": "Why not give it a constructor that takes all the required fields?",
+      "revId": "86e5079ede2a5b531c5a15ff41146087afd86247",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d4823900_d1a805a0",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 226,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-03-09T18:42:16Z",
+      "side": 1,
+      "message": "On what trigger is this thread started?  Will you start a new thread on each request?",
+      "revId": "86e5079ede2a5b531c5a15ff41146087afd86247",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8359eb53_bc306074",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/ModelConnectorDStThread.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-03-09T18:42:16Z",
+      "side": 1,
+      "message": "Create a logger and use it, never System.out",
+      "revId": "86e5079ede2a5b531c5a15ff41146087afd86247",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "63e10cea_cdc266fa",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/ModelConnectorDStThread.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-03-09T18:42:16Z",
+      "side": 1,
+      "message": "Why sleep immediately at the start!?",
+      "revId": "86e5079ede2a5b531c5a15ff41146087afd86247",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a5fb83a_cf85f929",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/ModelConnectorDStThread.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-03-09T18:42:16Z",
+      "side": 1,
+      "message": "So the thread immediately exits?  What\u0027s the point of a thread?",
+      "revId": "86e5079ede2a5b531c5a15ff41146087afd86247",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e4f57a7a_d8feba44",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/ModelConnectorDStThread.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-03-09T18:42:16Z",
+      "side": 1,
+      "message": "Why are the exception handlers empty?  At least log",
+      "revId": "86e5079ede2a5b531c5a15ff41146087afd86247",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dd2abd5a_4726c178",
+        "filename": "src/test/java/org/acumos/bporchestrator/BpControllerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-03-09T18:42:16Z",
+      "side": 1,
+      "message": "Why do you expect an exception?",
+      "revId": "86e5079ede2a5b531c5a15ff41146087afd86247",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    }
+  ]
+}
