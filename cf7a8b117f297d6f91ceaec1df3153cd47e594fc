@@ -1,0 +1,327 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "713f14e3_84790b1c",
+        "filename": "src/main/java/org/acumos/bporchestrator/MCAttributes.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-03-12T15:18:15Z",
+      "side": 1,
+      "message": "Suggest adding a many-argument constructor so it\u0027s easy to build an instance without calling all the setters.",
+      "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "00657bbc_6847dea2",
+        "filename": "src/main/java/org/acumos/bporchestrator/MCAttributes.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-03-12T15:18:15Z",
+      "side": 1,
+      "message": "Perhaps you can be consistent with your fields?  Current Node looks like two words.  Probe Operation looks like two words.  But the former you have run together, the latter you have written with camelCase.  And so on.",
+      "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1109dc9a_2a6241d0",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-03-12T15:18:15Z",
+      "side": 1,
+      "message": "Can this be removed?",
+      "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2edb6e1f_e13ced8a",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-03-12T15:18:15Z",
+      "side": 1,
+      "message": "Here\u0027s where you could use a convenience (many-argument) constructor",
+      "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "941fa9cb_a86b4f97",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 252,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-03-12T15:18:15Z",
+      "side": 1,
+      "message": "Don\u0027t put colons here",
+      "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bea6b55e_8c4e6e83",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-03-12T15:18:15Z",
+      "side": 1,
+      "message": "If this is not an endpoint (REST) method, why is it public?  Probably should be private.",
+      "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "21ee1dcb_04adefb3",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 343,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-03-12T15:18:15Z",
+      "side": 1,
+      "message": "Using the logger incorrectly.  Should be:\n\nlogger.debug(EELFLoggerDelegate.debugLogger, \"Message {}: parm {} and {}\", variable, variable, variable);",
+      "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6fbde453_f5b3493a",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 348,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-03-12T15:18:15Z",
+      "side": 1,
+      "message": "Do NOT catch and discard and continue!!  Must log and probably should throw again.",
+      "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "56b8215d_6a8f0b32",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/DBResponseThread.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-03-12T15:18:15Z",
+      "side": 1,
+      "message": "This does not extend thread. It\u0027s not a Thread.  Name it \"DBResponseRunnable\" because it extends Runnable.",
+      "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f7c62d17_744a264c",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/DBResponseThread.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-03-12T15:18:15Z",
+      "side": 1,
+      "message": "No, get the logger at class construction and make it private final static.",
+      "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a520d8e_14e235a2",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/DBResponseThread.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-03-12T15:18:15Z",
+      "side": 1,
+      "message": "You construct a new object with no arguments only to call a method?  Maybe instead the method should be static.",
+      "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "70a0f924_24b7425a",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/DSAsyncResponseThread.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-03-12T15:18:15Z",
+      "side": 1,
+      "message": "This is not a thread, it\u0027s a runnable.  Name it DSAsyncResponseRunnable.",
+      "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bb34fb6a_0d5193cf",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/DSAsyncResponseThread.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-03-12T15:18:15Z",
+      "side": 1,
+      "message": "Declare private static final at class level.",
+      "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "db94576a_37cff226",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/DSAsyncResponseThread.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-03-12T15:18:15Z",
+      "side": 1,
+      "message": "Again creating a new object with no arguments just to invoke a method?",
+      "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "451e079c_089e29a9",
+        "filename": "src/main/resources/blueprint.json",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-03-12T15:18:15Z",
+      "side": 1,
+      "message": "This looks like a very specific scenario: aggregator + predictor + classifier.  Is it for testing?  Why is it in src/main/resources?",
+      "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "be3ca1ea_af45d103",
+        "filename": "src/main/resources/blueprint.old.json",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-03-12T15:18:15Z",
+      "side": 1,
+      "message": "WHy commit old files? Can this be deleted?",
+      "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "936253c1_1307d797",
+        "filename": "src/main/resources/blueprintv2.json",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-03-12T15:18:15Z",
+      "side": 1,
+      "message": "Is this only for testing?  Then move it OUT of src/main/resources.  I don\u0027t think you want this specific blueprint in the distribution, right?",
+      "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "93dfcb97_c60f3cc1",
+        "filename": "src/main/resources/image_classifier_1.0.0.json",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-03-12T15:18:15Z",
+      "side": 1,
+      "message": "Why is a specific model thing-y (\"Image_Classifier v1\") buried in src/main/resources of Runtime Orchestrator?  Does this belong in src/test/resources?",
+      "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "eedb1bf2_f19b4158",
+        "filename": "src/main/resources/latest_blueprint.json",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-03-12T15:18:15Z",
+      "side": 1,
+      "message": "Same comments as other JSONs",
+      "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    }
+  ]
+}
