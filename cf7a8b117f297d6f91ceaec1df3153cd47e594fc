@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "9123c14c_404c9727",
+        "filename": "src/main/java/org/acumos/bporchestrator/MCAttributes.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 40
+      },
+      "writtenOn": "2018-03-13T17:58:51Z",
+      "side": 1,
+      "message": "Done. Changed.",
+      "parentUuid": "00657bbc_6847dea2",
+      "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1109dc9a_2a6241d0",
         "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
         "patchSetId": 2
@@ -47,6 +65,24 @@
       "writtenOn": "2018-03-12T15:18:15Z",
       "side": 1,
       "message": "Can this be removed?",
+      "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fc83aa3d_d3ebebf8",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 40
+      },
+      "writtenOn": "2018-03-13T17:58:51Z",
+      "side": 1,
+      "message": "Done. Removed.",
+      "parentUuid": "1109dc9a_2a6241d0",
       "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
       "serverId": "655300a2-7a56-4504-9153-881edd907bea",
       "unresolved": false
@@ -70,6 +106,24 @@
     },
     {
       "key": {
+        "uuid": "734c2917_cd1680f8",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 40
+      },
+      "writtenOn": "2018-03-13T17:58:51Z",
+      "side": 1,
+      "message": "I could change it but want to go ahead and change the visibility of setters and getters differently. So setters and getters.",
+      "parentUuid": "2edb6e1f_e13ced8a",
+      "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "941fa9cb_a86b4f97",
         "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
         "patchSetId": 2
@@ -81,6 +135,24 @@
       "writtenOn": "2018-03-12T15:18:15Z",
       "side": 1,
       "message": "Don\u0027t put colons here",
+      "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4933f002_c0ee0c86",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 252,
+      "author": {
+        "id": 40
+      },
+      "writtenOn": "2018-03-13T17:58:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "941fa9cb_a86b4f97",
       "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
       "serverId": "655300a2-7a56-4504-9153-881edd907bea",
       "unresolved": false
@@ -104,6 +176,24 @@
     },
     {
       "key": {
+        "uuid": "e9649800_29b76581",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 40
+      },
+      "writtenOn": "2018-03-13T17:58:51Z",
+      "side": 1,
+      "message": "No. Will not be private. This needs to be called from another class by other threads.",
+      "parentUuid": "bea6b55e_8c4e6e83",
+      "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "21ee1dcb_04adefb3",
         "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
         "patchSetId": 2
@@ -121,6 +211,24 @@
     },
     {
       "key": {
+        "uuid": "793f808f_d8f49e94",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 343,
+      "author": {
+        "id": 40
+      },
+      "writtenOn": "2018-03-13T17:58:51Z",
+      "side": 1,
+      "message": "Done. Made changes everywhere.",
+      "parentUuid": "21ee1dcb_04adefb3",
+      "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6fbde453_f5b3493a",
         "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
         "patchSetId": 2
@@ -132,6 +240,24 @@
       "writtenOn": "2018-03-12T15:18:15Z",
       "side": 1,
       "message": "Do NOT catch and discard and continue!!  Must log and probably should throw again.",
+      "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b890340c_91265bb7",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 348,
+      "author": {
+        "id": 40
+      },
+      "writtenOn": "2018-03-13T17:58:51Z",
+      "side": 1,
+      "message": "Done. Made changes everywhere.",
+      "parentUuid": "6fbde453_f5b3493a",
       "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
       "serverId": "655300a2-7a56-4504-9153-881edd907bea",
       "unresolved": false
@@ -172,6 +298,24 @@
     },
     {
       "key": {
+        "uuid": "bc01f3a1_e59ebcb5",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/DBResponseThread.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 40
+      },
+      "writtenOn": "2018-03-13T17:58:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f7c62d17_744a264c",
+      "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a520d8e_14e235a2",
         "filename": "src/main/java/org/acumos/bporchestrator/controller/DBResponseThread.java",
         "patchSetId": 2
@@ -183,6 +327,24 @@
       "writtenOn": "2018-03-12T15:18:15Z",
       "side": 1,
       "message": "You construct a new object with no arguments only to call a method?  Maybe instead the method should be static.",
+      "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "faeed0fd_651fe2aa",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/DBResponseThread.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 40
+      },
+      "writtenOn": "2018-03-13T17:58:51Z",
+      "side": 1,
+      "message": "Yes. That Method cannot be static because of multithreading in the code.",
+      "parentUuid": "1a520d8e_14e235a2",
       "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
       "serverId": "655300a2-7a56-4504-9153-881edd907bea",
       "unresolved": false
@@ -223,6 +385,24 @@
     },
     {
       "key": {
+        "uuid": "7ff06077_5088b21a",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/DSAsyncResponseThread.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 40
+      },
+      "writtenOn": "2018-03-13T17:58:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bb34fb6a_0d5193cf",
+      "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "db94576a_37cff226",
         "filename": "src/main/java/org/acumos/bporchestrator/controller/DSAsyncResponseThread.java",
         "patchSetId": 2
@@ -234,6 +414,24 @@
       "writtenOn": "2018-03-12T15:18:15Z",
       "side": 1,
       "message": "Again creating a new object with no arguments just to invoke a method?",
+      "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "92504cd1_cd344a56",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/DSAsyncResponseThread.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 40
+      },
+      "writtenOn": "2018-03-13T17:58:51Z",
+      "side": 1,
+      "message": "Yes. That Method cannot be static because of multithreading in the code.",
+      "parentUuid": "db94576a_37cff226",
       "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
       "serverId": "655300a2-7a56-4504-9153-881edd907bea",
       "unresolved": false
@@ -257,6 +455,24 @@
     },
     {
       "key": {
+        "uuid": "99759136_dc9c968a",
+        "filename": "src/main/resources/blueprint.json",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 40
+      },
+      "writtenOn": "2018-03-13T17:58:51Z",
+      "side": 1,
+      "message": "Done.Removed",
+      "parentUuid": "451e079c_089e29a9",
+      "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "be3ca1ea_af45d103",
         "filename": "src/main/resources/blueprint.old.json",
         "patchSetId": 2
@@ -268,6 +484,24 @@
       "writtenOn": "2018-03-12T15:18:15Z",
       "side": 1,
       "message": "WHy commit old files? Can this be deleted?",
+      "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dd006746_86b8215f",
+        "filename": "src/main/resources/blueprint.old.json",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 40
+      },
+      "writtenOn": "2018-03-13T17:58:51Z",
+      "side": 1,
+      "message": "Done.Removed",
+      "parentUuid": "be3ca1ea_af45d103",
       "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
       "serverId": "655300a2-7a56-4504-9153-881edd907bea",
       "unresolved": false
@@ -291,6 +525,24 @@
     },
     {
       "key": {
+        "uuid": "a34ea142_cc0c8875",
+        "filename": "src/main/resources/blueprintv2.json",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 40
+      },
+      "writtenOn": "2018-03-13T17:58:51Z",
+      "side": 1,
+      "message": "Done.Removed",
+      "parentUuid": "936253c1_1307d797",
+      "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "93dfcb97_c60f3cc1",
         "filename": "src/main/resources/image_classifier_1.0.0.json",
         "patchSetId": 2
@@ -308,6 +560,24 @@
     },
     {
       "key": {
+        "uuid": "cc5ab3df_284e6be8",
+        "filename": "src/main/resources/image_classifier_1.0.0.json",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 40
+      },
+      "writtenOn": "2018-03-13T17:58:51Z",
+      "side": 1,
+      "message": "Done.Removed",
+      "parentUuid": "93dfcb97_c60f3cc1",
+      "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "eedb1bf2_f19b4158",
         "filename": "src/main/resources/latest_blueprint.json",
         "patchSetId": 2
@@ -319,6 +589,24 @@
       "writtenOn": "2018-03-12T15:18:15Z",
       "side": 1,
       "message": "Same comments as other JSONs",
+      "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "32915fa7_d88ddd4b",
+        "filename": "src/main/resources/latest_blueprint.json",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 40
+      },
+      "writtenOn": "2018-03-13T17:58:51Z",
+      "side": 1,
+      "message": "Done.Removed",
+      "parentUuid": "eedb1bf2_f19b4158",
       "revId": "cf7a8b117f297d6f91ceaec1df3153cd47e594fc",
       "serverId": "655300a2-7a56-4504-9153-881edd907bea",
       "unresolved": false
