@@ -75,8 +75,7 @@ public class BlueprintOrchestratorController {
 	// protobuf binary message.
 
 	@ApiOperation(value = "operation on the first node in the chain", response = byte.class, responseContainer = "Page")
-	@RequestMapping(path = "/{operation}", consumes = { "application/octet-stream" }, produces = {
-			"application/octet-stream" }, method = RequestMethod.POST)
+	@RequestMapping(path = "/{operation}", method = RequestMethod.POST)
 	public ResponseEntity<byte[]> notify(
 			@ApiParam(value = "Inital request to start deploying... This binary stream is in protobuf format.", required = false) @Valid @RequestBody byte[] binaryStream,
 			@ApiParam(value = "This operation should match with one of the input operation signatures in blueprint.json", required = true) @PathVariable("operation") String operation) {
