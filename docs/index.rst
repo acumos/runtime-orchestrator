@@ -1,9 +1,10 @@
-runtime-orchestrator
+Blueprint Orchestrator
 --------------------
     
 .. toctree::
        :maxdepth: 2
     
-       runtime-orchestrator
+       developer-guide
+       user-guide
        release-notes
-       tutorials/index                  
+       tutorials/index               
