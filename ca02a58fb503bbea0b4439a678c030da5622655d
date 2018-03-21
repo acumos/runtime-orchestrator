@@ -42,6 +42,23 @@
     },
     {
       "key": {
+        "uuid": "659470ac_ab0a7f03",
+        "filename": "docs/index.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-03-21T00:08:56Z",
+      "side": 1,
+      "message": "Add license header",
+      "revId": "ca02a58fb503bbea0b4439a678c030da5622655d",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "44706113_2e51fca0",
         "filename": "docs/release-notes.rst",
         "patchSetId": 1
@@ -59,6 +76,23 @@
         "endLine": 21,
         "endChar": 22
       },
+      "revId": "ca02a58fb503bbea0b4439a678c030da5622655d",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "53f0b9e0_f7ebe906",
+        "filename": "docs/release-notes.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-03-21T00:08:56Z",
+      "side": 1,
+      "message": "Pls sort the other way - newest on top",
       "revId": "ca02a58fb503bbea0b4439a678c030da5622655d",
       "serverId": "655300a2-7a56-4504-9153-881edd907bea",
       "unresolved": false
