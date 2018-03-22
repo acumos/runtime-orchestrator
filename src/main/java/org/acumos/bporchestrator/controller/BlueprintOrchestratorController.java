@@ -87,8 +87,9 @@ public class BlueprintOrchestratorController {
 
 		// Probe related.
 		boolean probePresent = false;
-		String probeContName = null;
-		String probeOperation = null;
+
+		String probeContName = "Probe";
+		String probeOperation = "data";
 		String probeurl = null;
 		ArrayList<OperationSignatureList> ListOfProbeOpSigList = null;
 
@@ -126,27 +127,6 @@ public class BlueprintOrchestratorController {
 			for (ProbeIndicator pbindicator : list_of_pb_indicators) {
 				if (pbindicator.getValue().equalsIgnoreCase("true")) {
 					probePresent = true;
-				}
-			}
-
-			if (probePresent == true) {
-				for (Node nd : allnodes) {
-
-					if (nd.getNodeType().equalsIgnoreCase("probe")) {
-
-						// get its container name : to be used later.
-						probeContName = nd.getContainerName();
-						// getting its operation name : to be used later
-						ListOfProbeOpSigList = nd.getOperationSignatureList();
-						for (OperationSignatureList posl : ListOfProbeOpSigList) {
-							probeOperation = posl.getOperationSignature().getOperationName(); // here we are assuming
-																								// probe will have only
-																								// 1 operation. //this
-																								// can be changed.
-
-						}
-						break;
-					}
 				}
 			}
 
@@ -504,6 +484,9 @@ public class BlueprintOrchestratorController {
 		logger.info("****************************************************************************");
 		logger.info("Receiving /putBlueprint request: {}", blueprintReq.toString());
 
+		String probeContName = "Probe";
+		String probeOperation = "data";
+
 		TaskManager.setBlueprint(blueprintReq);
 		Blueprint blueprint = TaskManager.getBlueprint();
 
@@ -555,8 +538,8 @@ public class BlueprintOrchestratorController {
 
 		// Probe related.
 		boolean probePresent = false;
-		String probeContName = null;
-		String probeOperation = null;
+		String probeContName = "Probe";
+		String probeOperation = "data";
 		String probeurl = null;
 
 		// Check if data broker is present in the composite solution. If yes, get its
@@ -611,27 +594,6 @@ public class BlueprintOrchestratorController {
 		for (ProbeIndicator pbindicator : list_of_pb_indicators) {
 			if (pbindicator.getValue().equalsIgnoreCase("true")) {
 				probePresent = true;
-			}
-		}
-
-		if (probePresent == true) {
-			for (Node nd : allnodes) {
-
-				if (nd.getNodeType().equalsIgnoreCase("probe")) {
-
-					// get its container name : to be used later.
-					probeContName = nd.getContainerName();
-					// getting its operation name : to be used later
-					ArrayList<OperationSignatureList> ListOfProbeOpSigList = nd.getOperationSignatureList();
-					for (OperationSignatureList posl : ListOfProbeOpSigList) {
-						probeOperation = posl.getOperationSignature().getOperationName(); // here we are assuming
-																							// probe will have only
-																							// 1 operation. //this
-																							// can be changed.
-
-					}
-					break;
-				}
 			}
 		}
 
@@ -697,7 +659,7 @@ public class BlueprintOrchestratorController {
 	}
 
 	/**
-	 * Sending HTTP POST request to Models and Probes
+	 * Sending HTTP POST request to Probe
 	 * 
 	 * @param url
 	 *            : url of the node
