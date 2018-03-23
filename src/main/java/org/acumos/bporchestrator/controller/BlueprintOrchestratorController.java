@@ -695,7 +695,12 @@ public class BlueprintOrchestratorController {
 		logger.info("Thread {}: GOT RESPONSE Message {}", Thread.currentThread().getId(), responseMessage);
 		int responseCode = con.getResponseCode();
 		logger.info("Thread {}: GOT RESPONSE CODE {}", Thread.currentThread().getId(), responseCode);
-		if (responseCode == HttpURLConnection.HTTP_OK) {
+		if ((responseCode == HttpURLConnection.HTTP_OK) || (responseCode == HttpURLConnection.HTTP_CREATED)
+				|| (responseCode == HttpURLConnection.HTTP_ACCEPTED)
+				|| (responseCode == HttpURLConnection.HTTP_ACCEPTED)
+				|| (responseCode == HttpURLConnection.HTTP_NOT_AUTHORITATIVE)
+				|| (responseCode == HttpURLConnection.HTTP_NO_CONTENT) || (responseCode == HttpURLConnection.HTTP_RESET)
+				|| (responseCode == HttpURLConnection.HTTP_PARTIAL)) {
 			return IOUtils.toByteArray(con.getInputStream());
 		} else {
 			logger.error("Thread {}: ERROR:::::::POST request did not work {}", Thread.currentThread().getId(), url);
@@ -733,7 +738,12 @@ public class BlueprintOrchestratorController {
 		logger.info("Thread {}: GOT RESPONSE Message {}", Thread.currentThread().getId(), responseMessage);
 		int responseCode = con.getResponseCode();
 		logger.info("Thread {}: GOT RESPONSE CODE {}", Thread.currentThread().getId(), responseCode);
-		if (responseCode == HttpURLConnection.HTTP_OK) {
+		if ((responseCode == HttpURLConnection.HTTP_OK) || (responseCode == HttpURLConnection.HTTP_CREATED)
+				|| (responseCode == HttpURLConnection.HTTP_ACCEPTED)
+				|| (responseCode == HttpURLConnection.HTTP_ACCEPTED)
+				|| (responseCode == HttpURLConnection.HTTP_NOT_AUTHORITATIVE)
+				|| (responseCode == HttpURLConnection.HTTP_NO_CONTENT) || (responseCode == HttpURLConnection.HTTP_RESET)
+				|| (responseCode == HttpURLConnection.HTTP_PARTIAL)) {
 			return IOUtils.toByteArray(con.getInputStream());
 		} else {
 			logger.error("Thread {}: ERROR:::::::POST request did not work {}", Thread.currentThread().getId(), url);
