@@ -22,6 +22,7 @@ Runtime Orchestrator
 .. toctree::
        :maxdepth: 2
     
+       release-notes
        developer-guide
        user-guide
-       release-notes      
+           

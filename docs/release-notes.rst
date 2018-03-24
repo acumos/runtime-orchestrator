@@ -23,6 +23,14 @@ Runtime Orchestrator Release Notes
 
 The server is deployed within a Docker image.
 
+Version 1.0.6 March 2018
+---------------------------
+*  Supports 2xx responses from Models
+
+Version 1.0.5 March 2018
+---------------------------
+*  Supports Blueprint Probe changes to not include Probe node. The Probe node will always have container_name as "Probe
+
 Version 1.0.4 March 2018
 ---------------------------
 *  Multithreading support for Async response to Data Source and also Polling Data Broker. 
