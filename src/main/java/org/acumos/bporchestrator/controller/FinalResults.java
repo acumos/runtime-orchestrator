@@ -21,31 +21,33 @@ package org.acumos.bporchestrator.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import org.acumos.bporchestrator.MCAttributes;
+import org.acumos.bporchestrator.model.InputPort;
+import org.acumos.bporchestrator.model.Node;
+import org.acumos.bporchestrator.model.ProbeIndicator;
+import org.acumos.bporchestrator.model.TrainingClient;
 
-public class DBResponseRunnable implements Runnable {
+public class FinalResults {
 
-	private static final Logger dblogger = LoggerFactory.getLogger(DBResponseRunnable.class);
+	private byte[] finalresults;
 
-	private MCAttributes mcAttributes;
-
-	public DBResponseRunnable(MCAttributes mcAttributes) {
-		this.mcAttributes = mcAttributes;
+	// Constructor
+	public FinalResults(byte[] res) {
+		super();
+		this.finalresults = res;
 	}
 
-	@Override
-	public void run() {
+	public byte[] getFinalresults() {
+		return finalresults;
+	}
 
-		dblogger.info("New Thread started due to DB response");
-
-		new BlueprintOrchestratorController().notifynextnode(mcAttributes.getOutput(), mcAttributes.getCurrentNode(),
-				mcAttributes.getCurrentOperation(), mcAttributes.isProbePresent(), mcAttributes.getProbeContName(),
-				mcAttributes.getProbeOperation(), mcAttributes.getProbeUrl());
-
+	/**
+	 * 
+	 * @param finalresults
+	 *            The final results of the last model.
+	 */
+	public void setFinalresults(byte[] finalresults) {
+		this.finalresults = finalresults;
 	}
 
 }

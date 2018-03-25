@@ -21,6 +21,7 @@
 package org.acumos.bporchestrator.util;
 
 import org.acumos.bporchestrator.model.*;
+import org.acumos.bporchestrator.controller.FinalResults;
 
 /**
  * The TaskManager that holds copies of blueprint.json and DockerInfo.json
@@ -32,6 +33,8 @@ public class TaskManager {
 	private static Blueprint blueprint = null;
 
 	private static DockerInfoList dockerList = null;
+	
+	private static FinalResults fr = null;
 
 	/*
 	 * private Constructor for a utility class
@@ -58,6 +61,15 @@ public class TaskManager {
 
 	public static void setDockerList(DockerInfoList dockerList) {
 		TaskManager.dockerList = dockerList;
+	}
+	
+	
+	public static FinalResults getFinalResults() {
+		return fr;
+	}
+
+	public static void setFinalResults(FinalResults fr) {
+		TaskManager.fr = fr;
 	}
 
 }
