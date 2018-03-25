@@ -51,6 +51,7 @@ import org.apache.commons.io.IOUtils;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.acumos.bporchestrator.controller.FinalResults;
 
 /**
  * Rest Controller that handles the API end points
@@ -80,10 +81,12 @@ public class BlueprintOrchestratorController {
 			@ApiParam(value = "Inital request to start deploying... This binary stream is in protobuf format.", required = false) @Valid @RequestBody byte[] binaryStream,
 			@ApiParam(value = "This operation should match with one of the input operation signatures in blueprint.json", required = true) @PathVariable("operation") String operation) {
 
-		byte[] results = null;
+		byte[] finalresults = null;
 
 		Blueprint blueprint = TaskManager.getBlueprint();
-		DockerInfoList dockerList = TaskManager.getDockerList();
+		DockerInfoList dockerList = TaskManager.getDockerList();;
+		
+		
 
 		// Probe related.
 		boolean probePresent = false;
@@ -106,11 +109,11 @@ public class BlueprintOrchestratorController {
 			logger.info("Receiving /{} request: {}", operation, Arrays.toString(binaryStream));
 			if (blueprint == null) {
 				logger.error("Empty blueprint JSON");
-				return new ResponseEntity<>(results, HttpStatus.PARTIAL_CONTENT);
+				return new ResponseEntity<>(finalresults, HttpStatus.PARTIAL_CONTENT);
 			}
 			if (dockerList == null) {
 				logger.error("Need Docker Information... Exiting");
-				return new ResponseEntity<>(results, HttpStatus.PARTIAL_CONTENT);
+				return new ResponseEntity<>(finalresults, HttpStatus.PARTIAL_CONTENT);
 			}
 
 			List<InputPort> inps = blueprint.getInputPorts();
@@ -137,7 +140,7 @@ public class BlueprintOrchestratorController {
 				if (d2 == null) { // what to do if the deployer passed
 					// incomplete docker info ???
 					logger.error("Cannot find docker info about the probe {}", probeContName);
-					return new ResponseEntity<>(results, HttpStatus.INTERNAL_SERVER_ERROR);
+					return new ResponseEntity<>(finalresults, HttpStatus.INTERNAL_SERVER_ERROR);
 				}
 				urlBase = "http://" + d2.getIpAddress() + ":" + d2.getPort() + "/";
 				probeurl = urlBase + probeOperation;
@@ -167,7 +170,7 @@ public class BlueprintOrchestratorController {
 			if (d2 == null) { // what to do if the deployer passed
 				// incomplete docker info ???
 				logger.error("Cannot find docker info about the dontainer {}", inpcontainer);
-				return new ResponseEntity<>(results, HttpStatus.INTERNAL_SERVER_ERROR);
+				return new ResponseEntity<>(finalresults, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 			urlBase = "http://" + d2.getIpAddress() + ":" + d2.getPort() + "/";
 			String inpurl = urlBase + inpoperation; // Is this always get_image?
@@ -185,34 +188,36 @@ public class BlueprintOrchestratorController {
 				byte[] out = contactProbe(binaryStream, probeurl, probeContName, inpmsgname, inpnode);
 			}
 
-			// Unblock the data source.
-			logger.info("Unblocking data source after receiving output from input node.");
-
-			if (output != null) {
-				MCAttributes mcAttributes = new MCAttributes();
-				// set the all the required attributes.
-				mcAttributes.setOutput(output);
-				mcAttributes.setCurrentNode(inpnode);
-				mcAttributes.setCurrentOperation(inpoperation);
-				mcAttributes.setProbePresent(probePresent);
-				mcAttributes.setProbeContName(probeContName);
-				mcAttributes.setProbeOperation(probeOperation);
-				mcAttributes.setProbeUrl(probeurl);
-				// create a thread with the mcAttribute objects
-				DSAsyncResponseRunnable dsthread = new DSAsyncResponseRunnable(mcAttributes);
-				Thread thread = new Thread(dsthread);
-				// start the thread.
-				thread.start();
-				return new ResponseEntity<>(results, HttpStatus.OK);
-			}
+			notifynextnode(output, inpnode, inpoperation, probePresent, probeContName, probeOperation, probeurl);
+			FinalResults f = TaskManager.getFinalResults();
+			finalresults=f.getFinalresults();
+			/*
+			 * Adding direct call and commenting this for directly informing caller. //
+			 * Unblock the data source.
+			 * logger.info("Unblocking data source after receiving output from input node."
+			 * );
+			 * 
+			 * if (output != null) { MCAttributes mcAttributes = new MCAttributes(); // set
+			 * the all the required attributes. mcAttributes.setOutput(output);
+			 * mcAttributes.setCurrentNode(inpnode);
+			 * mcAttributes.setCurrentOperation(inpoperation);
+			 * mcAttributes.setProbePresent(probePresent);
+			 * mcAttributes.setProbeContName(probeContName);
+			 * mcAttributes.setProbeOperation(probeOperation);
+			 * mcAttributes.setProbeUrl(probeurl); // create a thread with the mcAttribute
+			 * objects DSAsyncResponseRunnable dsthread = new
+			 * DSAsyncResponseRunnable(mcAttributes); Thread thread = new Thread(dsthread);
+			 * // start the thread. thread.start(); return new ResponseEntity<>(results,
+			 * HttpStatus.OK); }
+			 */
 
 		} // try ends for notify method's chunk
 		catch (Exception ex) {
 			logger.error("Notify failed {}", ex);
-			return new ResponseEntity<>(results, HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(finalresults, HttpStatus.INTERNAL_SERVER_ERROR);
 
 		}
-		return new ResponseEntity<>(results, HttpStatus.OK);
+		return new ResponseEntity<>(finalresults, HttpStatus.OK);
 	}
 
 	/**
@@ -230,6 +235,8 @@ public class BlueprintOrchestratorController {
 	 *            Probe's operation name if Probe is present
 	 * @param prburl
 	 *            Probe's url if Probe is present
+	 * @param finalout
+	 *            Variable to store output of final model.
 	 * @return byte[] output stream
 	 */
 	public byte[] notifynextnode(byte[] output, Node n, String oprn, boolean prbpresent, String prbcontainername,
@@ -253,6 +260,7 @@ public class BlueprintOrchestratorController {
 		// Later on on every call it will be the output of the contactnode call passed
 		// as depoutput2)
 		byte[] depoutput = output;
+		byte[] depoutput2 = null;
 
 		// for loop here to loop through the dependents.
 		for (ConnectedTo depitem : deps) {
@@ -273,7 +281,7 @@ public class BlueprintOrchestratorController {
 			String depurl = depurlBase + depoperation;
 
 			// Contact the dependent node.
-			byte[] depoutput2 = contactnode(depoutput, depurl, depcontainername);
+			depoutput2 = contactnode(depoutput, depurl, depcontainername);
 
 			// Call notifyprobe if indicator is true.
 			// Message name needed for sending to probe. (Find the input message name for
@@ -340,9 +348,16 @@ public class BlueprintOrchestratorController {
 				}
 			}
 
+			if (depsofdeps.isEmpty()) {
+				FinalResults f2 = new FinalResults(null);
+				f2.setFinalresults(depoutput2);
+				TaskManager.setFinalResults(f2);
+			}
+
 			// Call notifynextnode function
 			if (!(depsofdeps.isEmpty())) {
 				notifynextnode(depoutput2, depnode, depoperation, prbpresent, prbcontainername, prboperation, prburl);
+
 			}
 		}
 		return output;
