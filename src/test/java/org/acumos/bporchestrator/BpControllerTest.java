@@ -65,26 +65,18 @@ public class BpControllerTest extends AbstractControllerTest {
 			bp.setName("Runtime Orchestrator");
 			bp.setVersion("1.0.0");
 
-			// Creating Input Port list with 2 input ports and add to the blueprint
+			// Creating Input Port list with 1 input port and add to the blueprint
 
 			InputPort inp1 = new InputPort();
-			InputPort inp2 = new InputPort();
 
 			OperationSignature ios1 = new OperationSignature();
 			ios1.setOperationName("classify");
-
-			OperationSignature ios2 = new OperationSignature();
-			ios2.setOperationName("predict");
-
+			
 			inp1.setContainerName("image_mood_classifier1");
 			inp1.setOperationSignature(ios1);
 
-			inp2.setContainerName("image_classifier1");
-			inp2.setOperationSignature(ios2);
-
 			List<InputPort> inputportslist = new ArrayList<>();
 			inputportslist.add(inp1);
-			inputportslist.add(inp2);
 
 			bp.setInputPorts(inputportslist);
 
@@ -106,9 +98,9 @@ public class BpControllerTest extends AbstractControllerTest {
 			test_osl1.setOperationSignature(test_os_a);
 
 			ConnectedTo conto = new ConnectedTo();
-			conto.setContainerName("somecontainer");
+			conto.setContainerName("image_mood_classifier1");
 			OperationSignature test_os_b = new OperationSignature();
-			test_os_b.setOperationName("someoperation");
+			test_os_b.setOperationName("predict");
 			conto.setOperationSignature(test_os_b);
 
 			ArrayList<ConnectedTo> listofconnto1 = new ArrayList<ConnectedTo>();
@@ -229,7 +221,7 @@ public class BpControllerTest extends AbstractControllerTest {
 			docker1.setPort("8123");
 
 			DockerInfo docker2 = new DockerInfo();
-			docker2.setContainer("image_good_classifier1");
+			docker2.setContainer("image_mood_classifier1");
 			docker2.setIpAddress("52.191.113.56");
 			docker2.setPort("8234");
 
@@ -240,6 +232,13 @@ public class BpControllerTest extends AbstractControllerTest {
 			doPut("/putDockerInfo", dockerList, DockerInfoList.class);
 
 			logger.info("Done testing /putDockerInfo PUT end point");
+			
+			//testing the notify method.
+			String sampleString = "This is the model connector";
+			byte[] b = sampleString.getBytes();
+			doPost("/classify",b);
+			logger.info("Done testing /{operation} POST end point i.e notify service method");
+		
 
 		} catch (HttpStatusCodeException ex) {
 			logger.error("controllerTest failed", ex);
