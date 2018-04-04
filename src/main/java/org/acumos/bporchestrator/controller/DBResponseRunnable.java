@@ -42,9 +42,14 @@ public class DBResponseRunnable implements Runnable {
 
 		dblogger.info("New Thread started due to DB response");
 
-		new BlueprintOrchestratorController().notifynextnode(mcAttributes.getOutput(), mcAttributes.getCurrentNode(),
-				mcAttributes.getCurrentOperation(), mcAttributes.isProbePresent(), mcAttributes.getProbeContName(),
-				mcAttributes.getProbeOperation(), mcAttributes.getProbeUrl());
+		try {
+			new BlueprintOrchestratorController().notifynextnode(mcAttributes.getOutput(), mcAttributes.getCurrentNode(),
+					mcAttributes.getCurrentOperation(), mcAttributes.isProbePresent(), mcAttributes.getProbeContName(),
+					mcAttributes.getProbeOperation(), mcAttributes.getProbeUrl());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 

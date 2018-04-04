@@ -71,7 +71,7 @@ public class BpControllerTest extends AbstractControllerTest {
 
 			OperationSignature ios1 = new OperationSignature();
 			ios1.setOperationName("classify");
-			
+
 			inp1.setContainerName("image_mood_classifier1");
 			inp1.setOperationSignature(ios1);
 
@@ -217,13 +217,13 @@ public class BpControllerTest extends AbstractControllerTest {
 			logger.info("Testing /putDockerInfo PUT method");
 			DockerInfo docker1 = new DockerInfo();
 			docker1.setContainer("image_classifier1");
-			docker1.setIpAddress("52.191.113.56");
-			docker1.setPort("8123");
+			docker1.setIpAddress("www.somewhere.com");
+			docker1.setPort("8000");
 
 			DockerInfo docker2 = new DockerInfo();
 			docker2.setContainer("image_mood_classifier1");
-			docker2.setIpAddress("52.191.113.56");
-			docker2.setPort("8234");
+			docker2.setIpAddress("www.somewhere.com");
+			docker2.setPort("8001");
 
 			DockerInfoList dockerList = new DockerInfoList();
 			dockerList.addDockerInfo(docker1);
@@ -232,16 +232,15 @@ public class BpControllerTest extends AbstractControllerTest {
 			doPut("/putDockerInfo", dockerList, DockerInfoList.class);
 
 			logger.info("Done testing /putDockerInfo PUT end point");
-			
-			//testing the notify method.
+
+			// testing the notify method.
 			String sampleString = "This is the model connector";
 			byte[] b = sampleString.getBytes();
-			doPost("/classify",b);
+			doPost("/classify", b);
 			logger.info("Done testing /{operation} POST end point i.e notify service method");
-		
 
-		} catch (HttpStatusCodeException ex) {
-			logger.error("controllerTest failed", ex);
+		} catch (Exception ex) {
+			logger.error("Controller Tests failed", ex);
 			assert (false);
 		}
 		assert (true);

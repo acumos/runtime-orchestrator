@@ -79,7 +79,7 @@ public class BlueprintOrchestratorController {
 	@RequestMapping(path = "/{operation}", method = RequestMethod.POST)
 	public ResponseEntity<byte[]> notify(
 			@ApiParam(value = "Inital request to start deploying... This binary stream is in protobuf format.", required = false) @Valid @RequestBody byte[] binaryStream,
-			@ApiParam(value = "This operation should match with one of the input operation signatures in blueprint.json", required = true) @PathVariable("operation") String operation) {
+			@ApiParam(value = "This operation should match with one of the input operation signatures in blueprint.json", required = true) @PathVariable("operation") String operation){
 
 		byte[] finalresults = null;
 
@@ -238,7 +238,7 @@ public class BlueprintOrchestratorController {
 	 * @return byte[] output stream
 	 */
 	public byte[] notifynextnode(byte[] output, Node n, String oprn, boolean prbpresent, String prbcontainername,
-			String prboperation, String prburl) {
+			String prboperation, String prburl) throws Exception{
 
 		Blueprint blueprint = TaskManager.getBlueprint();
 		DockerInfoList dockerList = TaskManager.getDockerList();
