@@ -20,11 +20,9 @@
 
 package org.acumos.bporchestrator;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.acumos.bporchestrator.controller.BlueprintOrchestratorController;
 import org.acumos.bporchestrator.model.Blueprint;
 import org.acumos.bporchestrator.model.ConnectedTo;
 import org.acumos.bporchestrator.model.DataBroker;
@@ -44,7 +42,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.boot.test.context.SpringBootTest;
-
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -85,7 +82,7 @@ public class BpControllerTest extends AbstractControllerTest {
 
 			node1.setContainerName("image_classifier1");
 			node1.setNodeType("MLModel");
-			node1.setImage("cognita-nexus01:8001/image_classifier:1");
+			node1.setImage("someAI-nexus01:8001/image_classifier:1");
 			node1.setProtoUri("www.somewhere.com/protourilink");
 
 			OperationSignatureList test_osl1 = new OperationSignatureList();
@@ -116,7 +113,7 @@ public class BpControllerTest extends AbstractControllerTest {
 
 			node2.setContainerName("image_mood_classifier1");
 			node2.setNodeType("MLModel");
-			node2.setImage("cognita-nexus01:8001/image_mood_classifier:1");
+			node2.setImage("someAI-nexus01:8001/image_mood_classifier:1");
 			node2.setProtoUri("www.somewhere.com/protourilink2");
 
 			OperationSignatureList test_osl2 = new OperationSignatureList();
