@@ -85,7 +85,7 @@ public class BpControllerTest extends AbstractControllerTest {
 
 			node1.setContainerName("image_classifier1");
 			node1.setNodeType("MLModel");
-			node1.setImage("cognita-nexus01:8001/image_classifier:1");
+			node1.setImage("someAI-nexus01:8001/image_classifier:1");
 			node1.setProtoUri("www.somewhere.com/protourilink");
 
 			OperationSignatureList test_osl1 = new OperationSignatureList();
@@ -116,7 +116,7 @@ public class BpControllerTest extends AbstractControllerTest {
 
 			node2.setContainerName("image_mood_classifier1");
 			node2.setNodeType("MLModel");
-			node2.setImage("cognita-nexus01:8001/image_mood_classifier:1");
+			node2.setImage("someAI-nexus01:8001/image_mood_classifier:1");
 			node2.setProtoUri("www.somewhere.com/protourilink2");
 
 			OperationSignatureList test_osl2 = new OperationSignatureList();
