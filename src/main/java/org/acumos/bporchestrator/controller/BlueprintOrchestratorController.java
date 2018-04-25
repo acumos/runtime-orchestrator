@@ -48,6 +48,8 @@ import org.acumos.bporchestrator.MCAttributes;
 import org.acumos.bporchestrator.model.*;
 import org.acumos.bporchestrator.util.TaskManager;
 import org.apache.commons.io.IOUtils;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -79,14 +81,13 @@ public class BlueprintOrchestratorController {
 	@RequestMapping(path = "/{operation}", method = RequestMethod.POST)
 	public ResponseEntity<byte[]> notify(
 			@ApiParam(value = "Inital request to start deploying... This binary stream is in protobuf format.", required = false) @Valid @RequestBody byte[] binaryStream,
-			@ApiParam(value = "This operation should match with one of the input operation signatures in blueprint.json", required = true) @PathVariable("operation") String operation){
+			@ApiParam(value = "This operation should match with one of the input operation signatures in blueprint.json", required = true) @PathVariable("operation") String operation) {
 
 		byte[] finalresults = null;
 
 		Blueprint blueprint = TaskManager.getBlueprint();
-		DockerInfoList dockerList = TaskManager.getDockerList();;
-		
-		
+		DockerInfoList dockerList = TaskManager.getDockerList();
+		;
 
 		// Probe related.
 		boolean probePresent = false;
@@ -110,6 +111,7 @@ public class BlueprintOrchestratorController {
 			if (blueprint == null) {
 				logger.error("Empty blueprint JSON");
 				return new ResponseEntity<>(finalresults, HttpStatus.PARTIAL_CONTENT);
+
 			}
 			if (dockerList == null) {
 				logger.error("Need Docker Information... Exiting");
@@ -190,7 +192,7 @@ public class BlueprintOrchestratorController {
 
 			notifynextnode(output, inpnode, inpoperation, probePresent, probeContName, probeOperation, probeurl);
 			FinalResults f = TaskManager.getFinalResults();
-			finalresults=f.getFinalresults();
+			finalresults = f.getFinalresults();
 			/*
 			 * Adding direct call and commenting this for directly informing caller. //
 			 * Unblock the data source.
@@ -238,7 +240,7 @@ public class BlueprintOrchestratorController {
 	 * @return byte[] output stream
 	 */
 	public byte[] notifynextnode(byte[] output, Node n, String oprn, boolean prbpresent, String prbcontainername,
-			String prboperation, String prburl) throws Exception{
+			String prboperation, String prburl) throws Exception {
 
 		Blueprint blueprint = TaskManager.getBlueprint();
 		DockerInfoList dockerList = TaskManager.getDockerList();
@@ -336,7 +338,7 @@ public class BlueprintOrchestratorController {
 					}
 					try {
 						logger.info("Thread {} : Notifying PROBE for node name: {}, out msg name: {} , msg: {}",
-								Thread.currentThread().getId(), depcontainername, depoutmsgname, depoutput);
+								Thread.currentThread().getId(), depcontainername, depoutmsgname, depoutput2);
 
 						byte[] probeout2 = contactProbe(depoutput2, prburl, depcontainername, depoutmsgname, depnode);
 					} catch (IOException e) {
@@ -383,7 +385,7 @@ public class BlueprintOrchestratorController {
 	 */
 
 	public byte[] contactProbe(byte[] binaryStream, String probeurl, String pb_c_name, String msg_name, Node n)
-			throws IOException {
+			throws Exception {
 
 		Blueprint blueprint = TaskManager.getBlueprint();
 		DockerInfoList dockerList = TaskManager.getDockerList();
@@ -419,7 +421,7 @@ public class BlueprintOrchestratorController {
 		byte[] output4 = null;
 		try {
 			output4 = httpPost(url, binaryStream);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			logger.error("Contacting node {} failed {}", name, e);
 		}
 		return output4;
@@ -440,7 +442,7 @@ public class BlueprintOrchestratorController {
 		// Find the databroker script
 		Blueprint blueprint = TaskManager.getBlueprint();
 		Node dbnode = blueprint.getNodebyContainer(db_c_name);
-		String scriptstring = dbnode.getScript();
+		String scriptstring = dbnode.getDataBrokerMap().getScript();
 
 		logger.info("Thread {} : Notifying databroker: {}, POST: {}", Thread.currentThread().getId(), db_c_name,
 				db_url);
@@ -630,25 +632,28 @@ public class BlueprintOrchestratorController {
 
 		Node dbnode = blueprint.getNodebyContainer(dataBrokerContName);
 		if (dataBrokerPresent == true) {
+			ExecutorService service = Executors.newFixedThreadPool(1);
 			// make a POST request to the databroker and receive response
 			do {
 				output = contactdataBroker(databrokerurl, dataBrokerContName);
-				MCAttributes mcAttributes = new MCAttributes();
-				// set the all the required attributes.
-				mcAttributes.setOutput(output);
-				mcAttributes.setCurrentNode(dbnode);
-				mcAttributes.setCurrentOperation(dataBrokerOperation);
-				mcAttributes.setProbePresent(probePresent);
-				mcAttributes.setProbeContName(probeContName);
-				mcAttributes.setProbeOperation(probeOperation);
-				mcAttributes.setProbeUrl(probeurl);
-				// create a thread with the mcAttribute objects
-				DBResponseRunnable dbthread = new DBResponseRunnable(mcAttributes);
-				Thread thread = new Thread(dbthread);
-				// start the thread.
-				thread.start();
+				if ((output != null) && (output.length != 0)) {
+					MCAttributes mcAttributes = new MCAttributes();
+					// set the all the required attributes.
+					mcAttributes.setOutput(output);
+					mcAttributes.setCurrentNode(dbnode);
+					mcAttributes.setCurrentOperation(dataBrokerOperation);
+					mcAttributes.setProbePresent(probePresent);
+					mcAttributes.setProbeContName(probeContName);
+					mcAttributes.setProbeOperation(probeOperation);
+					mcAttributes.setProbeUrl(probeurl);
+					// create a thread with the mcAttribute objects
+					service.execute(new DBResponseRunnable(mcAttributes));
 
-			} while (output.length != 0);
+					// start the thread.
+					// thread.start();
+				}
+
+			} while ((output != null) && (output.length != 0));
 
 		}
 		dbresults.put("status", "ok");
@@ -667,7 +672,7 @@ public class BlueprintOrchestratorController {
 	 * @throws IOException
 	 *             : IO exception
 	 */
-	private byte[] httpPost(String url, byte[] binaryStream) throws IOException {
+	private byte[] httpPost(String url, byte[] binaryStream) throws Exception {
 		return httpPost(url, binaryStream, null, null);
 	}
 
@@ -686,7 +691,7 @@ public class BlueprintOrchestratorController {
 	 * @throws IOException
 	 *             : IOException
 	 */
-	private byte[] httpPost(String url, byte[] binaryStream, String protoUrl, String messageName) throws IOException {
+	private byte[] httpPost(String url, byte[] binaryStream, String protoUrl, String messageName) throws Exception {
 
 		URL obj = new URL(url);
 

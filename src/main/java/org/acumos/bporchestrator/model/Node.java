@@ -33,6 +33,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Node implements Serializable {
 
+	private static final long serialVersionUID = 3561091761587012180L;
 	@JsonProperty("container_name")
 	private String container = null;
 	@JsonProperty("node_type")
@@ -43,13 +44,12 @@ public class Node implements Serializable {
 	private String protoUri = null;
 	@JsonProperty("operation_signature_list")
 	private ArrayList<OperationSignatureList> operationSignatureList = null; // OperationSignatureList itself is NOT a
-																				// Arraylist.
-	@JsonProperty("script")
-	private String script = null;
-	@JsonProperty("mapping_table")
-	private MappingTable mappingTable = null;
+																				// Arraylist
 	@JsonProperty("data_sources")
 	private List<DataSource> dataSources = null;
+
+	@JsonProperty("data_broker_map")
+	private DataBrokerMap dataBrokerMap;
 
 	/**
 	 * Standard POJO no-arg constructor
@@ -77,20 +77,20 @@ public class Node implements Serializable {
 	 * @param nodeType
 	 *            Type of the node: DataMapper or MLModel or DataBroker or
 	 *            TrainingClient or Probe
-	 * 
+	 * @param dataBrokerMap
+	 *            Data broker info data structure.
 	 */
 	public Node(String container, String nodeType, String image, String protoUri,
 			ArrayList<OperationSignatureList> operationSignatureList, String script, MappingTable mappingTable,
-			List<DataSource> dataSources) {
+			List<DataSource> dataSources, DataBrokerMap dataBrokerMap) {
 		super();
 		this.container = container;
 		this.nodeType = nodeType;
 		this.image = image;
 		this.protoUri = protoUri;
 		this.operationSignatureList = operationSignatureList;
-		this.script = script;
-		this.mappingTable = mappingTable;
 		this.dataSources = dataSources;
+		this.dataBrokerMap = dataBrokerMap;
 	}
 
 	@JsonProperty("container_name")
@@ -143,26 +143,6 @@ public class Node implements Serializable {
 		this.operationSignatureList = operationSignatureList;
 	}
 
-	@JsonProperty("script")
-	public String getScript() {
-		return script;
-	}
-
-	@JsonProperty("script")
-	public void setScript(String script) {
-		this.script = script;
-	}
-
-	@JsonProperty("mapping_table")
-	public MappingTable getMappingTable() {
-		return mappingTable;
-	}
-
-	@JsonProperty("mapping_table")
-	public void setMappingTable(MappingTable mappingTable) {
-		this.mappingTable = mappingTable;
-	}
-
 	@JsonProperty("data_sources")
 	public List<DataSource> getDataSources() {
 		return dataSources;
@@ -173,10 +153,20 @@ public class Node implements Serializable {
 		this.dataSources = dataSources;
 	}
 
+	@JsonProperty("data_broker_map")
+	public DataBrokerMap getDataBrokerMap() {
+		return dataBrokerMap;
+	}
+
+	@JsonProperty("data_broker_map")
+	public void setDataBrokerMap(DataBrokerMap dataBrokerMap) {
+		this.dataBrokerMap = dataBrokerMap;
+	}
+
 	@Override
 	public String toString() {
 		return "Node [container=" + container + ", image=" + image + ", protoUri=" + protoUri + ", nodeType=" + nodeType
-				+ "]";
+				+ ", dataBrokerMap=" + dataBrokerMap + "]";
 	}
 
 }

@@ -24,6 +24,11 @@ Runtime Orchestrator Release Notes
 The server is deployed within a Docker image.
 
 
+Version 1.0.9 April 2018
+------------------------
+* Supports new Blueprint for Data Broker.
+* Introduces usage of Executor framework for thread management.
+
 Version 1.0.8 April 2018
 ------------------------
 *  More tests and update release notes.
