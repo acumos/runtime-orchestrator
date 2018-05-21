@@ -449,7 +449,7 @@ public class BlueprintOrchestratorController {
 
 		byte[] output3 = null;
 		try {
-			output3 = httpPost(db_url, scriptstring);
+			output3 = httpGet(db_url, scriptstring);
 			logger.error("Thread {} : Output of data broker is {}", Thread.currentThread().getId(), output3);
 		} catch (IOException e) {
 			logger.error("Contacting databroker failed {}", e);
@@ -739,12 +739,12 @@ public class BlueprintOrchestratorController {
 	 * @throws IOException
 	 *             : IO exception
 	 */
-	public byte[] httpPost(String url, String the_script) throws IOException {
+	public byte[] httpGet(String url, String the_script) throws IOException {
 		URL obj = new URL(url);
 
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
-		con.setRequestMethod("POST");
+		con.setRequestMethod("GET");
 		con.setDoOutput(true);
 		DataOutputStream out = new DataOutputStream(con.getOutputStream());
 		out.writeBytes(the_script);

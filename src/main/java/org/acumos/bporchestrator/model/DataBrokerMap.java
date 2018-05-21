@@ -53,82 +53,82 @@ public class DataBrokerMap implements Serializable {
 		this.script=script;
 	}
 
-	@JsonProperty("map_inputs")
+	//@JsonProperty("map_inputs")
 	public MapInputs[] getMapInputs() {
 		return mapInputs;
 	}
 
-	@JsonProperty("map_inputs")
+	//@JsonProperty("map_inputs")
 	public void setMapInputs(MapInputs[] mapInputs) {
 		this.mapInputs = mapInputs;
 	}
 
-	@JsonProperty("data_broker_type")
+	//@JsonProperty("data_broker_type")
 	public String getDataBrokerType() {
 		return dataBrokerType;
 	}
 
-	@JsonProperty("data_broker_type")
+	//@JsonProperty("data_broker_type")
 	public void setDataBrokerType(String dataBrokerType) {
 		this.dataBrokerType = dataBrokerType;
 	}
 
-	@JsonProperty("csv_file_field_separator")
+	//@JsonProperty("csv_file_field_separator")
 	public String getCsvFileFieldSeparator() {
 		return csvFileFieldSeparator;
 	}
 
-	@JsonProperty("csv_file_field_separator")
+	//@JsonProperty("csv_file_field_separator")
 	public void setCsvFileFieldSeparator(String csvFileFieldSeparator) {
 		this.csvFileFieldSeparator = csvFileFieldSeparator;
 	}
 
-	@JsonProperty("target_system_url")
+	//@JsonProperty("target_system_url")
 	public String getTargetSystemUrl() {
 		return targetSystemUrl;
 	}
 
-	@JsonProperty("target_system_url")
+	//@JsonProperty("target_system_url")
 	public void setTargetSystemUrl(String targetSystemUrl) {
 		this.targetSystemUrl = targetSystemUrl;
 	}
 
-	@JsonProperty("container_name")
+	//@JsonProperty("container_name")
 	public MapOutputs[] getMapOutputs() {
 		return mapOutputs;
 	}
 
-	@JsonProperty("container_name")
+	//@JsonProperty("container_name")
 	public void setMapOutputs(MapOutputs[] mapOutputs) {
 		this.mapOutputs = mapOutputs;
 	}
 
-	@JsonProperty("local_system_data_file_path")
+	//@JsonProperty("local_system_data_file_path")
 	public String getLocalSystemDataFilePath() {
 		return localSystemDataFilePath;
 	}
 
-	@JsonProperty("local_system_data_file_path")
+	//@JsonProperty("local_system_data_file_path")
 	public void setLocalSystemDataFilePath(String localSystemDataFilePath) {
 		this.localSystemDataFilePath = localSystemDataFilePath;
 	}
 
-	@JsonProperty("first_row")
+	//@JsonProperty("first_row")
 	public String getFirstRow() {
 		return firstRow;
 	}
 
-	@JsonProperty("first_row")
+	//@JsonProperty("first_row")
 	public void setFirstRow(String firstRow) {
 		this.firstRow = firstRow;
 	}
 
-	@JsonProperty("script")
+	//@JsonProperty("script")
 	public String getScript() {
 		return script;
 	}
 
-	@JsonProperty("script")
+	//@JsonProperty("script")
 	public void setScript(String script) {
 		this.script = script;
 	}
