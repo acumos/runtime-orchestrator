@@ -20,8 +20,11 @@
 
 package org.acumos.bporchestrator.controller;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -442,17 +445,17 @@ public class BlueprintOrchestratorController {
 		// Find the databroker script
 		Blueprint blueprint = TaskManager.getBlueprint();
 		Node dbnode = blueprint.getNodebyContainer(db_c_name);
-		String scriptstring = dbnode.getDataBrokerMap().getScript();
-
+		
 		logger.info("Thread {} : Notifying databroker: {}, POST: {}", Thread.currentThread().getId(), db_c_name,
 				db_url);
 
 		byte[] output3 = null;
 		try {
-			output3 = httpPost(db_url, scriptstring);
+			output3 = httpGet(db_url);
 			logger.error("Thread {} : Output of data broker is {}", Thread.currentThread().getId(), output3);
 		} catch (IOException e) {
 			logger.error("Contacting databroker failed {}", e);
+			return new byte[0];
 		}
 		return output3;
 	}
@@ -733,13 +736,13 @@ public class BlueprintOrchestratorController {
 	 * 
 	 * @param url
 	 *            : url to get
-	 * @param the_script
+	 * @param theScript
 	 *            : actual script to be sent to the data broker.
 	 * @return : returns byte[] type
 	 * @throws IOException
 	 *             : IO exception
 	 */
-	public byte[] httpPost(String url, String the_script) throws IOException {
+	public byte[] httpPost(String url, String theScript) throws IOException {
 		URL obj = new URL(url);
 
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
@@ -747,7 +750,7 @@ public class BlueprintOrchestratorController {
 		con.setRequestMethod("POST");
 		con.setDoOutput(true);
 		DataOutputStream out = new DataOutputStream(con.getOutputStream());
-		out.writeBytes(the_script);
+		out.writeBytes(theScript);
 		out.flush();
 		out.close();
 
@@ -769,4 +772,40 @@ public class BlueprintOrchestratorController {
 
 		return new byte[0];
 	}
+	
+	/*
+	 * 
+	 */
+	private byte[] httpGet(String url) throws IOException {
+		HttpURLConnection con = null;
+		BufferedInputStream bis = null;
+		try{
+			URL obj = new URL(url);
+			con = (HttpURLConnection) obj.openConnection();
+			
+			con.setRequestMethod("GET");
+			int responseCode = con.getResponseCode();
+			System.out.println("GET Response Code :: " + responseCode);
+			if (responseCode == HttpURLConnection.HTTP_OK) { // success
+				bis = new BufferedInputStream(con.getInputStream());
+				
+				int bytesRead = bis.available();
+				logger.info("httpGet(): Available bytes: " + bytesRead);
+				byte[] output = new byte[bytesRead];
+				
+				bytesRead = bis.read(output);
+				
+				return output;
+			} else {
+				logger.error("Thread {}: ERROR:::::::GET request did not work {}", Thread.currentThread().getId(), url);
+			}
+		}catch(Exception ex){
+			logger.error("ERROR in contactdataBroker() at time of httpGet{} call", ex);
+		}finally{
+			bis.close();
+			con.getInputStream().close();
+		}
+		return new byte[0];
+	}
+
 }
