@@ -44,7 +44,7 @@ public class DSAsyncResponseRunnable implements Runnable {
 		dslogger.info("DS Async response thread started");
 
 		try {
-			new BlueprintOrchestratorController().notifynextnode(mcAttributes.getOutput(), mcAttributes.getCurrentNode(),
+			new BlueprintOrchestratorController().notifyNextNode(mcAttributes.getOutput(), mcAttributes.getCurrentNode(),
 					mcAttributes.getCurrentOperation(), mcAttributes.isProbePresent(), mcAttributes.getProbeContName(),
 					mcAttributes.getProbeOperation(), mcAttributes.getProbeUrl());
 		} catch (Exception e) {

@@ -19,9 +19,6 @@
  */
 package org.acumos.bporchestrator.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.BlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +40,7 @@ public class DBResponseRunnable implements Runnable {
 		dblogger.info("New Thread started due to DB response");
 
 		try {
-			new BlueprintOrchestratorController().notifynextnode(mcAttributes.getOutput(), mcAttributes.getCurrentNode(),
+			new BlueprintOrchestratorController().notifyNextNode(mcAttributes.getOutput(), mcAttributes.getCurrentNode(),
 					mcAttributes.getCurrentOperation(), mcAttributes.isProbePresent(), mcAttributes.getProbeContName(),
 					mcAttributes.getProbeOperation(), mcAttributes.getProbeUrl());
 		} catch (Exception e) {
