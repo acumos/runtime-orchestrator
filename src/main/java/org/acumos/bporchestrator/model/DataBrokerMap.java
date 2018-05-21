@@ -10,28 +10,28 @@ public class DataBrokerMap implements Serializable {
 
 	private static final long serialVersionUID = -7169022079856239669L;
 
-	//@JsonProperty("map_inputs")
+	@JsonProperty("map_inputs")
 	private MapInputs[] mapInputs;
 
-	//@JsonProperty("data_broker_type")
+	@JsonProperty("data_broker_type")
 	private String dataBrokerType;
 
-	//@JsonProperty("csv_file_field_separator")
+	@JsonProperty("csv_file_field_separator")
 	private String csvFileFieldSeparator;
 
-	//@JsonProperty("target_system_url")
+	@JsonProperty("target_system_url")
 	private String targetSystemUrl;
 
-	//@JsonProperty("map_outputs")
+	@JsonProperty("map_outputs")
 	private MapOutputs[] mapOutputs;
 
-	//@JsonProperty("local_system_data_file_path")
+	@JsonProperty("local_system_data_file_path")
 	private String localSystemDataFilePath;
 
-	//@JsonProperty("first_row")
+	@JsonProperty("first_row")
 	private String firstRow;
 
-	//@JsonProperty("script")
+	@JsonProperty("script")
 	private String script;
 
 	/**
@@ -52,18 +52,18 @@ public class DataBrokerMap implements Serializable {
 		this.firstRow=firstRow;
 		this.script=script;
 	}
-    
-	////@JsonProperty("map_inputs")
+
+	//@JsonProperty("map_inputs")
 	public MapInputs[] getMapInputs() {
 		return mapInputs;
 	}
 
-	////@JsonProperty("map_inputs")
+	//@JsonProperty("map_inputs")
 	public void setMapInputs(MapInputs[] mapInputs) {
 		this.mapInputs = mapInputs;
 	}
 
-	////@JsonProperty("data_broker_type")
+	//@JsonProperty("data_broker_type")
 	public String getDataBrokerType() {
 		return dataBrokerType;
 	}
