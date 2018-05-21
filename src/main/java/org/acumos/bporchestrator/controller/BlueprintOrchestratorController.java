@@ -20,9 +20,11 @@
 
 package org.acumos.bporchestrator.controller;
 
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -42,7 +44,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.acumos.bporchestrator.controller.DSAsyncResponseRunnable;
 import org.acumos.bporchestrator.controller.DBResponseRunnable;
 import org.acumos.bporchestrator.MCAttributes;
 import org.acumos.bporchestrator.model.*;
@@ -437,23 +438,19 @@ public class BlueprintOrchestratorController {
 	 * @return byte[] : received protobuf message
 	 */
 
-	public byte[] contactdataBroker(String db_url, String db_c_name) {
+	public byte[] contactDataBroker(String db_url, String db_c_name) throws Exception {
 
 		// Find the databroker script
 		Blueprint blueprint = TaskManager.getBlueprint();
 		Node dbnode = blueprint.getNodebyContainer(db_c_name);
-		String scriptstring = dbnode.getDataBrokerMap().getScript();
 
 		logger.info("Thread {} : Notifying databroker: {}, POST: {}", Thread.currentThread().getId(), db_c_name,
 				db_url);
 
 		byte[] output3 = null;
-		try {
-			output3 = httpPost(db_url, scriptstring);
-			logger.error("Thread {} : Output of data broker is {}", Thread.currentThread().getId(), output3);
-		} catch (IOException e) {
-			logger.error("Contacting databroker failed {}", e);
-		}
+		output3 = httpGet(db_url);
+		logger.info("Thread {} : Output of data broker is {}", Thread.currentThread().getId(), output3);
+
 		return output3;
 	}
 
@@ -529,136 +526,142 @@ public class BlueprintOrchestratorController {
 		Map<String, String> dbresults = new LinkedHashMap<>();
 		TaskManager.setDockerList(dockerListReq);
 
-		Blueprint blueprint = TaskManager.getBlueprint();
-		DockerInfoList dockerList = TaskManager.getDockerList();
+		try {
 
-		// Check if blueprint and dockerList has been populated.
+			Blueprint blueprint = TaskManager.getBlueprint();
+			DockerInfoList dockerList = TaskManager.getDockerList();
 
-		if (blueprint == null) {
-			logger.error("Empty blueprint JSON");
-			return new ResponseEntity<>(dbresults, HttpStatus.PARTIAL_CONTENT);
-		}
-		if (dockerList == null) {
-			logger.error("Need Docker Information... Exiting");
-			return new ResponseEntity<>(dbresults, HttpStatus.PARTIAL_CONTENT);
-		}
+			// Check if blueprint and dockerList has been populated.
 
-		List<Node> allnodes = blueprint.getNodes();
+			if (blueprint == null) {
+				logger.error("Empty blueprint JSON");
+				return new ResponseEntity<>(dbresults, HttpStatus.PARTIAL_CONTENT);
+			}
+			if (dockerList == null) {
+				logger.error("Need Docker Information... Exiting");
+				return new ResponseEntity<>(dbresults, HttpStatus.PARTIAL_CONTENT);
+			}
 
-		// DataBroker related.
-		boolean dataBrokerPresent = false;
-		String dataBrokerContName = null;
-		ArrayList<OperationSignatureList> ListOfDataBrokerOpSigList = null;
-		String dataBrokerOperation = null;
+			List<Node> allnodes = blueprint.getNodes();
 
-		// Probe related.
-		boolean probePresent = false;
-		String probeContName = "Probe";
-		String probeOperation = "data";
-		String probeurl = null;
+			// DataBroker related.
+			boolean dataBrokerPresent = false;
+			String dataBrokerContName = null;
+			ArrayList<OperationSignatureList> ListOfDataBrokerOpSigList = null;
+			String dataBrokerOperation = null;
 
-		// Check if data broker is present in the composite solution. If yes, get its
-		// container name, and operation.
-		for (Node nd : allnodes) {
-			if (nd.getNodeType().equalsIgnoreCase("Databroker")) {
-				dataBrokerPresent = true;
-				// get its container name : to be used later.
-				dataBrokerContName = nd.getContainerName();
-				// getting its operation name : to be used later ...OR is it always get_image?
-				ListOfDataBrokerOpSigList = nd.getOperationSignatureList();
-				for (OperationSignatureList dbosl : ListOfDataBrokerOpSigList) {
-					dataBrokerOperation = dbosl.getOperationSignature().getOperationName(); // here we are assuming
-																							// databroker will have
-																							// only 1 operation.
-																							// //this can be
-																							// changed.
+			// Probe related.
+			boolean probePresent = false;
+			String probeContName = "Probe";
+			String probeOperation = "data";
+			String probeurl = null;
+
+			// Check if data broker is present in the composite solution. If yes, get its
+			// container name, and operation.
+			for (Node nd : allnodes) {
+				if (nd.getNodeType().equalsIgnoreCase("Databroker")) {
+					dataBrokerPresent = true;
+					// get its container name : to be used later.
+					dataBrokerContName = nd.getContainerName();
+					// getting its operation name : to be used later ...OR is it always get_image?
+					ListOfDataBrokerOpSigList = nd.getOperationSignatureList();
+					for (OperationSignatureList dbosl : ListOfDataBrokerOpSigList) {
+						dataBrokerOperation = dbosl.getOperationSignature().getOperationName(); // here we are assuming
+																								// databroker will have
+																								// only 1 operation.
+																								// //this can be
+																								// changed.
+					}
+					break;
 				}
-				break;
 			}
-		}
 
-		String urlBase = null;
-		String databrokerurl = null;
-		byte[] output = null;
+			String urlBase = null;
+			String databrokerurl = null;
+			byte[] output = null;
 
-		// Find the url etc. for this data broker.
-		if (dataBrokerPresent == true) {
-			DockerInfo d1 = dockerList.findDockerInfoByContainer(dataBrokerContName);
+			// Find the url etc. for this data broker.
+			if (dataBrokerPresent == true) {
+				DockerInfo d1 = dockerList.findDockerInfoByContainer(dataBrokerContName);
 
-			if (d1 == null) { // what to do if the deployer passed
-				// incomplete docker info ???
-				logger.error("Cannot find docker info about the data broker {}", dataBrokerContName);
-				dbresults.put("status", "ok");
-				return new ResponseEntity<>(dbresults, HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-			urlBase = "http://" + d1.getIpAddress() + ":" + d1.getPort() + "/";
-			databrokerurl = urlBase + dataBrokerOperation; // Is this always get_image?
-		}
-
-		// Check if Probe is present in the composite solution. If yes, get its
-		// container name, and operation. THIS PROBE DATA WILL BE USED FOR THE DATA
-		// BROKER CASE ONLY. // Checking here again because requests back
-		// to back where taking old probe related values when probe related values were
-		// made class fields.
-
-		// IN CASE OF DATA SOURCE, call to /putDockerInfo will initialize the incorrect
-		// values. Then the
-		// notify function will initialize the correct values.
-
-		ArrayList<ProbeIndicator> list_of_pb_indicators = blueprint.getProbeIndicator();
-		for (ProbeIndicator pbindicator : list_of_pb_indicators) {
-			if (pbindicator.getValue().equalsIgnoreCase("true")) {
-				probePresent = true;
-			}
-		}
-
-		// Find the url etc. for the probe
-		if (probePresent == true) {
-			DockerInfo d2 = dockerList.findDockerInfoByContainer(probeContName);
-
-			if (d2 == null) { // what to do if the deployer passed
-				// incomplete docker info ???
-				logger.error("Cannot find docker info about the probe {}", probeContName);
-				return new ResponseEntity<>(dbresults, HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-			urlBase = "http://" + d2.getIpAddress() + ":" + d2.getPort() + "/";
-			probeurl = urlBase + probeOperation;
-		}
-
-		/*
-		 * if Databroker in composite solution { make a POST request to data broker
-		 * which will send the message. This is your message}
-		 */
-
-		Node dbnode = blueprint.getNodebyContainer(dataBrokerContName);
-		if (dataBrokerPresent == true) {
-			ExecutorService service = Executors.newFixedThreadPool(1);
-			// make a POST request to the databroker and receive response
-			do {
-				output = contactdataBroker(databrokerurl, dataBrokerContName);
-				if ((output != null) && (output.length != 0)) {
-					MCAttributes mcAttributes = new MCAttributes();
-					// set the all the required attributes.
-					mcAttributes.setOutput(output);
-					mcAttributes.setCurrentNode(dbnode);
-					mcAttributes.setCurrentOperation(dataBrokerOperation);
-					mcAttributes.setProbePresent(probePresent);
-					mcAttributes.setProbeContName(probeContName);
-					mcAttributes.setProbeOperation(probeOperation);
-					mcAttributes.setProbeUrl(probeurl);
-					// create a thread with the mcAttribute objects
-					service.execute(new DBResponseRunnable(mcAttributes));
-
-					// start the thread.
-					// thread.start();
+				if (d1 == null) { // what to do if the deployer passed
+					// incomplete docker info ???
+					logger.error("Cannot find docker info about the data broker {}", dataBrokerContName);
+					dbresults.put("status", "ok");
+					return new ResponseEntity<>(dbresults, HttpStatus.INTERNAL_SERVER_ERROR);
 				}
+				urlBase = "http://" + d1.getIpAddress() + ":" + d1.getPort() + "/";
+				databrokerurl = urlBase + dataBrokerOperation; // Is this always get_image?
+			}
 
-			} while ((output != null) && (output.length != 0));
+			// Check if Probe is present in the composite solution. If yes, get its
+			// container name, and operation. THIS PROBE DATA WILL BE USED FOR THE DATA
+			// BROKER CASE ONLY. // Checking here again because requests back
+			// to back where taking old probe related values when probe related values were
+			// made class fields.
 
+			// IN CASE OF DATA SOURCE, call to /putDockerInfo will initialize the incorrect
+			// values. Then the
+			// notify function will initialize the correct values.
+
+			ArrayList<ProbeIndicator> list_of_pb_indicators = blueprint.getProbeIndicator();
+			for (ProbeIndicator pbindicator : list_of_pb_indicators) {
+				if (pbindicator.getValue().equalsIgnoreCase("true")) {
+					probePresent = true;
+				}
+			}
+
+			// Find the url etc. for the probe
+			if (probePresent == true) {
+				DockerInfo d2 = dockerList.findDockerInfoByContainer(probeContName);
+
+				if (d2 == null) { // what to do if the deployer passed
+					// incomplete docker info ???
+					logger.error("Cannot find docker info about the probe {}", probeContName);
+					return new ResponseEntity<>(dbresults, HttpStatus.INTERNAL_SERVER_ERROR);
+				}
+				urlBase = "http://" + d2.getIpAddress() + ":" + d2.getPort() + "/";
+				probeurl = urlBase + probeOperation;
+			}
+
+			/*
+			 * if Databroker in composite solution { make a POST request to data broker
+			 * which will send the message. This is your message}
+			 */
+
+			Node dbnode = blueprint.getNodebyContainer(dataBrokerContName);
+			if (dataBrokerPresent == true) {
+				ExecutorService service = Executors.newFixedThreadPool(1);
+				// make a POST request to the databroker and receive response
+				do {
+					output = contactDataBroker(databrokerurl, dataBrokerContName);
+					if ((output != null) && (output.length != 0)) {
+						MCAttributes mcAttributes = new MCAttributes();
+						// set the all the required attributes.
+						mcAttributes.setOutput(output);
+						mcAttributes.setCurrentNode(dbnode);
+						mcAttributes.setCurrentOperation(dataBrokerOperation);
+						mcAttributes.setProbePresent(probePresent);
+						mcAttributes.setProbeContName(probeContName);
+						mcAttributes.setProbeOperation(probeOperation);
+						mcAttributes.setProbeUrl(probeurl);
+						// create a thread with the mcAttribute objects
+						service.execute(new DBResponseRunnable(mcAttributes));
+
+						// start the thread.
+						// thread.start();
+					}
+
+				} while ((output != null) && (output.length != 0));
+			}
+			dbresults.put("status", "ok");
+			logger.info("Thread {} : Returning HttpStatus.OK from putDockerInfo", Thread.currentThread().getId());
+			return new ResponseEntity<>(dbresults, HttpStatus.OK);
+		} catch (Exception ex) {
+			logger.error("putDockerInfo(): failed to put dockerInfo: " + ex);
+			return new ResponseEntity<>(dbresults, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		dbresults.put("status", "ok");
-		logger.info("Thread {} : Returning HttpStatus.OK from putDockerInfo", Thread.currentThread().getId());
-		return new ResponseEntity<>(dbresults, HttpStatus.OK);
+
 	}
 
 	/**
@@ -733,13 +736,13 @@ public class BlueprintOrchestratorController {
 	 * 
 	 * @param url
 	 *            : url to get
-	 * @param the_script
+	 * @param theScript
 	 *            : actual script to be sent to the data broker.
 	 * @return : returns byte[] type
 	 * @throws IOException
 	 *             : IO exception
 	 */
-	public byte[] httpPost(String url, String the_script) throws IOException {
+	public byte[] httpPost(String url, String theScript) throws IOException {
 		URL obj = new URL(url);
 
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
@@ -747,7 +750,7 @@ public class BlueprintOrchestratorController {
 		con.setRequestMethod("POST");
 		con.setDoOutput(true);
 		DataOutputStream out = new DataOutputStream(con.getOutputStream());
-		out.writeBytes(the_script);
+		out.writeBytes(theScript);
 		out.flush();
 		out.close();
 
@@ -769,4 +772,40 @@ public class BlueprintOrchestratorController {
 
 		return new byte[0];
 	}
+
+	/*
+	 * This reads from HTTPURLConnection into the memory then return the contents of
+	 * the memory.
+	 */
+	private byte[] httpGet(String url) throws IOException {
+		HttpURLConnection con = null;
+		InputStream in = null;
+		ByteArrayOutputStream out = new ByteArrayOutputStream(8192);
+		int count;
+		try {
+			URL obj = new URL(url);
+			con = (HttpURLConnection) obj.openConnection();
+
+			con.setRequestMethod("GET");
+			int responseCode = con.getResponseCode();
+			logger.info("httpGet(): GET Response Code ::" + responseCode);
+			if (responseCode == HttpURLConnection.HTTP_OK) { // success
+				in = con.getInputStream();
+				byte[] buffer = new byte[8192];
+				while ((count = in.read(buffer)) > 0)
+					out.write(buffer, 0, count);
+
+				return out.toByteArray();
+			} else {
+				logger.error("Thread {}: ERROR:::::::GET request did not work {}", Thread.currentThread().getId(), url);
+			}
+		} catch (Exception ex) {
+			logger.error("ERROR in contactdataBroker() at time of httpGet{} call", ex);
+		} finally {
+			in.close();
+			con.getInputStream().close();
+		}
+		return new byte[0];
+	}
+
 }
