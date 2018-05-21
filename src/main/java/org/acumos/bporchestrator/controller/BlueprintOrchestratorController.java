@@ -20,8 +20,10 @@
 
 package org.acumos.bporchestrator.controller;
 
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -449,7 +451,8 @@ public class BlueprintOrchestratorController {
 
 		byte[] output3 = null;
 		try {
-			output3 = httpPost(db_url, scriptstring);
+			//output3 = httpPost(db_url, scriptstring);
+			output3 = httpGet(db_url, scriptstring);
 			logger.error("Thread {} : Output of data broker is {}", Thread.currentThread().getId(), output3);
 		} catch (IOException e) {
 			logger.error("Contacting databroker failed {}", e);
@@ -767,6 +770,38 @@ public class BlueprintOrchestratorController {
 			logger.error("Thread {}: ERROR:::::::POST request did not work {}", Thread.currentThread().getId(), url);
 		}
 
+		return new byte[0];
+	}
+	private byte[] httpGet(String url, String the_script) throws IOException {
+		HttpURLConnection con = null;
+		BufferedReader in = null;
+		try{
+			URL obj = new URL(url);
+			con = (HttpURLConnection) obj.openConnection();
+			byte[] output = null;
+			con.setRequestMethod("GET");
+			int responseCode = con.getResponseCode();
+			System.out.println("GET Response Code :: " + responseCode);
+			if (responseCode == HttpURLConnection.HTTP_OK) { // success
+				in = new BufferedReader(new InputStreamReader(
+						con.getInputStream()));
+				String inputLine;
+				StringBuffer response = new StringBuffer();
+	
+				while ((inputLine = in.readLine()) != null) {
+					response.append(inputLine);
+				}
+				output = response.toString().getBytes();
+				return output;
+			} else {
+				logger.error("Thread {}: ERROR:::::::GET request did not work {}", Thread.currentThread().getId(), url);
+			}
+		}catch(Exception ex){
+			logger.error("ERROR in contactdataBroker() at time of httpGet{} call", ex);
+		}finally{
+			in.close();
+			con.getInputStream().close();
+		}
 		return new byte[0];
 	}
 }
