@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "4480b5a0_da3e13b7",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 452,
+      "author": {
+        "id": 39
+      },
+      "writtenOn": "2018-05-23T15:54:39Z",
+      "side": 1,
+      "message": "Changed to only print out first 150 bytes",
+      "parentUuid": "7176818d_dc2c5fab",
+      "revId": "6d14e7d1b3aff6527bb5697d62637554565eb1e6",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2a4bc3ab_622d1b36",
         "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
         "patchSetId": 6
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "717787f8_7adb648d",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 537,
+      "author": {
+        "id": 39
+      },
+      "writtenOn": "2018-05-23T15:54:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2a4bc3ab_622d1b36",
+      "revId": "6d14e7d1b3aff6527bb5697d62637554565eb1e6",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e0144de7_f9243191",
         "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
         "patchSetId": 6
@@ -47,6 +83,24 @@
       "writtenOn": "2018-05-23T13:21:25Z",
       "side": 1,
       "message": "please move hard-coded string to a constant",
+      "revId": "6d14e7d1b3aff6527bb5697d62637554565eb1e6",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2dec64ba_cb638451",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 562,
+      "author": {
+        "id": 39
+      },
+      "writtenOn": "2018-05-23T15:54:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e0144de7_f9243191",
       "revId": "6d14e7d1b3aff6527bb5697d62637554565eb1e6",
       "serverId": "655300a2-7a56-4504-9153-881edd907bea",
       "unresolved": false
@@ -76,6 +130,30 @@
     },
     {
       "key": {
+        "uuid": "4c4b447b_cd74c451",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 573,
+      "author": {
+        "id": 39
+      },
+      "writtenOn": "2018-05-23T15:54:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "82d2e244_ea283854",
+      "range": {
+        "startLine": 570,
+        "startChar": 0,
+        "endLine": 573,
+        "endChar": 35
+      },
+      "revId": "6d14e7d1b3aff6527bb5697d62637554565eb1e6",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "835fbaec_c85604cf",
         "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
         "patchSetId": 6
@@ -87,6 +165,24 @@
       "writtenOn": "2018-05-23T13:21:25Z",
       "side": 1,
       "message": "What if it\u0027s https ??   This seems questionable",
+      "revId": "6d14e7d1b3aff6527bb5697d62637554565eb1e6",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b5010b66_680f024b",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 593,
+      "author": {
+        "id": 39
+      },
+      "writtenOn": "2018-05-23T15:54:39Z",
+      "side": 1,
+      "message": "I believe currently it\u0027s http.",
+      "parentUuid": "835fbaec_c85604cf",
       "revId": "6d14e7d1b3aff6527bb5697d62637554565eb1e6",
       "serverId": "655300a2-7a56-4504-9153-881edd907bea",
       "unresolved": false
@@ -110,6 +206,24 @@
     },
     {
       "key": {
+        "uuid": "4000e6a6_242d7daa",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 623,
+      "author": {
+        "id": 39
+      },
+      "writtenOn": "2018-05-23T15:54:39Z",
+      "side": 1,
+      "message": "The same as above",
+      "parentUuid": "bec04c44_fe7c9d57",
+      "revId": "6d14e7d1b3aff6527bb5697d62637554565eb1e6",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9fab3f9e_557f25fd",
         "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
         "patchSetId": 6
@@ -121,6 +235,24 @@
       "writtenOn": "2018-05-23T13:21:25Z",
       "side": 1,
       "message": "remove don\u0027t comment out",
+      "revId": "6d14e7d1b3aff6527bb5697d62637554565eb1e6",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2de179a3_ef35199a",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 652,
+      "author": {
+        "id": 39
+      },
+      "writtenOn": "2018-05-23T15:54:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9fab3f9e_557f25fd",
       "revId": "6d14e7d1b3aff6527bb5697d62637554565eb1e6",
       "serverId": "655300a2-7a56-4504-9153-881edd907bea",
       "unresolved": false
@@ -144,6 +276,24 @@
     },
     {
       "key": {
+        "uuid": "1cf6fe23_0a798d6b",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 752,
+      "author": {
+        "id": 39
+      },
+      "writtenOn": "2018-05-23T15:54:39Z",
+      "side": 1,
+      "message": "Changed to use OutputStreamWriter which writes \"text\" to the underlying OutputStream",
+      "parentUuid": "a7b9b295_0d286cdd",
+      "revId": "6d14e7d1b3aff6527bb5697d62637554565eb1e6",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8c999224_c9b97205",
         "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
         "patchSetId": 6
@@ -155,6 +305,24 @@
       "writtenOn": "2018-05-23T13:21:25Z",
       "side": 1,
       "message": "I don\u0027t think you should catch - I think you should use try/finally and let the exception come thru.",
+      "revId": "6d14e7d1b3aff6527bb5697d62637554565eb1e6",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "18c36ef4_0717de87",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 803,
+      "author": {
+        "id": 39
+      },
+      "writtenOn": "2018-05-23T15:54:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8c999224_c9b97205",
       "revId": "6d14e7d1b3aff6527bb5697d62637554565eb1e6",
       "serverId": "655300a2-7a56-4504-9153-881edd907bea",
       "unresolved": false
