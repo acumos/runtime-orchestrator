@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "84cb4fb9_9cc8cc80",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 779,
+      "author": {
+        "id": 39
+      },
+      "writtenOn": "2018-05-23T15:54:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c9306c22_c8437720",
+      "revId": "d4f2f536097aa2f83ce8a5e1dfd553a3967da6d1",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e6e7de66_45da1f3f",
         "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
         "patchSetId": 4
@@ -30,6 +48,30 @@
       "writtenOn": "2018-05-22T19:25:05Z",
       "side": 1,
       "message": "use logger not system.out",
+      "range": {
+        "startLine": 788,
+        "startChar": 0,
+        "endLine": 788,
+        "endChar": 62
+      },
+      "revId": "d4f2f536097aa2f83ce8a5e1dfd553a3967da6d1",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "641bdf40_a06baf7a",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 788,
+      "author": {
+        "id": 39
+      },
+      "writtenOn": "2018-05-23T15:54:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e6e7de66_45da1f3f",
       "range": {
         "startLine": 788,
         "startChar": 0,
