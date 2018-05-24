@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "622aea92_3fa8cf00",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 289,
+      "author": {
+        "id": 39
+      },
+      "writtenOn": "2018-05-24T15:50:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bf76b4a1_a0566605",
+      "revId": "186119d99ae6d1773459310b288ffd813666c543",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2f54acb7_0c243a1a",
         "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
         "patchSetId": 9
@@ -30,6 +48,24 @@
       "writtenOn": "2018-05-24T12:34:08Z",
       "side": 1,
       "message": "Remove {} that\u0027s not used here",
+      "revId": "186119d99ae6d1773459310b288ffd813666c543",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "59951304_d72efeb8",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 340,
+      "author": {
+        "id": 39
+      },
+      "writtenOn": "2018-05-24T15:50:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2f54acb7_0c243a1a",
       "revId": "186119d99ae6d1773459310b288ffd813666c543",
       "serverId": "655300a2-7a56-4504-9153-881edd907bea",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "cfb99960_ad808663",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 390,
+      "author": {
+        "id": 39
+      },
+      "writtenOn": "2018-05-24T15:50:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cffe2995_82ae7d85",
+      "revId": "186119d99ae6d1773459310b288ffd813666c543",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b1c9199a_9b3ec69f",
         "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
         "patchSetId": 9
@@ -64,6 +118,24 @@
       "writtenOn": "2018-05-24T12:34:08Z",
       "side": 1,
       "message": "I don\u0027t think this works as you expect - I think you want to use the signature that has (string, throwable) and not (string, Object []).  Drop name, just log exception.",
+      "revId": "186119d99ae6d1773459310b288ffd813666c543",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9e592518_9709888d",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 420,
+      "author": {
+        "id": 39
+      },
+      "writtenOn": "2018-05-24T15:50:08Z",
+      "side": 1,
+      "message": "Not my doing, but done changes",
+      "parentUuid": "b1c9199a_9b3ec69f",
       "revId": "186119d99ae6d1773459310b288ffd813666c543",
       "serverId": "655300a2-7a56-4504-9153-881edd907bea",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "aba2e54d_4aa2f4af",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 449,
+      "author": {
+        "id": 39
+      },
+      "writtenOn": "2018-05-24T15:50:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "982115f0_df130211",
+      "revId": "186119d99ae6d1773459310b288ffd813666c543",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7ad20bda_216f1d45",
         "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
         "patchSetId": 9
@@ -104,6 +194,24 @@
     },
     {
       "key": {
+        "uuid": "1912ad08_5cd14482",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 634,
+      "author": {
+        "id": 39
+      },
+      "writtenOn": "2018-05-24T15:50:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7ad20bda_216f1d45",
+      "revId": "186119d99ae6d1773459310b288ffd813666c543",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "afb0b286_2a20f14f",
         "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
         "patchSetId": 9
@@ -115,6 +223,24 @@
       "writtenOn": "2018-05-24T12:34:08Z",
       "side": 1,
       "message": "be sure to guard against in being null - if the connection cannot be established you\u0027ll land here with in \u003d\u003d null\n\nOut is a memory construct, doesn\u0027t need to be closed, but it doesn\u0027t hurt",
+      "revId": "186119d99ae6d1773459310b288ffd813666c543",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7c0bffc0_30a0a348",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 808,
+      "author": {
+        "id": 39
+      },
+      "writtenOn": "2018-05-24T15:50:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "afb0b286_2a20f14f",
       "revId": "186119d99ae6d1773459310b288ffd813666c543",
       "serverId": "655300a2-7a56-4504-9153-881edd907bea",
       "unresolved": false
