@@ -59,11 +59,9 @@ import org.acumos.bporchestrator.controller.FinalResults;
 
 /**
  * Rest Controller that handles the API end points
- * 
- * @param <T>
  */
 @RestController
-public class BlueprintOrchestratorController<T> {
+public class BlueprintOrchestratorController {
 
 	private static final Logger logger = LoggerFactory.getLogger(BlueprintOrchestratorController.class);
 	private static final String DATABROKER = "Databroker";
@@ -226,6 +224,8 @@ public class BlueprintOrchestratorController<T> {
 	 * @param prburl
 	 *            Probe's url if Probe is present
 	 * @return byte[] output stream
+	 * @throws Exception
+	 *             : Exception
 	 */
 	public byte[] notifyNextNode(byte[] output, Node n, String oprn, boolean prbpresent, String prbcontainername,
 			String prboperation, String prburl) throws Exception {
@@ -430,6 +430,8 @@ public class BlueprintOrchestratorController<T> {
 	 * @param db_c_name
 	 *            : url of the databroker
 	 * @return byte[] : received protobuf message
+	 * @throws Exception
+	 *             : Exception
 	 */
 
 	public byte[] contactDataBroker(String db_url, String db_c_name) throws Exception {
@@ -446,8 +448,8 @@ public class BlueprintOrchestratorController<T> {
 		output3 = httpGet(db_url);
 
 		// Print out partial output from Data Broker
-		logger.info("contactDataBroker: Thread " +  Thread.currentThread().getId() + " : " +  output3.length + 
-				" bytes read from DataBroker");
+		logger.info("contactDataBroker: Thread " + Thread.currentThread().getId() + " : " + output3.length
+				+ " bytes read from DataBroker");
 
 		return output3;
 	}
@@ -805,9 +807,9 @@ public class BlueprintOrchestratorController<T> {
 				throw new Exception("GET " + url + " request did not work");
 			}
 		} finally {
-			if(in != null)
+			if (in != null)
 				in.close();
-			
+
 			out.close();
 		}
 	}

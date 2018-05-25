@@ -44,13 +44,13 @@ public class DataBrokerMap implements Serializable {
 	public DataBrokerMap(String dataBrokerType, String csvFileFieldSeparator, String targetSystemUrl,
 			MapOutputs[] mapOutputs, String localSystemDataFilePath, String firstRow, String script) {
 		super();
-		this.dataBrokerType=dataBrokerType;
-		this.csvFileFieldSeparator= csvFileFieldSeparator;
-		this.targetSystemUrl= targetSystemUrl;
-		this.mapOutputs=mapOutputs;
-		this.localSystemDataFilePath=localSystemDataFilePath;
-		this.firstRow=firstRow;
-		this.script=script;
+		this.dataBrokerType = dataBrokerType;
+		this.csvFileFieldSeparator = csvFileFieldSeparator;
+		this.targetSystemUrl = targetSystemUrl;
+		this.mapOutputs = mapOutputs;
+		this.localSystemDataFilePath = localSystemDataFilePath;
+		this.firstRow = firstRow;
+		this.script = script;
 	}
 
 	@JsonProperty("map_inputs")
@@ -93,12 +93,12 @@ public class DataBrokerMap implements Serializable {
 		this.targetSystemUrl = targetSystemUrl;
 	}
 
-	@JsonProperty("container_name")
+	@JsonProperty("map_outputs")
 	public MapOutputs[] getMapOutputs() {
 		return mapOutputs;
 	}
 
-	@JsonProperty("container_name")
+	@JsonProperty("map_outputs")
 	public void setMapOutputs(MapOutputs[] mapOutputs) {
 		this.mapOutputs = mapOutputs;
 	}
