@@ -63,7 +63,7 @@ import org.acumos.bporchestrator.controller.FinalResults;
  * @param <T>
  */
 @RestController
-public class BlueprintOrchestratorController<T> {
+public class BlueprintOrchestratorController {
 
 	private static final Logger logger = LoggerFactory.getLogger(BlueprintOrchestratorController.class);
 	private static final String DATABROKER = "Databroker";
@@ -446,8 +446,8 @@ public class BlueprintOrchestratorController<T> {
 		output3 = httpGet(db_url);
 
 		// Print out partial output from Data Broker
-		logger.info("contactDataBroker: Thread " +  Thread.currentThread().getId() + " : " +  output3.length + 
-				" bytes read from DataBroker");
+		logger.info("contactDataBroker: Thread " + Thread.currentThread().getId() + " : " + output3.length
+				+ " bytes read from DataBroker");
 
 		return output3;
 	}
@@ -805,9 +805,9 @@ public class BlueprintOrchestratorController<T> {
 				throw new Exception("GET " + url + " request did not work");
 			}
 		} finally {
-			if(in != null)
+			if (in != null)
 				in.close();
-			
+
 			out.close();
 		}
 	}
