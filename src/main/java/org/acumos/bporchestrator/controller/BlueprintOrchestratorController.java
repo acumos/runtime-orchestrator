@@ -109,7 +109,8 @@ public class BlueprintOrchestratorController {
 		// Check if blueprint and dockerList has been populated.
 		try {
 			logger.info("****************************************************************************");
-			logger.info("notify: Receiving /{} request: {}", operation, Arrays.toString(binaryStream));
+			logger.info("notify: Receiving /{} request: {}", operation,
+					(Arrays.toString(binaryStream)).substring(0, 20));
 			if (blueprint == null) {
 				logger.error("notify: Empty blueprint JSON");
 				return new ResponseEntity<>(finalresults, HttpStatus.PARTIAL_CONTENT);
@@ -191,7 +192,7 @@ public class BlueprintOrchestratorController {
 			 */
 			if (probePresent == true) {
 				logger.info("notify: Notifying PROBE for node name: {}, inp msg name: {} , msg: {}",
-						inpnode.getContainerName(), inpmsgname, binaryStream);
+						inpnode.getContainerName(), inpmsgname, Arrays.toString(binaryStream).substring(0, 20));
 
 				byte[] out = contactProbe(binaryStream, probeurl, probeContName, inpmsgname, inpnode);
 			}
@@ -308,7 +309,8 @@ public class BlueprintOrchestratorController {
 					try {
 						logger.info(
 								"notifyNextNode: Thread {} : Notifying PROBE for node name: {}, inp msg name: {} , msg: {}",
-								Thread.currentThread().getId(), depcontainername, depinpmsgname, depoutput);
+								Thread.currentThread().getId(), depcontainername, depinpmsgname,
+								(Arrays.toString(depoutput)).substring(0, 20));
 
 						byte[] probeout = contactProbe(depoutput, prburl, depcontainername, depinpmsgname, depnode);
 					} catch (IOException e) {
@@ -324,7 +326,8 @@ public class BlueprintOrchestratorController {
 
 						logger.info(
 								"notifyNextNode: Thread {} : Notifying PROBE for node name: {}, inp msg name: {} , msg: {}",
-								Thread.currentThread().getId(), depcontainername, depinpmsgname, depoutput);
+								Thread.currentThread().getId(), depcontainername, depinpmsgname,
+								(Arrays.toString(depoutput)).substring(0, 20));
 
 						byte[] probeout = contactProbe(depoutput, prburl, depcontainername, depinpmsgname, depnode);
 					} catch (IOException e) {
@@ -333,7 +336,8 @@ public class BlueprintOrchestratorController {
 					try {
 						logger.info(
 								"notifyNextNode: Thread {} : Notifying PROBE for node name: {}, out msg name: {} , msg: {}",
-								Thread.currentThread().getId(), depcontainername, depoutmsgname, depoutput2);
+								Thread.currentThread().getId(), depcontainername, depoutmsgname,
+								(Arrays.toString(depoutput2)).substring(0, 20));
 
 						byte[] probeout2 = contactProbe(depoutput2, prburl, depcontainername, depoutmsgname, depnode);
 					} catch (IOException e) {

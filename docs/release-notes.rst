@@ -23,6 +23,10 @@ Runtime Orchestrator Release Notes
 
 The server is deployed within a Docker image.
 
+Version 1.0.11 June 2018
+------------------------
+* Remove binary message from the logs.
+
 Version 1.0.10 May 21, 2018
 ---------------------------
 * Use http GET to contact Data Broker as per Data Broker API changes.
