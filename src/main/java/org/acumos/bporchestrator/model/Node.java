@@ -51,6 +51,9 @@ public class Node implements Serializable {
 	@JsonProperty("data_broker_map")
 	private DataBrokerMap dataBrokerMap;
 
+	@JsonProperty("collator_map")
+	private CollatorMap collatorMap;
+
 	/**
 	 * Standard POJO no-arg constructor
 	 */
@@ -79,10 +82,12 @@ public class Node implements Serializable {
 	 *            TrainingClient or Probe
 	 * @param dataBrokerMap
 	 *            Data broker info data structure.
+	 * @param collatorMap
+	 * 			  Collator info structure
 	 */
 	public Node(String container, String nodeType, String image, String protoUri,
 			ArrayList<OperationSignatureList> operationSignatureList, String script, MappingTable mappingTable,
-			List<DataSource> dataSources, DataBrokerMap dataBrokerMap) {
+			List<DataSource> dataSources, DataBrokerMap dataBrokerMap, CollatorMap collatorMap) {
 		super();
 		this.container = container;
 		this.nodeType = nodeType;
@@ -91,6 +96,7 @@ public class Node implements Serializable {
 		this.operationSignatureList = operationSignatureList;
 		this.dataSources = dataSources;
 		this.dataBrokerMap = dataBrokerMap;
+		this.collatorMap = collatorMap;
 	}
 
 	@JsonProperty("container_name")
@@ -163,10 +169,20 @@ public class Node implements Serializable {
 		this.dataBrokerMap = dataBrokerMap;
 	}
 
+	@JsonProperty("collator_map")
+	public CollatorMap getCollatorMap() {
+		return collatorMap;
+	}
+
+	@JsonProperty("collator_map")
+	public void setCollatorMap(CollatorMap collatorMap) {
+		this.collatorMap = collatorMap;
+	}
+
 	@Override
 	public String toString() {
 		return "Node [container=" + container + ", image=" + image + ", protoUri=" + protoUri + ", nodeType=" + nodeType
-				+ ", dataBrokerMap=" + dataBrokerMap + "]";
+				+ ", dataBrokerMap=" + dataBrokerMap + ",collatorMap=" + collatorMap + "]";
 	}
 
 }

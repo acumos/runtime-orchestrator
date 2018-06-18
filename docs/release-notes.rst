@@ -23,6 +23,14 @@ Runtime Orchestrator Release Notes
 
 The server is deployed within a Docker image.
 
+
+Version 1.0.12 June 2018
+------------------------
+* Support for Split and Join using Array based Collation
+* Introducing Array based Splitter
+* Introducing Collator
+* Probe calling code refactored
+
 Version 1.0.11 June 2018
 ------------------------
 * Remove binary message from the logs.

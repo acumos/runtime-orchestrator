@@ -5,7 +5,7 @@
 
 	<groupId>org.acumos.runtime-orchestrator</groupId>
 	<artifactId>blueprint-orchestrator</artifactId>
-	<version>1.0.11-SNAPSHOT</version>
+	<version>1.0.12-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>BlueprintOrchestrator</name>
@@ -55,6 +55,11 @@
 			<artifactId>swagger-jersey2-jaxrs</artifactId>
 			<version>1.5.9</version>
 		</dependency>
+		<dependency>
+			<groupId>com.google.protobuf</groupId>
+			<artifactId>protobuf-java</artifactId>
+			<version>3.4.0</version>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
@@ -100,6 +105,23 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-autoconfigure</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.att.eelf</groupId>
+			<artifactId>eelf-core</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<!-- For Dynamic protobuf message construction -->
+		<dependency>
+			<groupId>com.google.protobuf</groupId>
+			<artifactId>protobuf-java</artifactId>
+			<version>3.3.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.os72</groupId>
+			<artifactId>protobuf-dynamic</artifactId>
+			<version>0.9.4</version>
 		</dependency>
 	</dependencies>
 
