@@ -1,0 +1,187 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "56b464ba_8ffc1afe",
+        "filename": "src/main/java/org/acumos/bporchestrator/collator/vo/Result.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-19T15:01:13Z",
+      "side": 1,
+      "message": "Suggest choosing a more descriptive name; this is wildly generic",
+      "range": {
+        "startLine": 23,
+        "startChar": 13,
+        "endLine": 23,
+        "endChar": 19
+      },
+      "revId": "a4f1314db3e5a604c23094f836691daf77d207e6",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "215d4562_d4b9b9d7",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 811,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-19T15:01:13Z",
+      "side": 1,
+      "message": "Use logger!",
+      "range": {
+        "startLine": 811,
+        "startChar": 5,
+        "endLine": 811,
+        "endChar": 22
+      },
+      "revId": "a4f1314db3e5a604c23094f836691daf77d207e6",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9d969b24_4d5c4f86",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 813,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-19T15:01:13Z",
+      "side": 1,
+      "message": "Please use logger",
+      "range": {
+        "startLine": 813,
+        "startChar": 4,
+        "endLine": 813,
+        "endChar": 21
+      },
+      "revId": "a4f1314db3e5a604c23094f836691daf77d207e6",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "35e7c298_2671a555",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/CallMultipleModelParallely.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-19T15:01:13Z",
+      "side": 1,
+      "message": "Missing license header",
+      "revId": "a4f1314db3e5a604c23094f836691daf77d207e6",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "97cb92b1_9ff41453",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/CallMultipleModelParallely.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-19T15:01:13Z",
+      "side": 1,
+      "message": "Document what this should do",
+      "range": {
+        "startLine": 12,
+        "startChar": 13,
+        "endLine": 12,
+        "endChar": 39
+      },
+      "revId": "a4f1314db3e5a604c23094f836691daf77d207e6",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "93f2af11_92633312",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/TestCollatorController.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-19T15:01:13Z",
+      "side": 1,
+      "message": "Add license header pls",
+      "revId": "a4f1314db3e5a604c23094f836691daf77d207e6",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "076048f9_a350ff78",
+        "filename": "src/main/java/org/acumos/bporchestrator/model/CollatorMap.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-19T15:01:13Z",
+      "side": 1,
+      "message": "Add license header pls",
+      "revId": "a4f1314db3e5a604c23094f836691daf77d207e6",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "81650194_3af5edfe",
+        "filename": "src/main/java/org/acumos/bporchestrator/model/CollatorMap.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-19T15:01:13Z",
+      "side": 1,
+      "message": "Does this DUPLICATE the Java POJO class defined in Design Studio backend?",
+      "range": {
+        "startLine": 10,
+        "startChar": 13,
+        "endLine": 10,
+        "endChar": 24
+      },
+      "revId": "a4f1314db3e5a604c23094f836691daf77d207e6",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "51c849c3_ca665c09",
+        "filename": "src/main/java/org/acumos/bporchestrator/model/OutputField.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-19T15:01:13Z",
+      "side": 1,
+      "message": "Does this replicate the same changes made in the DesignStudio POJO class?",
+      "revId": "a4f1314db3e5a604c23094f836691daf77d207e6",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    }
+  ]
+}
