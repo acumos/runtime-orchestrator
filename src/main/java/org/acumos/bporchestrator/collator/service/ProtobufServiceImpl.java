@@ -8,9 +8,9 @@
  * under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *  
+ * 
  * This file is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
@@ -65,7 +65,7 @@ public class ProtobufServiceImpl implements ProtobufService {
 
 	/**
 	 * This method process the protobuf and sets the details.
-	 * 
+	 *
 	 * @throws Exception
 	 *             In case of any exception, this method throws Exception
 	 */
@@ -77,6 +77,7 @@ public class ProtobufServiceImpl implements ProtobufService {
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			throw e;
 
 		}
 	}
@@ -84,10 +85,11 @@ public class ProtobufServiceImpl implements ProtobufService {
 	/**
 	 * This method return the Protobuf Class set from the configuration details
 	 * using API /configDB.
-	 * 
+	 *
 	 * @return Protobuf This method returns Protobuf
 	 * @throws Exception
-	 *             In case of any exception, this method throws the ServiceException
+	 *             In case of any exception, this method throws the
+	 *             ServiceException
 	 */
 	public Protobuf getProtobuf() throws Exception {
 		if (null == protobuf) {
@@ -99,7 +101,7 @@ public class ProtobufServiceImpl implements ProtobufService {
 	/**
 	 * This method converters the ASCII data (input line) into protobuf binary
 	 * format for the specified message name.
-	 * 
+	 *
 	 * @param messageName
 	 *            This method accepts messageName
 	 * @param line
@@ -124,7 +126,7 @@ public class ProtobufServiceImpl implements ProtobufService {
 	/**
 	 * This method read the protobuf binary formatted data (i.e., line) into
 	 * specified message.
-	 * 
+	 *
 	 * @param messageName
 	 *            This method accepts messageName
 	 * @param line
@@ -151,6 +153,9 @@ public class ProtobufServiceImpl implements ProtobufService {
 		byte[] result = null;
 
 		String collatorType = conf.getCollator_type();
+		if (null == collatorType && collatorType.isEmpty()) {
+			throw new NullPointerException("CollatorType should not be null");
+		}
 
 		if (collatorType.equals("Array-based")) {
 			org.acumos.bporchestrator.collator.vo.ProtobufService rpc = protobuf.getService();
@@ -173,11 +178,12 @@ public class ProtobufServiceImpl implements ProtobufService {
 			DynamicMessage.Builder childOutputMsgBuilder = protobufSchema.newMessageBuilder(childOutputMsgName);
 			Descriptor childOutputMDesc = childOutputMsgBuilder.getDescriptorForType();
 			DynamicMessage dynamicChildOutputMsg = null;
-
-			for (byte[] b : listOfProtobufmsgs) {
-				dynamicChildOutputMsg = DynamicMessage.parseFrom(childOutputMDesc, b);
-				parentOutputMsgBuilder.addRepeatedField(parentOutpuMsgDesc.findFieldByName(parentField.getName()),
-						dynamicChildOutputMsg);
+			if (null != listOfProtobufmsgs && !listOfProtobufmsgs.isEmpty()) {
+				for (byte[] b : listOfProtobufmsgs) {
+					dynamicChildOutputMsg = DynamicMessage.parseFrom(childOutputMDesc, b);
+					parentOutputMsgBuilder.addRepeatedField(parentOutpuMsgDesc.findFieldByName(parentField.getName()),
+							dynamicChildOutputMsg);
+				}
 			}
 			dynamicOutputMsg = parentOutputMsgBuilder.build();
 			result = dynamicOutputMsg.toByteArray();
@@ -199,7 +205,8 @@ public class ProtobufServiceImpl implements ProtobufService {
 		List<ProtobufMessageField> fields = null;
 
 		List<ProtobufMessage> messages = protobuf.getMessages();
-		for (ProtobufMessage msg : messages) { // add MessageDefinition to msgDefinitions
+		for (ProtobufMessage msg : messages) { // add MessageDefinition to
+			// msgDefinitions
 			builder = MessageDefinition.newBuilder(msg.getName());
 			fields = msg.getFields();
 			for (ProtobufMessageField f : fields) {
@@ -232,7 +239,8 @@ public class ProtobufServiceImpl implements ProtobufService {
 		List<ProtobufMessageField> fields = null;
 
 		List<ProtobufMessage> messages = protobuf.getMessages();
-		for (ProtobufMessage msg : messages) { // add MessageDefinition to msgDefinitions
+		for (ProtobufMessage msg : messages) { // add MessageDefinition to
+			// msgDefinitions
 			builder = MessageDefinition.newBuilder(msg.getName());
 			fields = msg.getFields();
 			for (ProtobufMessageField f : fields) {
@@ -285,9 +293,9 @@ public class ProtobufServiceImpl implements ProtobufService {
 
 	/**
 	 * This method process the data structure collection, collection, .... e.g.
-	 * [1,2,3],[4,5,6],1,2,3 and first two fields might be part of nested structure
-	 * and might be repeated.
-	 * 
+	 * [1,2,3],[4,5,6],1,2,3 and first two fields might be part of nested
+	 * structure and might be repeated.
+	 *
 	 * @param messageName
 	 *            This method accepts messageName
 	 * @param field
@@ -307,7 +315,10 @@ public class ProtobufServiceImpl implements ProtobufService {
 
 		if (Constants.PROTOBUF_DATA_TYPE.contains(fieldType)) {
 			int mappedColumn = getMappedColumn(messageName, field);
-			Object input = getValue(mappedColumn, line); // get the corresponding input value from the line
+			Object input = getValue(mappedColumn, line); // get the
+			// corresponding
+			// input value from
+			// the line
 			// Convert the input value in to list of objects
 			List<Object> inputs = getObjectList(input, fieldType);
 			for (Object o : inputs) {
@@ -369,14 +380,19 @@ public class ProtobufServiceImpl implements ProtobufService {
 				int start = 0;
 				int end = 0;
 				for (int i = 0; i < chars.length; i++) {
-					if (Constants.BEGIN_PARENTHESIS.indexOf(chars[i]) >= 0) { // begin paranthesis, push to stack
+					if (Constants.BEGIN_PARENTHESIS.indexOf(chars[i]) >= 0) { // begin
+						// paranthesis,
+						// push
+						// to
+						// stack
 						if (parenthesis.isEmpty()) {
 							start = i;
 						}
 						parenthesis.push(String.valueOf(chars[i]));
 					} else if (Constants.END_PARENTHESIS.indexOf(chars[i]) >= 0) {
 						parenthesis.pop();
-						// if paranthesis stack is empty then get the input string
+						// if paranthesis stack is empty then get the input
+						// string
 						if (parenthesis.isEmpty()) {
 							end = i;
 							String v = val.substring(start + 1, end);
@@ -453,7 +469,11 @@ public class ProtobufServiceImpl implements ProtobufService {
 		String v = "";
 		List<String> columns = new ArrayList<String>();
 		for (int i = 0; i < chars.length; i++) {
-			if (Constants.BEGIN_PARENTHESIS.indexOf(chars[i]) >= 0) { // begin parenthesis, push to stack
+			if (Constants.BEGIN_PARENTHESIS.indexOf(chars[i]) >= 0) { // begin
+				// parenthesis,
+				// push
+				// to
+				// stack
 				if (parenthesis.isEmpty()) {
 					start = i;
 				}
