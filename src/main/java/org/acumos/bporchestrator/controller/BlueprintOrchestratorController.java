@@ -23,16 +23,17 @@ package org.acumos.bporchestrator.controller;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -71,7 +72,7 @@ import org.acumos.bporchestrator.controller.FinalResults;
  */
 @RestController
 // Uncomment @RequestMapping to enable swagger
-// @RequestMapping(value = "/mc/blueprintorchestrator/")
+//@RequestMapping(value = "/mc/blueprintorchestrator/")
 
 public class BlueprintOrchestratorController {
 
@@ -82,42 +83,56 @@ public class BlueprintOrchestratorController {
 	private ProtobufService protoService;
 
 	/**
-	 *
+	 * The MC is triggerred by a /{operation} request. The requester also sends
+	 * the protobuf binary message.
+	 * 
+	 * @param <T>
+	 *            Generic
 	 * @param binaryStream
 	 *            This is the binary stream from the data source
 	 * @param operation
 	 *            This specifies the input_operation_signature of the runtime
 	 *            orchestrator should invoke on the first node based on
 	 *            blueprint.json
-	 * @return Byte stream
+	 * @return The correct response on the error message
 	 */
-
-	// The MC is triggerred by a /{operation} request. The requester also sends
-	// the
-	// protobuf binary message.
 
 	@ApiOperation(value = "operation on the first node in the chain", response = byte.class, responseContainer = "Page")
 	@RequestMapping(path = "/{operation}", method = RequestMethod.POST)
-	public ResponseEntity<byte[]> notify(
+	public <T> ResponseEntity<T> notify(
 			@ApiParam(value = "Inital request to start deploying... This binary stream is in protobuf format.", required = false) @Valid @RequestBody byte[] binaryStream,
 			@ApiParam(value = "This operation should match with one of the input operation signatures in blueprint.json", required = true) @PathVariable("operation") String operation) {
 
-		byte[] finalresults = null;
+		byte[] finalResults = null;
 
 		Blueprint blueprint = TaskManager.getBlueprint();
 		DockerInfoList dockerList = TaskManager.getDockerList();
-		;
 
+		// clear the connecttimeout models list
+		if (TaskManager.getListofsocketimoutmodels() != null && !TaskManager.getListofsocketimoutmodels().isEmpty()) {
+			TaskManager.getListofsocketimoutmodels().clear();
+		}
+
+		// clear the Final results
+		if (TaskManager.getFinalResults() != null && (TaskManager.getFinalResults().getMsgname() != null)) {
+			FinalResults f0 = TaskManager.getFinalResults();
+			f0.setMsgname("Begin");
+			f0.setFinalresults(null);
+			TaskManager.setFinalResults(f0);
+		}
 		// Probe related.
 		boolean probePresent = false;
 
 		String probeContName = "Probe";
 		String probeOperation = "data";
-		String probeurl = null;
+		String probeUrl = null;
 
 		// Input node related
-		String inpcontainer = null;
-		String inpoperation = null;
+		String inpContainer = null;
+		String inpOperation = null;
+
+		// Bad execution message
+		String badExecutionMsg = null;
 
 		// On receiving this request, the data source is blocked.
 		// We will need to unblock it only when we receive output from the first
@@ -130,12 +145,12 @@ public class BlueprintOrchestratorController {
 					(Arrays.toString(binaryStream)).substring(0, 20));
 			if (blueprint == null) {
 				logger.error("notify: Empty blueprint JSON");
-				return new ResponseEntity<>(finalresults, HttpStatus.PARTIAL_CONTENT);
+				return (ResponseEntity<T>) new ResponseEntity<>(finalResults, HttpStatus.PARTIAL_CONTENT);
 
 			}
 			if (dockerList == null) {
 				logger.error("notify: Need Docker Information... Exiting");
-				return new ResponseEntity<>(finalresults, HttpStatus.PARTIAL_CONTENT);
+				return (ResponseEntity<T>) new ResponseEntity<>(finalResults, HttpStatus.PARTIAL_CONTENT);
 			}
 
 			List<InputPort> inps = blueprint.getInputPorts();
@@ -161,49 +176,83 @@ public class BlueprintOrchestratorController {
 				if (d2 == null) { // what to do if the deployer passed
 					// incomplete docker info ???
 					logger.error("notify: Cannot find docker info about the probe {}", probeContName);
-					return new ResponseEntity<>(finalresults, HttpStatus.INTERNAL_SERVER_ERROR);
+					return (ResponseEntity<T>) new ResponseEntity<>(finalResults, HttpStatus.INTERNAL_SERVER_ERROR);
 				}
 
 				URIBuilder builder = new URIBuilder();
 				builder.setScheme("http").setHost(d2.getIpAddress()).setPort(new Integer(d2.getPort()).intValue())
-				.setPath("/" + probeOperation);
+						.setPath("/" + probeOperation);
 
-				probeurl = builder.build().toURL().toString();
+				probeUrl = builder.build().toURL().toString();
 			}
 
 			// Now call the input node and its operation signature.
 			for (InputPort inport : inps) {
 				if (inport.getOperationSignature().getOperationName().equals(operation)) {
-					inpcontainer = inport.getContainerName();
-					inpoperation = operation;
+					inpContainer = inport.getContainerName();
+					inpOperation = operation;
 					break;
 
 				}
 			}
 
-			String inpmsgname = null;
+			String inpMsgName = null;
 
-			Node inpnode = blueprint.getNodebyContainer(inpcontainer);
-			ArrayList<OperationSignatureList> inplosl = inpnode.getOperationSignatureList();
+			Node inpNode = blueprint.getNodebyContainer(inpContainer);
+			ArrayList<OperationSignatureList> inplosl = inpNode.getOperationSignatureList();
 			for (OperationSignatureList inposl : inplosl) {
-				inpmsgname = inposl.getOperationSignature().getInputMessageName();
+				inpMsgName = inposl.getOperationSignature().getInputMessageName();
 				break;
 			}
 
-			DockerInfo d2 = dockerList.findDockerInfoByContainer(inpcontainer);
+			DockerInfo d2 = dockerList.findDockerInfoByContainer(inpContainer);
 
 			if (d2 == null) { // what to do if the deployer passed
 				// incomplete docker info ???
-				logger.error("notify: Cannot find docker info about the dontainer {}", inpcontainer);
-				return new ResponseEntity<>(finalresults, HttpStatus.INTERNAL_SERVER_ERROR);
+				logger.error("notify: Cannot find docker info about the dontainer {}", inpContainer);
+				return (ResponseEntity<T>) new ResponseEntity<>(finalResults, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 
 			URIBuilder builder = new URIBuilder();
 			builder.setScheme("http").setHost(d2.getIpAddress()).setPort(new Integer(d2.getPort()).intValue())
-			.setPath("/" + inpoperation);
+					.setPath("/" + inpOperation);
 
-			String inpurl = builder.build().toURL().toString();
-			output = contactnode(binaryStream, inpurl, inpcontainer);
+			boolean singleModel = false;
+
+			// Check if the input node has any dependencies? if no, set
+			// singlemodel to true.
+			ArrayList<ConnectedTo> inpNodeDeps = findconnectedto(inpNode, inpOperation);
+			if (inpNodeDeps == null || inpNodeDeps.isEmpty()) {
+				singleModel = true;
+			}
+
+			String inpUrl = builder.build().toURL().toString();
+			try {
+				output = contactnode(binaryStream, inpUrl, inpContainer);
+			} catch (Exception e) {
+				return (ResponseEntity<T>) new ResponseEntity<>(
+						"Exception for" + " " + inpContainer + ":::" + e.getMessage(),
+						HttpStatus.INTERNAL_SERVER_ERROR);
+
+			}
+			/*****************/
+
+			// If output of the first model is null, stop execution and return
+			// to the data source.
+
+			if (output == null || (output.length == 0)) {
+				logger.error("The output of {} is null. Model connector will not proceed.", inpContainer);
+
+				FinalResults f = new FinalResults();
+				f.setMsgname("Error from container " + inpContainer);
+				f.setFinalresults(output);
+				TaskManager.setFinalResults(f);
+
+				badExecutionMsg = f.getMsgname();
+				return (ResponseEntity<T>) new ResponseEntity<>(badExecutionMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+
+			}
+			/*****************/
 
 			/*
 			 * if probe in composite solution send the input message of input
@@ -213,29 +262,37 @@ public class BlueprintOrchestratorController {
 
 				// create a dummydepsofdeps null object
 				ArrayList<ConnectedTo> dummydepsofdeps = null;
-				prepareAndContactprobe(inpoperation, probeurl, inpcontainer, binaryStream, output, dummydepsofdeps);
+				prepareAndContactprobe(inpOperation, probeUrl, inpContainer, binaryStream, output, dummydepsofdeps,
+						singleModel);
 
-				/*
-				 * logger
-				 * info("notify: Notifying PROBE for node name: {}, inp msg name: {} , msg: {}"
-				 * , inpnode.getContainerName(), inpmsgname,
-				 * Arrays.toString(binaryStream).substring(0, 20));
-				 *
-				 * byte[] out = contactProbe(binaryStream, probeurl,
-				 * probeContName, inpmsgname, inpnode);
-				 */
 			}
 
-			notifyNextNode(output, inpnode, inpoperation, probePresent, probeContName, probeOperation, probeurl);
-			FinalResults f = TaskManager.getFinalResults();
-			finalresults = f.getFinalresults();
+			// If it is a single model, then return the correct output of the
+			// single model.
+			if (singleModel != true) {
+				notifyNextNode(output, inpNode, inpOperation, probePresent, probeContName, probeOperation, probeUrl);
+			} else {
+				return (ResponseEntity<T>) new ResponseEntity<>(output, HttpStatus.OK);
+			}
 		} // try ends for notify method's chunk
 		catch (Exception ex) {
-			logger.error("notify: Notify failed {}", ex);
-			return new ResponseEntity<>(finalresults, HttpStatus.INTERNAL_SERVER_ERROR);
+			logger.error("notify: Notify failed", ex);
+			return (ResponseEntity<T>) new ResponseEntity<>(ex.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
 
 		}
-		return new ResponseEntity<>(finalresults, HttpStatus.OK);
+
+		// if no exceptions in the notifyNextNode
+
+		FinalResults f2 = TaskManager.getFinalResults();
+		finalResults = f2.getFinalresults();
+		badExecutionMsg = f2.getMsgname();
+		if ((badExecutionMsg).contains("Error")) {
+			// Return error due to correct execution of notifyNextNode but
+			// output null due to wrong model behaviours
+			return (ResponseEntity<T>) new ResponseEntity<>(badExecutionMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+		} else {
+			return (ResponseEntity<T>) new ResponseEntity<>(finalResults, HttpStatus.OK);
+		}
 	}
 
 	/**
@@ -245,20 +302,20 @@ public class BlueprintOrchestratorController {
 	 *            Current node
 	 * @param oprn
 	 *            Current node's operation which was called
-	 * @param prbpresent
+	 * @param prbPresent
 	 *            Indicator of probe presence in the blueprint
 	 * @param prbcontainername
 	 *            Probe's container name if Probe is present
 	 * @param prboperation
 	 *            Probe's operation name if Probe is present
-	 * @param prburl
+	 * @param prbUrl
 	 *            Probe's url if Probe is present
 	 * @return byte[] output stream
 	 * @throws Exception
 	 *             : Exception
 	 */
-	public byte[] notifyNextNode(byte[] output, Node n, String oprn, boolean prbpresent, String prbcontainername,
-			String prboperation, String prburl) throws Exception {
+	public byte[] notifyNextNode(byte[] output, Node n, String oprn, boolean prbPresent, String prbcontainername,
+			String prboperation, String prbUrl) throws Exception {
 
 		Blueprint blueprint = TaskManager.getBlueprint();
 		DockerInfoList dockerList = TaskManager.getDockerList();
@@ -267,11 +324,11 @@ public class BlueprintOrchestratorController {
 		// output
 		// message to the probe and stop looping.
 		ArrayList<ConnectedTo> deps = null;
-		ArrayList<ConnectedTo> depsofdeps = null;
+		ArrayList<ConnectedTo> depsOfDeps = null;
 		try {
 			deps = findconnectedto(n, oprn);
 		} catch (Exception e) {
-			logger.error("notifyNextNode: Finding Connected to failed {}", e);
+			logger.error("notifyNextNode: Finding Connected to failed", e);
 		}
 
 		// First time the loop executes (i.e when we call 1st dependent node,
@@ -280,45 +337,68 @@ public class BlueprintOrchestratorController {
 		// Later on on every call it will be the output of the contactnode call
 		// passed
 		// as depoutput2)
-		byte[] depoutput = output;
-		byte[] depoutput2 = null;
+		byte[] depOutput = output;
+		byte[] depOutput2 = null;
 
 		// for loop here to loop through the dependents.
-		for (ConnectedTo depitem : deps) {
+		for (ConnectedTo depItem : deps) {
 
-			String depcontainername = depitem.getContainerName();
-			String depoperation = depitem.getOperationSignature().getOperationName();
-			Node depnode = blueprint.getNodebyContainer(depcontainername);
+			String depContainerName = depItem.getContainerName();
+			String depOperation = depItem.getOperationSignature().getOperationName();
+			Node depNode = blueprint.getNodebyContainer(depContainerName);
 
 			// Find dependent's url and name for the node. Url finding will also
 			// need the
 			// dependent's operation
-			DockerInfo d3 = dockerList.findDockerInfoByContainer(depcontainername);
+			DockerInfo d3 = dockerList.findDockerInfoByContainer(depContainerName);
 
-			if (d3 == null && !(depcontainername.contains("Splitter") || depcontainername.contains("Collator"))) {
+			if (d3 == null && !(depContainerName.contains("Splitter") || depContainerName.contains("Collator"))) {
 				// what to do if the deployer passed incomplete dockerInfo ???
-				logger.error("Cannot find docker info about the container {}", depcontainername);
+				logger.error("Cannot find docker info about the container {}", depContainerName);
 			}
 
 			// Contact the dependent node.
-			if (!(((depnode.getNodeType()).equals("Splitter")) || ((depnode.getNodeType()).equals("Collator")))) {
+			if (!(((depNode.getNodeType()).equals("Splitter")) || ((depNode.getNodeType()).equals("Collator")))) {
 
 				URIBuilder builder = new URIBuilder();
 				builder.setScheme("http").setHost(d3.getIpAddress()).setPort(new Integer(d3.getPort()).intValue())
-				.setPath("/" + depoperation);
+						.setPath("/" + depOperation);
 
 				String depurl = builder.build().toURL().toString();
-				depoutput2 = contactnode(depoutput, depurl, depcontainername);
+
+				try {
+					depOutput2 = contactnode(depOutput, depurl, depContainerName);
+
+				} catch (Exception ex) {
+					logger.error("Exception in notifyNextNode method while calling a dependent node {}",
+							depContainerName + " ", ex);
+					throw ex;
+
+				}
+
+				// If output of any model is null, Model connector stops
+				// immediately and returns.
+				if (depOutput2 == null || (depOutput2.length == 0)) {
+					logger.error("The output of {} is null. Model connector will not proceed.", depContainerName);
+
+					FinalResults f4 = new FinalResults();
+					f4.setMsgname("Error from container " + depContainerName);
+					f4.setFinalresults(depOutput2);
+					TaskManager.setFinalResults(f4);
+					return depOutput2;
+
+				}
+
 			}
 
 			// find dependents of the current dependent to see if we need to
 			// send input msg
 			// or both the input and output msg.
 			try {
-				depsofdeps = findconnectedto(depnode, depoperation);
+				depsOfDeps = findconnectedto(depNode, depOperation);
 
-				if ((depnode.getNodeType()).equals("Splitter")) {
-					List<byte[]> mergedoutput;
+				if ((depNode.getNodeType()).equals("Splitter")) {
+					List<byte[]> mergedOutput;
 
 					// CALLING MULTIPLE MODELS WITH SPLITTER INPUT i.e
 					// SPLITTER's PRECEDING NODE's
@@ -332,23 +412,35 @@ public class BlueprintOrchestratorController {
 					// prburl,prbpresent);
 
 					// CALL MULTIPLE MODELS PARALLELY
-					mergedoutput = callMultipleModelsParallelyClient(depoutput, depsofdeps, prburl, prbpresent);
+					mergedOutput = callMultipleModelsParallelyClient(depOutput, depsOfDeps, prbUrl, prbPresent);
 
+					// Stop execution if any of the PARALLEL models had sent
+					// null output or not responded.
+					FinalResults f5 = TaskManager.getFinalResults();
+					if (f5 != null && f5.getMsgname() != null) {
+						String executionStatusMsg = f5.getMsgname();
+						if ((executionStatusMsg.contains("Error"))) {
+
+							// Return from here.
+							return null;
+						}
+					}
 					// whether splitter has collator reference or not
-					depsofdeps = linkRelatedCollator(depsofdeps);
+					depsOfDeps = linkRelatedCollator(depsOfDeps);
 
 					// configure collator here
-					String collatorcontainer = depsofdeps.get(0).getContainerName();
-					Node collatornode = blueprint.getNodebyContainer(collatorcontainer);
-					String containeroperation = collatornode.getOperationSignatureList().get(0).getOperationSignature()
+					String collatorContainer = depsOfDeps.get(0).getContainerName();
+					Node collatorNode = blueprint.getNodebyContainer(collatorContainer);
+					String containerOperation = collatorNode.getOperationSignatureList().get(0).getOperationSignature()
 							.getOperationName();
-					String collatortype = collatornode.getCollatorMap().getCollatorType();
-					String protobufFileStr = collatornode.getCollatorMap().getOutputMessageSignature();
+					String collatorType = collatorNode.getCollatorMap().getCollatorType();
+					String protobufFileStr = collatorNode.getCollatorMap().getOutputMessageSignature();
 					logger.info("set all the configuration related values for the collator is started");
 					Configuration configuration = new Configuration();
-					logger.info("collatortype" + collatortype);
-					configuration.setCollator_type(collatortype);
+					logger.info("collatortype" + collatorType);
+					configuration.setCollator_type(collatorType);
 					logger.info("protobufFileStr" + protobufFileStr);
+
 					configuration.setProtobufFileStr(protobufFileStr);
 					protoService.setConf(configuration);
 					try {
@@ -367,16 +459,16 @@ public class BlueprintOrchestratorController {
 					logger.info("Call the protoService.collateData api");
 
 					try {
-						if (null != mergedoutput && !mergedoutput.isEmpty()) {
-							logger.info("collate data input" + mergedoutput);
-							depoutput2 = protoService.collateData(mergedoutput);
-							logger.info("collate data output" + depoutput2);
+						if (null != mergedOutput && !mergedOutput.isEmpty()) {
+							logger.info("collate data input" + mergedOutput);
+							depOutput2 = protoService.collateData(mergedOutput);
+							logger.info("collate data output" + depOutput2);
 						} else {
 							logger.debug("Please check final combine result from multiple models are working or not");
 						}
 
 					} catch (Exception ex) {
-						logger.error("calling collateData method of the Collator failed{}", ex);
+						logger.error("calling collateData method of the Collator failed", ex);
 					}
 
 					// SIMULATED CALL
@@ -385,20 +477,21 @@ public class BlueprintOrchestratorController {
 
 					// Set depnode to collator node before call notifyNextNode
 					// recursively
-					depnode = collatornode;
-					depoperation = containeroperation;
-					depcontainername = collatorcontainer;
+					depNode = collatorNode;
+					depOperation = containerOperation;
+					depContainerName = collatorContainer;
 
 				}
 
 			}
 
 			catch (Exception e1) {
-				logger.error("notifyNextNode: Finding connected to failed {}", e1);
+				logger.error("notifyNextNode failed", e1);
+				throw e1;
 			}
 
-			if (prbpresent == true
-					&& !(((depcontainername.contains("Splitter")) || (depcontainername.contains("Collator"))))) {
+			if (prbPresent == true
+					&& !(((depContainerName.contains("Splitter")) || (depContainerName.contains("Collator"))))) {
 
 				// For any node (if probe is present), contact probe with input
 				// message
@@ -406,19 +499,28 @@ public class BlueprintOrchestratorController {
 				// input message name
 				// & contact probe with output message name
 
-				prepareAndContactprobe(depoperation, prburl, depcontainername, depoutput, depoutput2, depsofdeps);
+				prepareAndContactprobe(depOperation, prbUrl, depContainerName, depOutput, depOutput2, depsOfDeps,
+						false);
 
 			}
 
-			if (depsofdeps.isEmpty()) {
-				FinalResults f2 = new FinalResults(null);
-				f2.setFinalresults(depoutput2);
-				TaskManager.setFinalResults(f2);
+			if (depsOfDeps.isEmpty()) {
+				FinalResults f3 = new FinalResults();
+				// Set the correct output. Set the msg to be success.
+				// The output is the output of the composite solution upon
+				// correct execution.
+				f3.setMsgname("success");
+				f3.setFinalresults(depOutput2);
+				TaskManager.setFinalResults(f3);
 			}
 
 			// Call notifyNextNode function
-			if (!(depsofdeps.isEmpty())) {
-				notifyNextNode(depoutput2, depnode, depoperation, prbpresent, prbcontainername, prboperation, prburl);
+			if (!(depsOfDeps.isEmpty())) {
+				byte[] mdOutput = notifyNextNode(depOutput2, depNode, depOperation, prbPresent, prbcontainername,
+						prboperation, prbUrl);
+				if (mdOutput == null || mdOutput.length == 0) {
+					return null;
+				}
 
 			}
 		}
@@ -428,17 +530,17 @@ public class BlueprintOrchestratorController {
 	/**
 	 * Contacting probe
 	 *
-	 * @param probeurl
+	 * @param probeUrl
 	 *            : url of the probe
 	 * @param binaryStream
 	 *            : input protobuf binary message.
-	 * @param probeurl
+	 * @param probeUrl
 	 *            : url of probe
-	 * @param msg_name
+	 * @param msgName
 	 *            : input message name
 	 * @param n
 	 *            : the node object
-	 * @param pb_c_name
+	 * @param prbCname
 	 *            : probe container name
 	 *
 	 * @return : returns byte[] type
@@ -446,28 +548,23 @@ public class BlueprintOrchestratorController {
 	 *             : IO exception
 	 */
 
-	public byte[] contactProbe(byte[] binaryStream, String probeurl, String pb_c_name, String msg_name, Node n)
+	public byte[] contactProbe(byte[] binaryStream, String probeUrl, String prbCname, String msgName, Node n)
 			throws Exception {
 
 		Blueprint blueprint = TaskManager.getBlueprint();
 		DockerInfoList dockerList = TaskManager.getDockerList();
 
 		byte[] output2;
-		Node probeNode = blueprint.getNodebyContainer(pb_c_name);
+		Node probeNode = blueprint.getNodebyContainer(prbCname);
 		logger.info("contactProbe: Thread {} : Notifying probe: {}, POST: {}, proto uri: {} , message Name: {}",
-				Thread.currentThread().getId(), pb_c_name, probeurl, n.getProtoUri(), msg_name);
-		// logger.info("Thread " + Thread.currentThread().getId() + ": " +
-		// "Notifying
-		// probe " + pb_c_name + " POST: "
-		// + probeurl + " proto uri = [" + n.getProtoUri() + "] message Name =
-		// [" +
-		// "Sample message" + "]");
-		output2 = httpPost(probeurl, binaryStream, n.getProtoUri(), msg_name);
+				Thread.currentThread().getId(), prbCname, probeUrl, n.getProtoUri(), msgName);
+
+		output2 = httpPost(probeUrl, binaryStream, n.getProtoUri(), msgName);
 		return output2;
 	}
 
-	void prepareAndContactprobe(String depoperation, String prburl, String depcontainername, byte[] depoutput,
-			byte[] depoutput2, ArrayList<ConnectedTo> depsofdeps) {
+	void prepareAndContactprobe(String depOperation, String prbUrl, String depContainerName, byte[] depOutput,
+			byte[] depOutput2, ArrayList<ConnectedTo> depsOfDeps, boolean singleModel) {
 
 		// Call notifyprobe if indicator is true.
 		// Message name needed for sending to probe. (Find the input message
@@ -476,21 +573,21 @@ public class BlueprintOrchestratorController {
 
 		Blueprint blueprint = TaskManager.getBlueprint();
 		DockerInfoList dockerInfoList = TaskManager.getDockerList();
-		String depinpmsgname = null;
-		String depoutmsgname = null;
-		byte[] probeout = null;
-		byte[] probeout2 = null;
-		Node depnode = blueprint.getNodebyContainer(depcontainername);
-		ArrayList<OperationSignatureList> deplosl = depnode.getOperationSignatureList();
+		String depInpMsgName = null;
+		String depoutMsgName = null;
+		byte[] probeOut = null;
+		byte[] probeOut2 = null;
+		Node depNode = blueprint.getNodebyContainer(depContainerName);
+		ArrayList<OperationSignatureList> deplosl = depNode.getOperationSignatureList();
 		for (OperationSignatureList deposl : deplosl) {
 			// checking if the operation is the same as requested operation.
 			// Only then
 			// proceed to set the depinpmsgname and depoutmsgname accordingly.
-			if ((deposl.getOperationSignature().getOperationName()).equals(depoperation))
+			if ((deposl.getOperationSignature().getOperationName()).equals(depOperation))
 
 			{
-				depinpmsgname = deposl.getOperationSignature().getInputMessageName();
-				depoutmsgname = deposl.getOperationSignature().getOutputMessageName();
+				depInpMsgName = deposl.getOperationSignature().getInputMessageName();
+				depoutMsgName = deposl.getOperationSignature().getOutputMessageName();
 				break;
 			}
 
@@ -501,43 +598,43 @@ public class BlueprintOrchestratorController {
 		 * any node with depsofdeps not empty, contact probe with input message
 		 */
 
-		if ((depsofdeps == null) || !(depsofdeps.isEmpty())) {
+		if (((depsOfDeps == null) || !(depsOfDeps.isEmpty())) && singleModel == false) {
 			try {
 				logger.info("notifyNextNode: Thread {} : Notifying PROBE for node name: {}, inp msg name: {} , msg: {}",
-						Thread.currentThread().getId(), depcontainername, depinpmsgname,
-						(Arrays.toString(depoutput)).substring(0, 20));
+						Thread.currentThread().getId(), depContainerName, depInpMsgName,
+						(Arrays.toString(depOutput)).substring(0, 20));
 
-				probeout = contactProbe(depoutput, prburl, depcontainername, depinpmsgname, depnode);
+				probeOut = contactProbe(depOutput, prbUrl, depContainerName, depInpMsgName, depNode);
 			} catch (Exception e) {
-				logger.error("Contacting probe failed {}", e);
+				logger.error("Contacting probe failed", e);
 			}
 		}
 
 		// If probe is present -For the last node contact probe with input
 		// message name
 		// & contact probe with output message name
-		if ((depsofdeps != null) && (depsofdeps.isEmpty())) {
+		if (((depsOfDeps != null) && (depsOfDeps.isEmpty())) || (singleModel == true)) {
 
 			try {
 
 				logger.info("notifyNextNode: Thread {} : Notifying PROBE for node name: {}, inp msg name: {} , msg: {}",
-						Thread.currentThread().getId(), depcontainername, depinpmsgname,
-						(Arrays.toString(depoutput)).substring(0, 20));
+						Thread.currentThread().getId(), depContainerName, depInpMsgName,
+						(Arrays.toString(depOutput)).substring(0, 20));
 
-				probeout = contactProbe(depoutput, prburl, depcontainername, depinpmsgname, depnode);
+				probeOut = contactProbe(depOutput, prbUrl, depContainerName, depInpMsgName, depNode);
 			} catch (Exception e) {
-				logger.error("notifyNextNode: Contacting probe failed {}", e);
+				logger.error("notifyNextNode: Contacting probe failed", e);
 			}
 			try {
 				// Note here depoutput2 is assigned to local depoutputof this
 				// function.
 				logger.info("notifyNextNode: Thread {} : Notifying PROBE for node name: {}, out msg name: {} , msg: {}",
-						Thread.currentThread().getId(), depcontainername, depoutmsgname,
-						(Arrays.toString(depoutput2)).substring(0, 20));
+						Thread.currentThread().getId(), depContainerName, depoutMsgName,
+						(Arrays.toString(depOutput2)).substring(0, 20));
 
-				probeout2 = contactProbe(depoutput2, prburl, depcontainername, depoutmsgname, depnode);
+				probeOut2 = contactProbe(depOutput2, prbUrl, depContainerName, depoutMsgName, depNode);
 			} catch (Exception e) {
-				logger.error("notifyNextNode: Contacting probe failed - ", e);
+				logger.error("notifyNextNode: Contacting probe failed", e);
 			}
 
 		}
@@ -554,9 +651,11 @@ public class BlueprintOrchestratorController {
 	 * @param name
 	 *            : url of the databroker
 	 * @return byte[] : received protobuf message
+	 * @throws Exception
+	 *             : Exception
 	 */
 
-	public byte[] contactnode(byte[] binaryStream, String url, String name) {
+	public byte[] contactnode(byte[] binaryStream, String url, String name) throws Exception {
 
 		logger.info("contactnode: Thread {} : Notifying node: {}, POST: {}", Thread.currentThread().getId(), name, url);
 
@@ -564,7 +663,8 @@ public class BlueprintOrchestratorController {
 		try {
 			output4 = httpPost(url, binaryStream);
 		} catch (Exception e) {
-			logger.error("contactnode: Contacting node failed - ", e);
+			logger.error("contactnode: Contacting node failed", e);
+			throw e;
 		}
 		return output4;
 	}
@@ -717,11 +817,10 @@ public class BlueprintOrchestratorController {
 					ListOfDataBrokerOpSigList = nd.getOperationSignatureList();
 					for (OperationSignatureList dbosl : ListOfDataBrokerOpSigList) {
 						dataBrokerOperation = dbosl.getOperationSignature().getOperationName(); // here
-						// we
-						// are
-						// assuming
-						// Databroker will have only 1 operation. this can be
-						// changed.
+						/*
+						 * we are assuming Databroker will have only 1
+						 * operation. this can be changed.
+						 */
 					}
 					break;
 				}
@@ -743,25 +842,26 @@ public class BlueprintOrchestratorController {
 
 				URIBuilder builder = new URIBuilder();
 				builder.setScheme("http").setHost(d1.getIpAddress()).setPort(new Integer(d1.getPort()).intValue())
-				.setPath("/" + dataBrokerOperation); // Is this always
+						.setPath("/" + dataBrokerOperation); // Is this always
 				// get_image?
 
 				databrokerurl = builder.build().toURL().toString();
 			}
 
-			// Check if Probe is present in the composite solution. If yes, get
-			// its
-			// container name, and operation. THIS PROBE DATA WILL BE USED FOR
-			// THE DATA
-			// BROKER CASE ONLY. // Checking here again because requests back
-			// to back where taking old probe related values when probe related
-			// values were
-			// made class fields.
+			/*
+			 * Check if Probe is present in the composite solution. If yes, get
+			 * its container name, and operation. THIS PROBE DATA WILL BE USED
+			 * FOR THE DATA BROKER CASE ONLY. Checking here again because
+			 * requests back to back where taking old probe related values when
+			 * probe related values were made class fields.
+			 */
 
-			// IN CASE OF DATA SOURCE, call to /putDockerInfo will initialize
-			// the incorrect
-			// values. Then the
-			// notify function will initialize the correct values.
+			/*
+			 * IN CASE OF DATA SOURCE, call to /putDockerInfo will initialize
+			 * the incorrect values. Then the notify function will initialize
+			 * the correct values.
+			 * 
+			 */
 
 			ArrayList<ProbeIndicator> list_of_pb_indicators = blueprint.getProbeIndicator();
 			for (ProbeIndicator pbindicator : list_of_pb_indicators) {
@@ -782,7 +882,7 @@ public class BlueprintOrchestratorController {
 
 				URIBuilder builder = new URIBuilder();
 				builder.setScheme("http").setHost(d2.getIpAddress()).setPort(new Integer(d2.getPort()).intValue())
-				.setPath("/" + probeOperation);
+						.setPath("/" + probeOperation);
 
 				probeurl = builder.build().toURL().toString();
 			}
@@ -840,13 +940,13 @@ public class BlueprintOrchestratorController {
 					byte[] modelOutput = contactnode(depoutput,
 							"http://" + dockerInfo.getIpAddress() + ":" + dockerInfo.getPort() + "/"
 									+ connectedNode.getOperationSignature().getOperationName(),
-									dockerInfo.getContainer());
+							dockerInfo.getContainer());
 					String depoperation = connectedNode.getOperationSignature().getOperationName();
 
 					// Contact the probe for the model /connectedNode
 					if (probePresent == true) {
 						prepareAndContactprobe(depoperation, prburl, depcontainername, depoutput, modelOutput,
-								depsofdeps);
+								depsofdeps, false);
 					}
 
 					// call to probe ends
@@ -863,38 +963,87 @@ public class BlueprintOrchestratorController {
 	}
 
 	// Client To Call models connected to the splitter parallely
-	private List<byte[]> callMultipleModelsParallelyClient(byte[] depoutput, ArrayList<ConnectedTo> depsofdeps,
+	private <T> List<T> callMultipleModelsParallelyClient(byte[] depoutput, ArrayList<ConnectedTo> depsofdeps,
 			String prburl, boolean probePresent) throws Exception {
 		List<byte[]> listOfbyte = new ArrayList<byte[]>();
 		try {
 			ExecutorService executor = Executors.newFixedThreadPool(4);
-			List<Future<byte[]>> listOfMlOutput = new ArrayList<Future<byte[]>>();
+
+			List<Future<Map<String, byte[]>>> listOfMlOutput = new ArrayList<Future<Map<String, byte[]>>>();
+
 			for (ConnectedTo connectedNode : depsofdeps) {
 				String depcontainername = connectedNode.getContainerName();
 				String depoperation = connectedNode.getOperationSignature().getOperationName();
-				Callable<byte[]> callable = new CallMultipleModelParallely(depoutput, depcontainername, depoperation,
-						prburl, depsofdeps, probePresent);
-				Future<byte[]> future = executor.submit(callable);
+				Callable<Map<String, byte[]>> callable = new CallMultipleModelParallely(depoutput, depcontainername,
+						depoperation, prburl, depsofdeps, probePresent);
+				Future<Map<String, byte[]>> future = executor.submit(callable);
 
 				listOfMlOutput.add(future);
+
 			}
-			for (Future<byte[]> fut : listOfMlOutput) {
+			for (Future<Map<String, byte[]>> fut : listOfMlOutput) {
+				String modelname = "";
 				try {
-					listOfbyte.add(fut.get());
+
+					// Map has been added to capture the results of models to
+					// which connection timed out. i.e SockerTimoutException.
+					Map mapinsideafuture = fut.get();
+
+					Set mapSet = (Set) mapinsideafuture.entrySet();
+					Iterator mapIterator = mapSet.iterator();
+
+					Map.Entry mapEntry = (Map.Entry) mapIterator.next();
+					// getKey Method of HashMap access a key of map. This
+					// key is the model name for which we are receiving
+					// output.
+					modelname = (String) mapEntry.getKey();
+
+					// get the byte[] output for this key from the hashmap
+					byte[] op = (byte[]) mapinsideafuture.get(modelname);
+
+					// Return if any of the PARALLEL models sent null output.
+					if (op == null || (op.length == 0)) {
+
+						logger.error("The output of {} is null. Model connector will not proceed.", modelname);
+						FinalResults f4 = new FinalResults();
+						f4.setMsgname("Error from container " + modelname);
+						f4.setFinalresults(op);
+						TaskManager.setFinalResults(f4);
+
+						// immediately return
+						return null;
+
+					} else
+
+					{
+						listOfbyte.add(op);
+					}
 				} catch (Exception ex) {
-					logger.error(
-							"Exception happens while fetching the thread return result in callMultipleModelsParallelyClient() method:"
-									+ ex);
-					ex.printStackTrace();
-					throw new Exception();
+
+					if (ex.getMessage().contains("SocketTimeoutException")) {
+						TaskManager.getListofsocketimoutmodels();
+						logger.error("SocketTimeoutException in callMultipleModelsParallelyClient() method:" + ex);
+
+						throw new SocketTimeoutException(
+								"Connection timed out for " + TaskManager.getListofsocketimoutmodels());
+					} else {
+						logger.error(
+								"Exception happens while fetching the thread return result in callMultipleModelsParallelyClient() method:"
+										+ ex);
+
+						throw ex;
+					}
 				}
+
 			}
-		} catch (Exception ex) {
-			logger.error("Exception in callMultipleModelsParallelyClient() method:" + ex);
-			throw new Exception();
 		}
 
-		return listOfbyte;
+		catch (Exception ex) {
+			logger.error("Exception in callMultipleModelsParallelyClient() method:" + ex);
+			throw ex;
+		}
+
+		return (List<T>) listOfbyte;
 	}
 
 	private ArrayList<ConnectedTo> linkRelatedCollator(ArrayList<ConnectedTo> connectedNodeList) throws Exception {
@@ -940,7 +1089,7 @@ public class BlueprintOrchestratorController {
 	}
 
 	/**
-	 * Sending HTTP POST request to Probe
+	 * Sending HTTP POST request. Used for calling Probe and Models.
 	 *
 	 * @param url
 	 *            : url of the node
@@ -962,6 +1111,7 @@ public class BlueprintOrchestratorController {
 
 		con.setRequestMethod("POST");
 		con.setRequestProperty("Content-Type", "application/octet-stream;");
+		con.setConnectTimeout(20000);
 		if (protoUrl != null)
 			con.setRequestProperty("PROTO-URL", protoUrl);
 		if (messageName != null)
@@ -984,65 +1134,19 @@ public class BlueprintOrchestratorController {
 				|| (responseCode == HttpURLConnection.HTTP_PARTIAL)) {
 			return IOUtils.toByteArray(con.getInputStream());
 		} else {
-			logger.error("httpPost: Thread {}: ERROR:::::::POST request did not work {}",
-					Thread.currentThread().getId(), url);
+			logger.error(
+					"httpPost: Thread {}: ERROR:::POST request did not work for {}. Got the following response: {} {}",
+					Thread.currentThread().getId(), url, responseCode, responseMessage);
 		}
 
 		return new byte[0];
 
-	}
-
-	/**
-	 * Sending HTTP POST request to the Data Broker
-	 *
-	 * @param url
-	 *            : url to get
-	 * @param theScript
-	 *            : actual script to be sent to the data broker.
-	 * @return : returns byte[] type
-	 * @throws IOException
-	 *             : IO exception
-	 */
-	public byte[] httpPost(String url, String theScript) throws IOException {
-		URL obj = new URL(url);
-
-		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-
-		con.setRequestMethod("POST");
-
-		/*
-		 * Write String to the connection
-		 * https://docs.oracle.com/javase/tutorial/networking/urls/
-		 * readingWriting.html
-		 */
-		con.setDoOutput(true);
-		OutputStreamWriter out = new OutputStreamWriter(con.getOutputStream());
-		out.write(theScript);
-		out.close();
-
-		logger.info("httpPost: Thread {}: HTTPS POST Sent {}", Thread.currentThread().getId(), url);
-		String responseMessage = con.getResponseMessage();
-		logger.info("httpPost: Thread {}: GOT RESPONSE Message {}", Thread.currentThread().getId(), responseMessage);
-		int responseCode = con.getResponseCode();
-		logger.info("httpPost: Thread {}: GOT RESPONSE CODE {}", Thread.currentThread().getId(), responseCode);
-		if ((responseCode == HttpURLConnection.HTTP_OK) || (responseCode == HttpURLConnection.HTTP_CREATED)
-				|| (responseCode == HttpURLConnection.HTTP_ACCEPTED)
-				|| (responseCode == HttpURLConnection.HTTP_ACCEPTED)
-				|| (responseCode == HttpURLConnection.HTTP_NOT_AUTHORITATIVE)
-				|| (responseCode == HttpURLConnection.HTTP_NO_CONTENT) || (responseCode == HttpURLConnection.HTTP_RESET)
-				|| (responseCode == HttpURLConnection.HTTP_PARTIAL)) {
-			return IOUtils.toByteArray(con.getInputStream());
-		} else {
-			logger.error("httpPost: Thread {}: ERROR:::::::POST request did not work {}",
-					Thread.currentThread().getId(), url);
-		}
-
-		return new byte[0];
 	}
 
 	/*
-	 * This reads from HTTPURLConnection into the memory then return the
-	 * contents of the memory.
+	 * Sending HTTP GET request to the Data Broker. This reads from
+	 * HTTPURLConnection into the memory then return the contents of the memory.
+	 * 
 	 */
 	private byte[] httpGet(String url) throws Exception {
 		HttpURLConnection con = null;
@@ -1052,8 +1156,8 @@ public class BlueprintOrchestratorController {
 		try {
 			URL obj = new URL(url);
 			con = (HttpURLConnection) obj.openConnection();
-
 			con.setRequestMethod("GET");
+			con.setConnectTimeout(20000);
 			int responseCode = con.getResponseCode();
 			logger.info("httpGet(): GET Response Code ::" + responseCode);
 			if (responseCode == HttpURLConnection.HTTP_OK) { // success
@@ -1064,8 +1168,9 @@ public class BlueprintOrchestratorController {
 
 				return out.toByteArray();
 			} else {
-				logger.error("httpGet: Thread {}: ERROR:::::::GET request did not work {}",
-						Thread.currentThread().getId(), url);
+				logger.error(
+						"httpGet: Thread {}: ERROR:::GET request did not work {}. Got the following response code: {}",
+						Thread.currentThread().getId(), url, responseCode);
 				throw new Exception("GET " + url + " request did not work");
 			}
 		} finally {
