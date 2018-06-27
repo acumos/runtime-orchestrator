@@ -21,6 +21,9 @@
 package org.acumos.bporchestrator.util;
 
 import org.acumos.bporchestrator.model.*;
+
+import java.util.List;
+
 import org.acumos.bporchestrator.controller.FinalResults;
 
 /**
@@ -35,6 +38,22 @@ public class TaskManager {
 	private static DockerInfoList dockerList = null;
 	
 	private static FinalResults fr = null;
+	
+	private static List listofsocketimoutmodels = null;
+
+	/**
+	 * @return the listofsocketimoutmodels
+	 */
+	public static List getListofsocketimoutmodels() {
+		return listofsocketimoutmodels;
+	}
+
+	/**
+	 * @param listofsocketimoutmodels the listofsocketimoutmodels to set
+	 */
+	public static void setListofsocketimoutmodels(List listofsocketimoutmodels) {
+		TaskManager.listofsocketimoutmodels = listofsocketimoutmodels;
+	}
 
 	/*
 	 * private Constructor for a utility class
