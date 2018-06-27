@@ -24,6 +24,16 @@ Runtime Orchestrator Release Notes
 The server is deployed within a Docker image.
 
 
+Version 1.0.14 June 2018
+------------------------
+* More exception handling to send messages about connect timeout and null output received from models.
+* Single Model Support available in the Model connector.
+
+Version 1.0.13 June 2018
+------------------------
+* Better Logging and Exception Handling
+* Integration with collator.
+
 Version 1.0.12 June 2018
 ------------------------
 * Support for Split and Join using Array based Collation

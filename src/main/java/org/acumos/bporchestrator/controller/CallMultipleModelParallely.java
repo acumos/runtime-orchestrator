@@ -20,7 +20,11 @@
 
 package org.acumos.bporchestrator.controller;
 
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 import org.acumos.bporchestrator.model.Blueprint;
@@ -36,7 +40,7 @@ import org.acumos.bporchestrator.controller.BlueprintOrchestratorController;
  * Used to parallelly call models connected to the splitter
  */
 
-public class CallMultipleModelParallely implements Callable<byte[]> {
+public class CallMultipleModelParallely implements Callable<Map<String, byte[]>> {
 	private static final Logger logger = LoggerFactory.getLogger(BlueprintOrchestratorController.class);
 	private byte[] modelOutput = null; // holds output message after calling the
 	// node. It is also returned to the
@@ -63,8 +67,8 @@ public class CallMultipleModelParallely implements Callable<byte[]> {
 
 	}
 
-	@Override
-	public byte[] call() throws Exception {
+	// @Override
+	public byte[] call10() throws Exception {
 		try {
 			DockerInfoList dockerInfoList = TaskManager.getDockerList();
 			if (null != dockerInfoList) {
@@ -76,7 +80,7 @@ public class CallMultipleModelParallely implements Callable<byte[]> {
 					// Contact the probe for the model /connectedNode
 					if (probePresent == true) {
 						new BlueprintOrchestratorController().prepareAndContactprobe(depoperation, probeurl,
-								depcontainername, depoutput, modelOutput, depsofdeps);
+								depcontainername, depoutput, modelOutput, depsofdeps, false);
 					}
 
 				}
@@ -88,6 +92,52 @@ public class CallMultipleModelParallely implements Callable<byte[]> {
 		}
 
 		return modelOutput;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Map<String, byte[]> call() throws Exception {
+		Map<String, byte[]> map = new HashMap<String, byte[]>();
+		try {
+			DockerInfoList dockerInfoList = TaskManager.getDockerList();
+			if (null != dockerInfoList) {
+				DockerInfo dockerInfo = dockerInfoList.findDockerInfoByContainer(depcontainername);
+				if (null != dockerInfo) {
+					modelOutput = new BlueprintOrchestratorController().contactnode(depoutput,
+							"http://" + dockerInfo.getIpAddress() + ":" + dockerInfo.getPort() + "/" + depoperation,
+							dockerInfo.getContainer());
+					// Contact the probe for the model /connectedNode
+					if (probePresent == true) {
+						new BlueprintOrchestratorController().prepareAndContactprobe(depoperation, probeurl,
+								depcontainername, depoutput, modelOutput, depsofdeps, false);
+					}
+
+					map.put(depcontainername, modelOutput);
+				}
+
+			}
+		} catch (SocketTimeoutException ex) {
+
+			/* map.put(depcontainername, new byte[0]); */
+			// Thread.sleep(500);
+			logger.error("Exception in CallMultipleModelParallely class and call() method :" + ex);
+			List<String> listOfModelName = new ArrayList<String>();
+			listOfModelName.add(depcontainername);
+			if (TaskManager.getListofsocketimoutmodels() != null) {
+				TaskManager.getListofsocketimoutmodels().addAll(listOfModelName);
+			} else {
+				TaskManager.setListofsocketimoutmodels(listOfModelName);
+			}
+
+			throw ex;
+
+		} catch (Exception ex) {
+			logger.error("Exception in CallMultipleModelParallely class and call() method :" + ex);
+			throw ex;
+		}
+
+		return map;
+
 	}
 
 }
