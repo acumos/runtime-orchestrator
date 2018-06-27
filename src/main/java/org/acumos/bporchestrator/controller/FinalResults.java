@@ -29,25 +29,49 @@ import org.acumos.bporchestrator.model.TrainingClient;
 
 public class FinalResults {
 
-	private byte[] finalresults;
+	
 
+	private byte[] finalresults;
+	private String msgname;
+
+	public FinalResults() {
+		super();
+	}
+	
 	// Constructor
-	public FinalResults(byte[] res) {
+	public FinalResults(byte[] res, String msg) {
 		super();
 		this.finalresults = res;
+		this.msgname = msg;
 	}
 
+	/**
+	 * @return the msgname
+	 */
+	public String getMsgname() {
+		return msgname;
+	}
+
+	/**
+	 * @param mdname
+	 *            the msgname to set
+	 */
+	public void setMsgname(String msg) {
+		this.msgname = msg;
+	}
+
+	/**
+	 * @return
+	 */
 	public byte[] getFinalresults() {
 		return finalresults;
 	}
 
 	/**
-	 * 
-	 * @param finalresults
-	 *            The final results of the last model.
+	 * @param results
 	 */
-	public void setFinalresults(byte[] finalresults) {
-		this.finalresults = finalresults;
+	public void setFinalresults(byte[] results) {
+		this.finalresults = results;
 	}
 
 }
