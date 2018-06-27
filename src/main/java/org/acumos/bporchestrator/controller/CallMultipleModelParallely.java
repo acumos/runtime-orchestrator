@@ -20,7 +20,11 @@
 
 package org.acumos.bporchestrator.controller;
 
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 import org.acumos.bporchestrator.model.Blueprint;
@@ -36,58 +40,76 @@ import org.acumos.bporchestrator.controller.BlueprintOrchestratorController;
  * Used to parallelly call models connected to the splitter
  */
 
-public class CallMultipleModelParallely implements Callable<byte[]> {
+public class CallMultipleModelParallely implements Callable<Map<String, byte[]>> {
 	private static final Logger logger = LoggerFactory.getLogger(BlueprintOrchestratorController.class);
 	private byte[] modelOutput = null; // holds output message after calling the
 	// node. It is also returned to the
 	// client to be added back to the
 	// collation list.
-	private byte[] depoutput = null; // holds incoming input message for the
+	private byte[] depOutput = null; // holds incoming input message for the
 	// node.
-	private String depcontainername = "";
-	private String depoperation = null;
-	private String probeurl = null;
-	private ArrayList<ConnectedTo> depsofdeps = null;
+	private String depContainername = "";
+	private String depOperation = null;
+	private String probeUrl = null;
+	private ArrayList<ConnectedTo> depsOfDeps = null;
 	private boolean probePresent = false;
 
 	public CallMultipleModelParallely(byte[] depoutput, String depcontainername, String depoperation, String prburl,
 			ArrayList<ConnectedTo> depsofdeps, boolean probePresent) {
 
-		this.depoutput = depoutput;
-		this.depcontainername = depcontainername;
-		this.depoperation = depoperation;
-		this.probeurl = prburl;
-		this.depoutput = depoutput;
-		this.depsofdeps = depsofdeps;
+		this.depOutput = depoutput;
+		this.depContainername = depcontainername;
+		this.depOperation = depoperation;
+		this.probeUrl = prburl;
+		this.depOutput = depoutput;
+		this.depsOfDeps = depsofdeps;
 		this.probePresent = probePresent;
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public byte[] call() throws Exception {
+	public Map<String, byte[]> call() throws Exception {
+		Map<String, byte[]> map = new HashMap<String, byte[]>();
 		try {
 			DockerInfoList dockerInfoList = TaskManager.getDockerList();
 			if (null != dockerInfoList) {
-				DockerInfo dockerInfo = dockerInfoList.findDockerInfoByContainer(depcontainername);
+				DockerInfo dockerInfo = dockerInfoList.findDockerInfoByContainer(depContainername);
 				if (null != dockerInfo) {
-					modelOutput = new BlueprintOrchestratorController().contactnode(depoutput,
-							"http://" + dockerInfo.getIpAddress() + ":" + dockerInfo.getPort() + "/" + depoperation,
+					modelOutput = new BlueprintOrchestratorController().contactnode(depOutput,
+							"http://" + dockerInfo.getIpAddress() + ":" + dockerInfo.getPort() + "/" + depOperation,
 							dockerInfo.getContainer());
 					// Contact the probe for the model /connectedNode
 					if (probePresent == true) {
-						new BlueprintOrchestratorController().prepareAndContactprobe(depoperation, probeurl,
-								depcontainername, depoutput, modelOutput, depsofdeps);
+						new BlueprintOrchestratorController().prepareAndContactprobe(depOperation, probeUrl,
+								depContainername, depOutput, modelOutput, depsOfDeps, false);
 					}
 
+					map.put(depContainername, modelOutput);
 				}
 
 			}
+		} catch (SocketTimeoutException ex) {
+
+			
+			logger.error("Exception in CallMultipleModelParallely class and call() method :" + ex);
+			List<String> listOfModelName = new ArrayList<String>();
+			listOfModelName.add(depContainername);
+			if (TaskManager.getListofsocketimoutmodels() != null) {
+				TaskManager.getListofsocketimoutmodels().addAll(listOfModelName);
+			} else {
+				TaskManager.setListofsocketimoutmodels(listOfModelName);
+			}
+
+			throw ex;
+
 		} catch (Exception ex) {
 			logger.error("Exception in CallMultipleModelParallely class and call() method :" + ex);
 			throw ex;
 		}
 
-		return modelOutput;
+		return map;
+
 	}
 
 }
