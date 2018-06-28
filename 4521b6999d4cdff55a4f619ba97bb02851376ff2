@@ -1,0 +1,698 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2a9e6c4c_1bca0e29",
+        "filename": "docs/release-notes.rst",
+        "patchSetId": 3
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-28T13:26:11Z",
+      "side": 1,
+      "message": "Please include the Acumos Jira issue numbers here!\n\nAlso I suggest including the date; e.g., 28 June, not just the month.  It helps you when people ask \"when did this change get merged\".",
+      "revId": "4521b6999d4cdff55a4f619ba97bb02851376ff2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "00852c3e_705d280a",
+        "filename": "pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-28T13:26:11Z",
+      "side": 1,
+      "message": "Upgrade to 1.5.14.RELEASE",
+      "range": {
+        "startLine": 17,
+        "startChar": 11,
+        "endLine": 17,
+        "endChar": 24
+      },
+      "revId": "4521b6999d4cdff55a4f619ba97bb02851376ff2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "182012a3_84c5cd69",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-28T13:26:11Z",
+      "side": 1,
+      "message": "Harmonize comment markup - put this into javadoc, not standalone like this",
+      "revId": "4521b6999d4cdff55a4f619ba97bb02851376ff2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "46afd2d9_78d40f33",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-28T13:26:11Z",
+      "side": 1,
+      "message": "I see no need to get and set the list back to the same object, why work so hard? Why not just getList().clear() ?",
+      "range": {
+        "startLine": 117,
+        "startChar": 0,
+        "endLine": 119,
+        "endChar": 48
+      },
+      "revId": "4521b6999d4cdff55a4f619ba97bb02851376ff2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2d51f44f_09afbe34",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-28T13:26:11Z",
+      "side": 1,
+      "message": "Same thing here, why get and set the same object?",
+      "range": {
+        "startLine": 126,
+        "startChar": 0,
+        "endLine": 127,
+        "endChar": 35
+      },
+      "revId": "4521b6999d4cdff55a4f619ba97bb02851376ff2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ecb4cd9d_6c2269bc",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-28T13:26:11Z",
+      "side": 1,
+      "message": "Please use CamelCase consistently as above (\"probePresent\"), these should be badExecutionMsg and so on.",
+      "range": {
+        "startLine": 141,
+        "startChar": 9,
+        "endLine": 141,
+        "endChar": 24
+      },
+      "revId": "4521b6999d4cdff55a4f619ba97bb02851376ff2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "aa8b532d_a26fe247",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 226,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-28T13:26:11Z",
+      "side": 1,
+      "message": "singleModel",
+      "range": {
+        "startLine": 226,
+        "startChar": 11,
+        "endLine": 226,
+        "endChar": 22
+      },
+      "revId": "4521b6999d4cdff55a4f619ba97bb02851376ff2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b4afa2a1_5bfa5640",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 251,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-28T13:26:11Z",
+      "side": 1,
+      "message": "You don\u0027t have to catch each exception separately if you\u0027re taking the exact same action for each one.  Why work so hard?",
+      "range": {
+        "startLine": 238,
+        "startChar": 0,
+        "endLine": 251,
+        "endChar": 40
+      },
+      "revId": "4521b6999d4cdff55a4f619ba97bb02851376ff2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ab9c277b_ddfafd6f",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 262,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-28T13:26:11Z",
+      "side": 1,
+      "message": "Use the convenience constructor - pass the values at create time, save 2 lines of code",
+      "range": {
+        "startLine": 262,
+        "startChar": 25,
+        "endLine": 262,
+        "endChar": 37
+      },
+      "revId": "4521b6999d4cdff55a4f619ba97bb02851376ff2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4436558e_a9810708",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-28T13:26:11Z",
+      "side": 1,
+      "message": "simplify to\n\n    if (!singlemodel)",
+      "range": {
+        "startLine": 288,
+        "startChar": 7,
+        "endLine": 288,
+        "endChar": 26
+      },
+      "revId": "4521b6999d4cdff55a4f619ba97bb02851376ff2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0d73c696_8a8899a2",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 300,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-28T13:26:11Z",
+      "side": 1,
+      "message": "Why catch specific AND generic here?  This is an odd pattern",
+      "range": {
+        "startLine": 294,
+        "startChar": 13,
+        "endLine": 300,
+        "endChar": 17
+      },
+      "revId": "4521b6999d4cdff55a4f619ba97bb02851376ff2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dd3e5bd0_c06ddbcb",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 316,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-28T13:26:11Z",
+      "side": 1,
+      "message": "Why extra parens here?",
+      "range": {
+        "startLine": 316,
+        "startChar": 22,
+        "endLine": 316,
+        "endChar": 23
+      },
+      "revId": "4521b6999d4cdff55a4f619ba97bb02851376ff2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "de0105fe_3b048456",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 398,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-28T13:26:11Z",
+      "side": 1,
+      "message": "Why three separate catch clauses to do the exact same thing? You\u0027re working too hard",
+      "revId": "4521b6999d4cdff55a4f619ba97bb02851376ff2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7b7511c5_3d126d2e",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 401,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-28T13:26:11Z",
+      "side": 1,
+      "message": "Remove",
+      "range": {
+        "startLine": 401,
+        "startChar": 0,
+        "endLine": 401,
+        "endChar": 26
+      },
+      "revId": "4521b6999d4cdff55a4f619ba97bb02851376ff2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a73562d_e27e8895",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 407,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-28T13:26:11Z",
+      "side": 1,
+      "message": "Remove",
+      "range": {
+        "startLine": 407,
+        "startChar": 0,
+        "endLine": 407,
+        "endChar": 26
+      },
+      "revId": "4521b6999d4cdff55a4f619ba97bb02851376ff2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "77cf182b_1a73ca4e",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 414,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-28T13:26:11Z",
+      "side": 1,
+      "message": "Remove",
+      "range": {
+        "startLine": 414,
+        "startChar": 0,
+        "endLine": 414,
+        "endChar": 26
+      },
+      "revId": "4521b6999d4cdff55a4f619ba97bb02851376ff2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "54bf5b7e_f85d7093",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 463,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-28T13:26:11Z",
+      "side": 1,
+      "message": "Log a debug message here",
+      "revId": "4521b6999d4cdff55a4f619ba97bb02851376ff2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6f352131_a676b10c",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 529,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-28T13:26:11Z",
+      "side": 1,
+      "message": "Don\u0027t use {} notation here, e1 is not a string to be interpolated",
+      "revId": "4521b6999d4cdff55a4f619ba97bb02851376ff2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0d553a18_378fbc97",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 641,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-28T13:26:11Z",
+      "side": 1,
+      "message": "This is boolean. Just use the simple form \n\n    !singlemodel\n\ndon\u0027t work so hard",
+      "range": {
+        "startLine": 641,
+        "startChar": 59,
+        "endLine": 641,
+        "endChar": 70
+      },
+      "revId": "4521b6999d4cdff55a4f619ba97bb02851376ff2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cf373409_ccb042de",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 656,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-28T13:26:11Z",
+      "side": 1,
+      "message": "Simplify to \n\ns    inglemodel",
+      "range": {
+        "startLine": 656,
+        "startChar": 59,
+        "endLine": 656,
+        "endChar": 70
+      },
+      "revId": "4521b6999d4cdff55a4f619ba97bb02851376ff2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6983ac2c_e492c2b7",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 863,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-28T13:26:11Z",
+      "side": 1,
+      "message": "Log an error message about reaching this unimplemented feature in the code",
+      "revId": "4521b6999d4cdff55a4f619ba97bb02851376ff2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "72f70949_096f4e78",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 924,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-28T13:26:11Z",
+      "side": 1,
+      "message": "Don\u0027t hardcode http.  Don\u0027t hardcode an IP address!  This looks dead wrong.",
+      "range": {
+        "startLine": 924,
+        "startChar": 12,
+        "endLine": 924,
+        "endChar": 21
+      },
+      "revId": "4521b6999d4cdff55a4f619ba97bb02851376ff2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5d157d0d_0f0563a4",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1063,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-28T13:26:11Z",
+      "side": 1,
+      "message": "Why are you checking the exception message content?  Looks odd",
+      "revId": "4521b6999d4cdff55a4f619ba97bb02851376ff2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "591adf28_e6e1f158",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1067,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-28T13:26:11Z",
+      "side": 1,
+      "message": "Remove",
+      "range": {
+        "startLine": 1067,
+        "startChar": 0,
+        "endLine": 1067,
+        "endChar": 27
+      },
+      "revId": "4521b6999d4cdff55a4f619ba97bb02851376ff2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e987799a_ca21b879",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1074,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-28T13:26:11Z",
+      "side": 1,
+      "message": "Remove",
+      "range": {
+        "startLine": 1074,
+        "startChar": 0,
+        "endLine": 1074,
+        "endChar": 27
+      },
+      "revId": "4521b6999d4cdff55a4f619ba97bb02851376ff2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ec138418_eef0c822",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1133,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-28T13:26:11Z",
+      "side": 1,
+      "message": "What if it\u0027s https?",
+      "range": {
+        "startLine": 1133,
+        "startChar": 12,
+        "endLine": 1133,
+        "endChar": 16
+      },
+      "revId": "4521b6999d4cdff55a4f619ba97bb02851376ff2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "63d20edc_15d4f446",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1147,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-28T13:26:11Z",
+      "side": 1,
+      "message": "Why are you reimplementing post?  Apache HttpClient gives you this for free and you don\u0027t have to debug it.",
+      "range": {
+        "startLine": 1147,
+        "startChar": 16,
+        "endLine": 1147,
+        "endChar": 24
+      },
+      "revId": "4521b6999d4cdff55a4f619ba97bb02851376ff2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "95e3dadd_ff60ddbb",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1165,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-28T13:26:11Z",
+      "side": 1,
+      "message": "Is it http or https??",
+      "range": {
+        "startLine": 1165,
+        "startChar": 36,
+        "endLine": 1165,
+        "endChar": 41
+      },
+      "revId": "4521b6999d4cdff55a4f619ba97bb02851376ff2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9c07edeb_f30b271d",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1192,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-28T13:26:11Z",
+      "side": 1,
+      "message": "Why are you reimplementing get?  Apache HttpClient gives you this for free and you don\u0027t have to debug it.",
+      "range": {
+        "startLine": 1192,
+        "startChar": 16,
+        "endLine": 1192,
+        "endChar": 23
+      },
+      "revId": "4521b6999d4cdff55a4f619ba97bb02851376ff2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "83fa817f_e4fd3576",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/CallMultipleModelParallely.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-28T13:26:11Z",
+      "side": 1,
+      "message": "What is this? call ten?  Very difficult to understand, why 10?",
+      "range": {
+        "startLine": 71,
+        "startChar": 15,
+        "endLine": 71,
+        "endChar": 21
+      },
+      "revId": "4521b6999d4cdff55a4f619ba97bb02851376ff2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2586fb47_15128cb7",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/CallMultipleModelParallely.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-28T13:26:11Z",
+      "side": 1,
+      "message": "Remove don\u0027t comment out",
+      "range": {
+        "startLine": 121,
+        "startChar": 0,
+        "endLine": 121,
+        "endChar": 48
+      },
+      "revId": "4521b6999d4cdff55a4f619ba97bb02851376ff2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e3ec3826_ecde63d1",
+        "filename": "src/main/java/org/acumos/bporchestrator/util/TaskManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-28T13:26:11Z",
+      "side": 1,
+      "message": "Be consistent with camelCase like dockerList, make it socketTimeoutModelList",
+      "range": {
+        "startLine": 42,
+        "startChar": 21,
+        "endLine": 42,
+        "endChar": 44
+      },
+      "revId": "4521b6999d4cdff55a4f619ba97bb02851376ff2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    }
+  ]
+}
