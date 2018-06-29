@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "1df706c3_3fbba8ce",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 40
+      },
+      "writtenOn": "2018-06-29T18:58:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7772d826_dd0545a6",
+      "range": {
+        "startLine": 118,
+        "startChar": 21,
+        "endLine": 118,
+        "endChar": 32
+      },
+      "revId": "1bd125f5fa6faa00e29961578f18a205cec9a443",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "819e9c17_e2a1fbe1",
         "filename": "src/main/java/org/acumos/bporchestrator/controller/FinalResults.java",
         "patchSetId": 6
@@ -53,6 +77,30 @@
       "writtenOn": "2018-06-29T17:57:34Z",
       "side": 1,
       "message": "Is this used?  I see your code making direct reference to TaskManager.  Don\u0027t do DOUBLE static.  Either you use a static instance via a getInstance() method and the fields are NOT static, or you use the static fields directly.",
+      "range": {
+        "startLine": 34,
+        "startChar": 28,
+        "endLine": 34,
+        "endChar": 30
+      },
+      "revId": "1bd125f5fa6faa00e29961578f18a205cec9a443",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0f45cd10_d0b1e222",
+        "filename": "src/main/java/org/acumos/bporchestrator/util/TaskManager.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 40
+      },
+      "writtenOn": "2018-06-29T18:58:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "be9dd918_8312e9c4",
       "range": {
         "startLine": 34,
         "startChar": 28,
