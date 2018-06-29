@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b51df93e_666907fb",
+        "filename": "docs/release-notes.rst",
+        "patchSetId": 4
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-29T17:18:20Z",
+      "side": 1,
+      "message": "Please fix length of underline",
+      "revId": "b4e3334adee20de9f1e9b3355c9d34acd9502198",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a69d708e_c633953b",
+        "filename": "docs/release-notes.rst",
+        "patchSetId": 4
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-29T17:18:20Z",
+      "side": 1,
+      "message": "Perhaps reduce this to just:\n\n    ACUMOS-1265",
+      "range": {
+        "startLine": 31,
+        "startChar": 2,
+        "endLine": 31,
+        "endChar": 80
+      },
+      "revId": "b4e3334adee20de9f1e9b3355c9d34acd9502198",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6caed19f_39e0177f",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1071,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-06-29T17:18:20Z",
+      "side": 1,
+      "message": "Remove all printStackTrace() invocations. Use logger instead:\n\n    logger.error(\"myMethod failed\", ex);",
+      "revId": "b4e3334adee20de9f1e9b3355c9d34acd9502198",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    }
+  ]
+}
