@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "c9258f1f_f48890b0",
+        "filename": "docs/release-notes.rst",
+        "patchSetId": 3
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 40
+      },
+      "writtenOn": "2018-06-29T15:24:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2a9e6c4c_1bca0e29",
+      "revId": "4521b6999d4cdff55a4f619ba97bb02851376ff2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "00852c3e_705d280a",
         "filename": "pom.xml",
         "patchSetId": 3
@@ -174,6 +192,30 @@
     },
     {
       "key": {
+        "uuid": "c0a8fb46_acaeed5a",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 251,
+      "author": {
+        "id": 40
+      },
+      "writtenOn": "2018-06-29T15:24:57Z",
+      "side": 1,
+      "message": "Yes. We want to catch them separately. To send the correct messages to the data source. We need this.",
+      "parentUuid": "b4afa2a1_5bfa5640",
+      "range": {
+        "startLine": 238,
+        "startChar": 0,
+        "endLine": 251,
+        "endChar": 40
+      },
+      "revId": "4521b6999d4cdff55a4f619ba97bb02851376ff2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ab9c277b_ddfafd6f",
         "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
         "patchSetId": 3
@@ -243,6 +285,30 @@
     },
     {
       "key": {
+        "uuid": "6a3a2d45_13341f85",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 300,
+      "author": {
+        "id": 40
+      },
+      "writtenOn": "2018-06-29T15:24:57Z",
+      "side": 1,
+      "message": "Needed. For setting and sending custom messages.",
+      "parentUuid": "0d73c696_8a8899a2",
+      "range": {
+        "startLine": 294,
+        "startChar": 13,
+        "endLine": 300,
+        "endChar": 17
+      },
+      "revId": "4521b6999d4cdff55a4f619ba97bb02851376ff2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dd3e5bd0_c06ddbcb",
         "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
         "patchSetId": 3
@@ -277,6 +343,24 @@
       "writtenOn": "2018-06-28T13:26:11Z",
       "side": 1,
       "message": "Why three separate catch clauses to do the exact same thing? You\u0027re working too hard",
+      "revId": "4521b6999d4cdff55a4f619ba97bb02851376ff2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ac2e248f_3c8914c1",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 398,
+      "author": {
+        "id": 40
+      },
+      "writtenOn": "2018-06-29T15:24:57Z",
+      "side": 1,
+      "message": "same reason as above.",
+      "parentUuid": "de0105fe_3b048456",
       "revId": "4521b6999d4cdff55a4f619ba97bb02851376ff2",
       "serverId": "655300a2-7a56-4504-9153-881edd907bea",
       "unresolved": false
@@ -369,6 +453,24 @@
     },
     {
       "key": {
+        "uuid": "d521f627_a0c00aea",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 463,
+      "author": {
+        "id": 40
+      },
+      "writtenOn": "2018-06-29T15:24:57Z",
+      "side": 1,
+      "message": "Not required. The error does not happen here. The logging is done at the correct place where the error happens.",
+      "parentUuid": "54bf5b7e_f85d7093",
+      "revId": "4521b6999d4cdff55a4f619ba97bb02851376ff2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6f352131_a676b10c",
         "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
         "patchSetId": 3
@@ -449,6 +551,24 @@
     },
     {
       "key": {
+        "uuid": "d4a2543c_7487f963",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 863,
+      "author": {
+        "id": 40
+      },
+      "writtenOn": "2018-06-29T15:24:57Z",
+      "side": 1,
+      "message": "Will not execute any other way right now because there is no use case for Data broker with 2 operations. Not required right now.",
+      "parentUuid": "6983ac2c_e492c2b7",
+      "revId": "4521b6999d4cdff55a4f619ba97bb02851376ff2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "72f70949_096f4e78",
         "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
         "patchSetId": 3
@@ -460,6 +580,30 @@
       "writtenOn": "2018-06-28T13:26:11Z",
       "side": 1,
       "message": "Don\u0027t hardcode http.  Don\u0027t hardcode an IP address!  This looks dead wrong.",
+      "range": {
+        "startLine": 924,
+        "startChar": 12,
+        "endLine": 924,
+        "endChar": 21
+      },
+      "revId": "4521b6999d4cdff55a4f619ba97bb02851376ff2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "468089f0_6157c33d",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 924,
+      "author": {
+        "id": 40
+      },
+      "writtenOn": "2018-06-29T15:24:57Z",
+      "side": 1,
+      "message": "Discussed yesterday",
+      "parentUuid": "72f70949_096f4e78",
       "range": {
         "startLine": 924,
         "startChar": 12,
@@ -546,6 +690,30 @@
       "writtenOn": "2018-06-28T13:26:11Z",
       "side": 1,
       "message": "What if it\u0027s https?",
+      "range": {
+        "startLine": 1133,
+        "startChar": 12,
+        "endLine": 1133,
+        "endChar": 16
+      },
+      "revId": "4521b6999d4cdff55a4f619ba97bb02851376ff2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d66b6fc2_ea9e0600",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1133,
+      "author": {
+        "id": 40
+      },
+      "writtenOn": "2018-06-29T15:24:57Z",
+      "side": 1,
+      "message": "discussed.",
+      "parentUuid": "ec138418_eef0c822",
       "range": {
         "startLine": 1133,
         "startChar": 12,
