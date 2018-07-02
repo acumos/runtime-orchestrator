@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "72960928_cf81d2e4",
+        "filename": "pom.xml",
+        "patchSetId": 7
+      },
+      "lineNbr": 254,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-07-02T13:57:20Z",
+      "side": 1,
+      "message": "Why did you comment out the construction of docker image?  Please restore.",
+      "range": {
+        "startLine": 254,
+        "startChar": 10,
+        "endLine": 254,
+        "endChar": 20
+      },
+      "revId": "5ec6f9a01c6a3f02d85566bed20daf5c75eb2758",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    }
+  ]
+}
