@@ -17,38 +17,26 @@
  * limitations under the License.
  * ===============LICENSE_END=========================================================
  */
-package org.acumos.bporchestrator.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package org.acumos.bporchestrator.splittercollator.vo;
 
-import org.acumos.bporchestrator.MCAttributes;
+import java.io.Serializable;
 
-public class DBResponseRunnable implements Runnable {
+public class CollatorMapOutput implements Serializable{
+	
+	private static final long serialVersionUID = -8114356478731475710L;
+	
+	private CollatorOutputField output_field;
 
-	private static final Logger dblogger = LoggerFactory.getLogger(DBResponseRunnable.class);
-
-	private MCAttributes mcAttributes;
-
-	public DBResponseRunnable(MCAttributes mcAttributes) {
-		this.mcAttributes = mcAttributes;
+	public CollatorOutputField getOutput_field() {
+		return output_field;
 	}
 
-	@Override
-	public void run() {
-
-		dblogger.info("New Thread started due to DB response");
-
-		/*
-		 * try { new
-		 * BlueprintOrchestratorController().notifyNextNode(mcAttributes.
-		 * getOutput(), mcAttributes.getCurrentNode(),
-		 * mcAttributes.getCurrentOperation(), mcAttributes.isProbePresent(),
-		 * mcAttributes.getProbeContName(), mcAttributes.getProbeOperation(),
-		 * mcAttributes.getProbeUrl()); } catch (Exception e) { // TODO
-		 * Auto-generated catch block e.printStackTrace(); }
-		 */
-
+	public void setOutput_field(CollatorOutputField output_field) {
+		this.output_field = output_field;
 	}
+	
+	
+	
 
 }

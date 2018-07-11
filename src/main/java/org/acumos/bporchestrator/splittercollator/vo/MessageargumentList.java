@@ -2,7 +2,7 @@
  * ===============LICENSE_START=======================================================
  * Acumos
  * ===================================================================================
- * Copyright (C) 2017 - 2018 AT&T Intellectual Property & Tech Mahindra. All rights reserved.
+ * Copyright (C) 2017 AT&T Intellectual Property & Tech Mahindra. All rights reserved.
  * ===================================================================================
  * This Acumos software file is distributed by AT&T and Tech Mahindra
  * under the Apache License, Version 2.0 (the "License");
@@ -18,64 +18,107 @@
  * ===============LICENSE_END=========================================================
  */
 
-package org.acumos.bporchestrator.collator.vo;
+package org.acumos.bporchestrator.splittercollator.vo;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
-public class ProtobufService implements Serializable {
+public class MessageargumentList implements Serializable{
+	private static final long serialVersionUID = 1L;
+	
+	private String role;
+    private String type;
+    private String name;
+    private String tag;
+    private ComplexType complexType;
+    
+    
+	/**
+	 * @return the role
+	 */
+	public String getRole() {
+		return role;
+	}
+
+
 
 	/**
-	 * 
+	 * @param role the role to set
 	 */
-	private static final long serialVersionUID = 6149386852915447136L;
-	
-	private String name; 
-	private List<ProtobufServiceOperation> operations;
-	
-	public ProtobufService(){
-		operations = new ArrayList<ProtobufServiceOperation>();
+	public void setRole(String role) {
+		this.role = role;
 	}
+
+
+
+	/**
+	 * @return the type
+	 */
+	public String getType() {
+		return type;
+	}
+
+
+
+	/**
+	 * @param type the type to set
+	 */
+	public void setType(String type) {
+		this.type = type;
+	}
+
+
+
 	/**
 	 * @return the name
-	 * 		This method returns name
 	 */
 	public String getName() {
 		return name;
 	}
+
+
+
 	/**
 	 * @param name the name to set
-	 * 		This method accepts name
 	 */
 	public void setName(String name) {
 		this.name = name;
 	}
+
+
+
 	/**
-	 * @return the operations
-	 * 			This method returns operations	
+	 * @return the tag
 	 */
-	public List<ProtobufServiceOperation> getOperations() {
-		return operations;
+	public String getTag() {
+		return tag;
 	}
+
+
+
 	/**
-	 * @param operations
-	 * 			This method accepts operations
+	 * @param tag the tag to set
 	 */
-	public void setOperations(List<ProtobufServiceOperation> operations) {
-		this.operations = operations;
+	public void setTag(String tag) {
+		this.tag = tag;
 	}
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("service " + name + " {\n");
-		for(ProtobufServiceOperation o : operations){
-			sb.append(o.toString());
-		}
-		sb.append("}\n");
-		return sb.toString();
+
+
+	/**
+	 * 
+	 */
+	public MessageargumentList() {
 	}
-	
-	
-	
+
+
+
+	public ComplexType getComplexType() {
+		return complexType;
+	}
+
+
+
+	public void setComplexType(ComplexType complexType) {
+		this.complexType = complexType;
+	}
+
 }

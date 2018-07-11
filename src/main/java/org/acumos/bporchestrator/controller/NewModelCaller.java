@@ -26,27 +26,29 @@ import java.util.concurrent.BlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.acumos.bporchestrator.MCAttributes;
+import org.acumos.bporchestrator.util.NewThreadAttributes;
 
-public class DSAsyncResponseRunnable implements Runnable {
+public class NewModelCaller implements Runnable {
 
-	private static final Logger dslogger = LoggerFactory.getLogger(DSAsyncResponseRunnable.class);
+	private static final Logger ntlogger = LoggerFactory.getLogger(NewModelCaller.class);
 
-	private MCAttributes mcAttributes;
+	private NewThreadAttributes newThreadAttributes;
 
-	public DSAsyncResponseRunnable(MCAttributes mcAttributes) {
-		this.mcAttributes = mcAttributes;
+	public NewModelCaller(NewThreadAttributes newThreadAttributes) {
+		this.newThreadAttributes = newThreadAttributes;
 	}
 
 	@Override
 	public void run() {
 
-		dslogger.info("DS Async response thread started");
+		ntlogger.info("NewModelCaller response thread {} started for {}", Thread.currentThread().getId(),
+				newThreadAttributes.getsNode());
 
 		try {
-			new BlueprintOrchestratorController().notifyNextNode(mcAttributes.getOutput(), mcAttributes.getCurrentNode(),
-					mcAttributes.getCurrentOperation(), mcAttributes.isProbePresent(), mcAttributes.getProbeContName(),
-					mcAttributes.getProbeOperation(), mcAttributes.getProbeUrl());
+
+			new BlueprintOrchestratorController().traverseEachNode(newThreadAttributes.getpNode(),
+					newThreadAttributes.getsNode(), newThreadAttributes.getOut(), newThreadAttributes.getId(),
+					newThreadAttributes.getPbNode());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

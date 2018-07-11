@@ -17,38 +17,46 @@
  * limitations under the License.
  * ===============LICENSE_END=========================================================
  */
-package org.acumos.bporchestrator.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+/**
+ * 
+ */
+package org.acumos.bporchestrator.splittercollator.vo;
 
-import org.acumos.bporchestrator.MCAttributes;
+import java.io.Serializable;
 
-public class DBResponseRunnable implements Runnable {
-
-	private static final Logger dblogger = LoggerFactory.getLogger(DBResponseRunnable.class);
-
-	private MCAttributes mcAttributes;
-
-	public DBResponseRunnable(MCAttributes mcAttributes) {
-		this.mcAttributes = mcAttributes;
+public class Message implements Serializable{
+	private static final long serialVersionUID = -1288328507537289159L;
+	
+	private String messageName; 
+	private Argument[] messageargumentList;
+	
+	/**
+	 * @return the messageName
+	 */
+	public String getMessageName() {
+		return messageName;
 	}
-
-	@Override
-	public void run() {
-
-		dblogger.info("New Thread started due to DB response");
-
-		/*
-		 * try { new
-		 * BlueprintOrchestratorController().notifyNextNode(mcAttributes.
-		 * getOutput(), mcAttributes.getCurrentNode(),
-		 * mcAttributes.getCurrentOperation(), mcAttributes.isProbePresent(),
-		 * mcAttributes.getProbeContName(), mcAttributes.getProbeOperation(),
-		 * mcAttributes.getProbeUrl()); } catch (Exception e) { // TODO
-		 * Auto-generated catch block e.printStackTrace(); }
-		 */
-
+	/**
+	 * @param messageName the messageName to set
+	 */
+	public void setMessageName(String messageName) {
+		this.messageName = messageName;
 	}
+	/**
+	 * @return the messageargumentList
+	 */
+	public Argument[] getMessageargumentList() {
+		return messageargumentList;
+	}
+	/**
+	 * @param messageargumentList the messageargumentList to set
+	 */
+	public void setMessageargumentList(Argument[] messageargumentList) {
+		this.messageargumentList = messageargumentList;
+	}
+		
+	
+	
 
 }

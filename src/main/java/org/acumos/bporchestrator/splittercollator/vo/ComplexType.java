@@ -2,7 +2,7 @@
  * ===============LICENSE_START=======================================================
  * Acumos
  * ===================================================================================
- * Copyright (C) 2017 - 2018 AT&T Intellectual Property & Tech Mahindra. All rights reserved.
+ * Copyright (C) 2017 AT&T Intellectual Property & Tech Mahindra. All rights reserved.
  * ===================================================================================
  * This Acumos software file is distributed by AT&T and Tech Mahindra
  * under the Apache License, Version 2.0 (the "License");
@@ -18,51 +18,43 @@
  * ===============LICENSE_END=========================================================
  */
 
-package org.acumos.bporchestrator.collator.vo;
+package org.acumos.bporchestrator.splittercollator.vo;
 
-public class Result {
-	private int status;
-	private Object message;
+import java.io.Serializable;
+import java.util.List;
+
+
+public class ComplexType implements Serializable {
+
+	private static final long serialVersionUID = -8550690156793239836L;
 	
-	public Result(){
-		
-	}
-	
-	
-	public Result(int status, Object message) {
-		super();
-		this.status = status;
-		this.message = message;
-	}
+	private String messageName ="";
+	private List<MessageargumentList> messageargumentList;
 	
 	/**
-	 * @return status
-	 * 			This method returns status
+	 * @return the messageName
 	 */
-	public int getStatus() {
-		return status;
+	public String getMessageName() {
+		return messageName;
 	}
 	/**
-	 * @param status 
-	 * 			This method accepts status
+	 * @param messageName the messageName to set
 	 */
-	public void setStatus(int status) {
-		this.status = status;
+	public void setMessageName(String messageName) {
+		this.messageName = messageName;
 	}
 	/**
-	 * @return message
-	 * 		This method returns message
+	 * @return the messageargumentList
 	 */
-	public Object getMessage() {
-		return message;
+	public List<MessageargumentList> getMessageargumentList() {
+		return messageargumentList;
 	}
 	/**
-	 * @param message 
-	 * 		This method accepts message
+	 * @param messageargumentList the messageargumentList to set
 	 */
-	public void setMessage(Object message) {
-		this.message = message;
+	public void setMessageargumentList(List<MessageargumentList> messageargumentList) {
+		this.messageargumentList = messageargumentList;
 	}
 	
-	
+
 }

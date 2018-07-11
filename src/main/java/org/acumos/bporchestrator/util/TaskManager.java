@@ -35,10 +35,9 @@ public class TaskManager {
 	private static Blueprint blueprint = null;
 
 	private static DockerInfoList dockerList = null;
-	
 	private static FinalResults fr = null;
-	
 	private static List listOfSockeTimoutModels = null;
+	private static int[][] sourceDestinatioNodeMappingTable;
 
 	/**
 	 * @return the listofsocketimoutmodels
@@ -48,7 +47,8 @@ public class TaskManager {
 	}
 
 	/**
-	 * @param listofsocketimoutmodels the listofsocketimoutmodels to set
+	 * @param listofsocketimoutmodels
+	 *            the listofsocketimoutmodels to set
 	 */
 	public static void setListofsocketimoutmodels(List listofsocketimoutmodels) {
 		TaskManager.listOfSockeTimoutModels = listofsocketimoutmodels;
@@ -60,7 +60,6 @@ public class TaskManager {
 	private TaskManager() {
 		throw new IllegalAccessError("TaskManager class");
 	}
-
 
 	public static Blueprint getBlueprint() {
 		return blueprint;
@@ -74,11 +73,25 @@ public class TaskManager {
 		return dockerList;
 	}
 
+	/**
+	 * @return the sourceDestinatioNodeMappingTable
+	 */
+	public static int[][] getSourceDestinatioNodeMappingTable() {
+		return sourceDestinatioNodeMappingTable;
+	}
+
+	/**
+	 * @param sourceDestinatioNodeMappingTable
+	 *            the sourceDestinatioNodeMappingTable to set
+	 */
+	public static void setSourceDestinatioNodeMappingTable(int[][] sourceDestinatioNodeMappingTable) {
+		TaskManager.sourceDestinatioNodeMappingTable = sourceDestinatioNodeMappingTable;
+	}
+
 	public static void setDockerList(DockerInfoList dockerList) {
 		TaskManager.dockerList = dockerList;
 	}
-	
-	
+
 	public static FinalResults getFinalResults() {
 		return fr;
 	}

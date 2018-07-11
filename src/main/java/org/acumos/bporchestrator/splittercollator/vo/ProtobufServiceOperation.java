@@ -18,7 +18,7 @@
  * ===============LICENSE_END=========================================================
  */
 
-package org.acumos.bporchestrator.collator.vo;
+package org.acumos.bporchestrator.splittercollator.vo;
 
 import java.io.Serializable;
 import java.util.List;

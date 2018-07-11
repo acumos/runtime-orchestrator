@@ -18,76 +18,64 @@
  * ===============LICENSE_END=========================================================
  */
 
-package org.acumos.bporchestrator.collator.vo;
+package org.acumos.bporchestrator.splittercollator.vo;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
-public class ProtobufMessageField implements Serializable {
+public class ProtobufService implements Serializable {
 
-	
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 6611051786680341185L;
+	private static final long serialVersionUID = 6149386852915447136L;
 	
-	private String role;
-	private String type;
-	private String name;
-	private int tag;
+	private String name; 
+	private List<ProtobufServiceOperation> operations;
 	
-	/**
-	 * @return the role
-	 */
-	public String getRole() {
-		return role;
-	}
-	/**
-	 * @param role the role to set
-	 */
-	public void setRole(String role) {
-		this.role = role;
-	}
-	/**
-	 * @return the type
-	 */
-	public String getType() {
-		return type;
-	}
-	/**
-	 * @param type the type to set
-	 */
-	public void setType(String type) {
-		this.type = type;
+	public ProtobufService(){
+		operations = new ArrayList<ProtobufServiceOperation>();
 	}
 	/**
 	 * @return the name
+	 * 		This method returns name
 	 */
 	public String getName() {
 		return name;
 	}
 	/**
 	 * @param name the name to set
+	 * 		This method accepts name
 	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 	/**
-	 * @return the tag
+	 * @return the operations
+	 * 			This method returns operations	
 	 */
-	public int getTag() {
-		return tag;
+	public List<ProtobufServiceOperation> getOperations() {
+		return operations;
 	}
 	/**
-	 * @param tag the tag to set
+	 * @param operations
+	 * 			This method accepts operations
 	 */
-	public void setTag(int tag) {
-		this.tag = tag;
+	public void setOperations(List<ProtobufServiceOperation> operations) {
+		this.operations = operations;
 	}
-	
 	@Override
 	public String toString() {
-		return role + " " + type + " " + name + " = " + tag + ";\n";
+		StringBuilder sb = new StringBuilder();
+		sb.append("service " + name + " {\n");
+		for(ProtobufServiceOperation o : operations){
+			sb.append(o.toString());
+		}
+		sb.append("}\n");
+		return sb.toString();
 	}
+	
 	
 	
 }

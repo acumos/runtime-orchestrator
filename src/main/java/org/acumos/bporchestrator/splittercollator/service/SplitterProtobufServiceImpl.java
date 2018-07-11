@@ -8,9 +8,9 @@
  * under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *  
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *  
  * This file is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
@@ -18,8 +18,9 @@
  * ===============LICENSE_END=========================================================
  */
 
-package org.acumos.bporchestrator.collator.service;
+package org.acumos.bporchestrator.splittercollator.service;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,70 +29,62 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-import org.acumos.bporchestrator.collator.util.Constants;
-import org.acumos.bporchestrator.collator.util.ProtobufUtil;
-import org.acumos.bporchestrator.collator.vo.Configuration;
-import org.acumos.bporchestrator.collator.vo.Protobuf;
-import org.acumos.bporchestrator.collator.vo.ProtobufMessage;
-import org.acumos.bporchestrator.collator.vo.ProtobufMessageField;
-import org.acumos.bporchestrator.collator.vo.ProtobufServiceOperation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.acumos.bporchestrator.splittercollator.util.Constants;
+import org.acumos.bporchestrator.splittercollator.util.ProtobufUtil;
+import org.acumos.bporchestrator.splittercollator.vo.CollatorInputField;
+import org.acumos.bporchestrator.splittercollator.vo.Message;
+import org.acumos.bporchestrator.splittercollator.vo.Protobuf;
+import org.acumos.bporchestrator.splittercollator.vo.ProtobufMessage;
+import org.acumos.bporchestrator.splittercollator.vo.ProtobufMessageField;
+import org.acumos.bporchestrator.splittercollator.vo.ProtobufServiceOperation;
+import org.acumos.bporchestrator.splittercollator.vo.SplitterMap;
+import org.acumos.bporchestrator.splittercollator.vo.SplitterMapOutput;
+import org.acumos.bporchestrator.splittercollator.vo.SplitterOutputField;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.os72.protobuf.dynamic.DynamicSchema;
 import com.github.os72.protobuf.dynamic.MessageDefinition;
-import com.google.protobuf.DynamicMessage;
-import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Descriptors.Descriptor;
 import com.google.protobuf.Descriptors.DescriptorValidationException;
+import com.google.protobuf.Descriptors.FieldDescriptor;
+import com.google.protobuf.DynamicMessage;
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.ServiceException;
 
-@Component("ProtobufServiceImpl")
-public class ProtobufServiceImpl implements ProtobufService {
+@Component("SplitterProtobufServiceImpl")
+public class SplitterProtobufServiceImpl implements SplitterProtobufService {
 
-	private Configuration conf;
+	private SplitterMap splitterMap;
 	private Protobuf protobuf;
 	private DynamicSchema protobufSchema;
 
 	@Override
-	public Configuration getConf() throws CloneNotSupportedException {
-		return (null != conf) ? (Configuration) conf.clone() : null;
+	public SplitterMap getConf() throws CloneNotSupportedException {
+		return (null != splitterMap) ? splitterMap : null;
 	}
 
 	@Override
-	public void setConf(Configuration conf) throws Exception {
-		this.conf = conf;
+	public void setConf(SplitterMap splitterMap) {
+		this.splitterMap = splitterMap;
+		processProtobuf();
 	}
 
-	/**
-	 * This method process the protobuf and sets the details.
-	 *
-	 * @throws Exception
-	 *             In case of any exception, this method throws Exception
-	 */
-	public void processProtobuf() throws Exception {
+	
+	private void processProtobuf() {
 		try {
-			String protobufStr = conf.getProtobufFileStr();
-			protobuf = ProtobufUtil.parseProtobuf(protobufStr);
+			protobuf = ProtobufUtil.parseProtoStrForSplit(splitterMap);
 			setProbufSchem(protobuf);
-
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw e;
 
 		}
 	}
 
-	/**
-	 * This method return the Protobuf Class set from the configuration details
-	 * using API /configDB.
-	 *
-	 * @return Protobuf This method returns Protobuf
-	 * @throws Exception
-	 *             In case of any exception, this method throws the
-	 *             ServiceException
-	 */
-	public Protobuf getProtobuf() throws Exception {
+	
+	public Protobuf getProtobuf() throws NullPointerException {
 		if (null == protobuf) {
 			throw new NullPointerException();
 		}
@@ -101,7 +94,7 @@ public class ProtobufServiceImpl implements ProtobufService {
 	/**
 	 * This method converters the ASCII data (input line) into protobuf binary
 	 * format for the specified message name.
-	 *
+	 * 
 	 * @param messageName
 	 *            This method accepts messageName
 	 * @param line
@@ -126,7 +119,7 @@ public class ProtobufServiceImpl implements ProtobufService {
 	/**
 	 * This method read the protobuf binary formatted data (i.e., line) into
 	 * specified message.
-	 *
+	 * 
 	 * @param messageName
 	 *            This method accepts messageName
 	 * @param line
@@ -148,84 +141,105 @@ public class ProtobufServiceImpl implements ProtobufService {
 	}
 
 	@Override
-	public byte[] collateData(List<byte[]> listOfProtobufmsgs)
-			throws NullPointerException, CloneNotSupportedException, InvalidProtocolBufferException {
-		byte[] result = null;
+	public Map<String, Object> parameterBasedSplitData(byte[] inputData) throws NullPointerException,
+			CloneNotSupportedException, JsonParseException, JsonMappingException, IOException {
+		Map<String, Object> result = new HashMap<String, Object>();
 
-		String collatorType = conf.getCollator_type();
-		if (null == collatorType && collatorType.isEmpty()) {
-			throw new NullPointerException("CollatorType should not be null");
-		}
+		org.acumos.bporchestrator.splittercollator.vo.ProtobufService rpc = protobuf.getService();
+		List<ProtobufServiceOperation> operations = rpc.getOperations();
+		ProtobufServiceOperation operation = operations.get(0);
+		List<String> inputMsgNames = operation.getInputMessageNames();
+		String parentInputMsgName = inputMsgNames.get(0);
 
-		if (collatorType.equals("Array-based")) {
-			org.acumos.bporchestrator.collator.vo.ProtobufService rpc = protobuf.getService();
-			List<ProtobufServiceOperation> operations = rpc.getOperations();
-			ProtobufServiceOperation operation = operations.get(0);
-			List<String> outputMsgNames = operation.getOutputMessageNames();
-			String parentOutputMsgName = outputMsgNames.get(0);
+		Object inputFieldValue = null;
 
-			ProtobufMessage parentOutputMsg = protobuf.getMessage(parentOutputMsgName);
-			List<ProtobufMessageField> parentFields = parentOutputMsg.getFields();
-			ProtobufMessageField parentField = parentFields.get(0);
-			String childOutputMsgType = parentField.getType();
+		DynamicMessage.Builder parentInputMsgBuilder = protobufSchema.newMessageBuilder(parentInputMsgName);
+		Descriptor parentInpuMsgDesc = parentInputMsgBuilder.getDescriptorForType();
+		DynamicMessage inputDynamsg = DynamicMessage.parseFrom(parentInpuMsgDesc, inputData);
 
-			String childOutputMsgName = parentOutputMsgName + "." + childOutputMsgType;
+		DynamicMessage.Builder outputMsgBuilder = null;
+		Descriptor outMsgDesc = null;
+		DynamicMessage outDynamsg = null;
+		FieldDescriptor outFieldDesc = null;
 
-			DynamicMessage.Builder parentOutputMsgBuilder = protobufSchema.newMessageBuilder(parentOutputMsgName);
-			Descriptor parentOutpuMsgDesc = parentOutputMsgBuilder.getDescriptorForType();
-			DynamicMessage dynamicOutputMsg = null;
-
-			DynamicMessage.Builder childOutputMsgBuilder = protobufSchema.newMessageBuilder(childOutputMsgName);
-			Descriptor childOutputMDesc = childOutputMsgBuilder.getDescriptorForType();
-			DynamicMessage dynamicChildOutputMsg = null;
-			if (null != listOfProtobufmsgs && !listOfProtobufmsgs.isEmpty()) {
-				for (byte[] b : listOfProtobufmsgs) {
-					dynamicChildOutputMsg = DynamicMessage.parseFrom(childOutputMDesc, b);
-					parentOutputMsgBuilder.addRepeatedField(parentOutpuMsgDesc.findFieldByName(parentField.getName()),
-							dynamicChildOutputMsg);
+		String outputMessageName = null;
+		List<ProtobufMessageField> protoMessageFields = null;
+		List<ProtobufMessage> protoMessages = protobuf.getMessages();
+		int outputFieldTag = 0;
+		for (ProtobufMessage protoMessage : protoMessages) {
+			outputMessageName = protoMessage.getName();
+			if (!outputMessageName.equals(parentInputMsgName)) {
+				protoMessageFields = protoMessage.getFields();
+				outputMsgBuilder = protobufSchema.newMessageBuilder(outputMessageName);
+				outMsgDesc = outputMsgBuilder.getDescriptorForType();
+				for (ProtobufMessageField field : protoMessageFields) {
+					outputFieldTag = field.getTag();
+					outFieldDesc = outMsgDesc.findFieldByNumber(outputFieldTag);
+					inputFieldValue = getOutputFieldValue(outputMessageName, outputFieldTag, parentInpuMsgDesc,
+							inputDynamsg);
+					if (null != inputFieldValue) {
+						outputMsgBuilder.setField(outFieldDesc, inputFieldValue);
+					}
 				}
+				outDynamsg = outputMsgBuilder.build();
+				result.put(outputMessageName.split("\\_")[0], outDynamsg.toByteArray());
 			}
-			dynamicOutputMsg = parentOutputMsgBuilder.build();
-			result = dynamicOutputMsg.toByteArray();
-		} else if (collatorType.equals("Parameter-based")) {
 
 		}
 
 		return result;
 	}
 
-	private void setCollatorProbufSchem(Protobuf protobuf) throws DescriptorValidationException {
-		// Create dynamic schema
-		DynamicSchema.Builder schemaBuilder = DynamicSchema.newBuilder();
-		schemaBuilder.setName("DatabrokerSchemaDynamic.proto");
-		Map<String, MessageDefinition> msgDefinitions = new HashMap<String, MessageDefinition>();
+	private Object getOutputFieldValue(String outputMessageName, int outputFieldTag, Descriptor parentInpuMsgDesc,
+			DynamicMessage inputDynamsg) throws IOException, JsonParseException, JsonMappingException {
+		Object inputFieldValue = null;
+		FieldDescriptor inputFieldDesc = null;
 
-		MessageDefinition msgDef = null;
-		MessageDefinition.Builder builder = null;
-		List<ProtobufMessageField> fields = null;
+		SplitterMapOutput[] splitterMapOutputs = splitterMap.getMap_outputs();
+		SplitterOutputField outputField = null;
+		String mappedToField = null;
+		ObjectMapper mapper = new ObjectMapper();
 
-		List<ProtobufMessage> messages = protobuf.getMessages();
-		for (ProtobufMessage msg : messages) { // add MessageDefinition to
-			// msgDefinitions
-			builder = MessageDefinition.newBuilder(msg.getName());
-			fields = msg.getFields();
-			for (ProtobufMessageField f : fields) {
-				if (Constants.PROTOBUF_DATA_TYPE.contains(f.getType())) {
-					builder.addField(f.getRole(), f.getType(), f.getName(), f.getTag());
-				} else if (f.getType().contains("enum")) {
-					// TODO : Include Enum
-				} else { // field is nested message, get it from msgDefinitions
-					builder.addMessageDefinition(getNestedMsgDefinitionFrom(msgDefinitions, f.getType()));
-					builder.addField(f.getRole(), f.getType(), f.getName(), f.getTag());
+		String targetName = null;
+		String messageSignature = null;
+		Message msg = null;
+		for (SplitterMapOutput mapOutput : splitterMapOutputs) {
+			outputField = mapOutput.getOutput_field();
+			mappedToField = outputField.getMapped_to_field();
+			if (null != mappedToField && !mappedToField.trim().equals("")
+					&& outputFieldTag == Integer.parseInt(mappedToField)) {
+				targetName = outputField.getTarget_name();
+				messageSignature = outputField.getMessage_signature();
+				msg = mapper.readValue(messageSignature, Message.class);
+				if (targetName.equals(outputMessageName.split("\\_")[0])
+						&& msg.getMessageName().equals(outputMessageName.split("\\_")[1])) {
+					inputFieldDesc = parentInpuMsgDesc.findFieldByNumber(outputFieldTag);
+					inputFieldValue = inputDynamsg.getField(inputFieldDesc);
 				}
 			}
-			msgDef = builder.build();
-			msgDefinitions.put(msg.getName(), msgDef);
 		}
-		for (String key : msgDefinitions.keySet()) {
-			schemaBuilder.addMessageDefinition(msgDefinitions.get(key));
-		}
-		protobufSchema = schemaBuilder.build();
+		return inputFieldValue;
+	}
+
+	private Object getInputFieldValue(CollatorInputField inputField, Map<String, Object> protobufmsgsbyteMap)
+			throws JsonParseException, JsonMappingException, IOException {
+		Object inputFieldValue = null;
+		ObjectMapper mapper = new ObjectMapper();
+		DynamicMessage inputFielddynamsg = null;
+
+		String inputMessageSignature = inputField.getMessage_signature();
+		String sourceName = inputField.getSource_name();
+		Message msg = mapper.readValue(inputMessageSignature, Message.class);
+		String inputMessageName = sourceName + "_" + msg.getMessageName();
+
+		DynamicMessage.Builder inputFieldmsgBuilder = protobufSchema.newMessageBuilder(inputMessageName);
+		Descriptor inputFieldmsgDesc = inputFieldmsgBuilder.getDescriptorForType();
+		byte[] data = (byte[]) protobufmsgsbyteMap.get(sourceName);
+		inputFielddynamsg = DynamicMessage.parseFrom(inputFieldmsgDesc, data);
+		FieldDescriptor inputfieldDesc = inputFieldmsgDesc
+				.findFieldByNumber(Integer.parseInt(inputField.getParameter_tag()));
+		inputFieldValue = inputFielddynamsg.getField(inputfieldDesc);
+		return inputFieldValue;
 	}
 
 	private void setProbufSchem(Protobuf protobuf) throws DescriptorValidationException {
@@ -240,12 +254,13 @@ public class ProtobufServiceImpl implements ProtobufService {
 
 		List<ProtobufMessage> messages = protobuf.getMessages();
 		for (ProtobufMessage msg : messages) { // add MessageDefinition to
-			// msgDefinitions
+												// msgDefinitions
 			builder = MessageDefinition.newBuilder(msg.getName());
 			fields = msg.getFields();
 			for (ProtobufMessageField f : fields) {
 				if (Constants.PROTOBUF_DATA_TYPE.contains(f.getType())) {
-					builder.addField(f.getRole(), f.getType(), f.getName(), f.getTag());
+					builder.addField((null == f.getRole() || f.getRole().trim().equals("")) ? "optional" : f.getRole(),
+							f.getType(), f.getName(), f.getTag());
 				} else if (f.getType().contains("enum")) {
 					// TODO : Include Enum
 				} else { // field is nested message, get it from msgDefinitions
@@ -295,7 +310,7 @@ public class ProtobufServiceImpl implements ProtobufService {
 	 * This method process the data structure collection, collection, .... e.g.
 	 * [1,2,3],[4,5,6],1,2,3 and first two fields might be part of nested
 	 * structure and might be repeated.
-	 *
+	 * 
 	 * @param messageName
 	 *            This method accepts messageName
 	 * @param field
@@ -316,9 +331,9 @@ public class ProtobufServiceImpl implements ProtobufService {
 		if (Constants.PROTOBUF_DATA_TYPE.contains(fieldType)) {
 			int mappedColumn = getMappedColumn(messageName, field);
 			Object input = getValue(mappedColumn, line); // get the
-			// corresponding
-			// input value from
-			// the line
+															// corresponding
+															// input value from
+															// the line
 			// Convert the input value in to list of objects
 			List<Object> inputs = getObjectList(input, fieldType);
 			for (Object o : inputs) {
@@ -381,10 +396,10 @@ public class ProtobufServiceImpl implements ProtobufService {
 				int end = 0;
 				for (int i = 0; i < chars.length; i++) {
 					if (Constants.BEGIN_PARENTHESIS.indexOf(chars[i]) >= 0) { // begin
-						// paranthesis,
-						// push
-						// to
-						// stack
+																				// paranthesis,
+																				// push
+																				// to
+																				// stack
 						if (parenthesis.isEmpty()) {
 							start = i;
 						}
@@ -470,10 +485,10 @@ public class ProtobufServiceImpl implements ProtobufService {
 		List<String> columns = new ArrayList<String>();
 		for (int i = 0; i < chars.length; i++) {
 			if (Constants.BEGIN_PARENTHESIS.indexOf(chars[i]) >= 0) { // begin
-				// parenthesis,
-				// push
-				// to
-				// stack
+																		// parenthesis,
+																		// push
+																		// to
+																		// stack
 				if (parenthesis.isEmpty()) {
 					start = i;
 				}
