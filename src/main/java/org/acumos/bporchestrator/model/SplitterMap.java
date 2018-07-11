@@ -22,62 +22,59 @@ package org.acumos.bporchestrator.model;
 import java.io.Serializable;
 import java.util.List;
 
-import org.acumos.bporchestrator.splittercollator.vo.CollatorMapInput;
-import org.acumos.bporchestrator.splittercollator.vo.CollatorMapOutput;
+import org.acumos.bporchestrator.splittercollator.vo.SplitterMapInput;
+import org.acumos.bporchestrator.splittercollator.vo.SplitterMapOutput;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-public class CollatorMap implements Serializable {
+public class SplitterMap implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 2105328157288866544L;
+	private static final long serialVersionUID = 7470791845990288358L;
 	
-	private String collator_type;
-	private String output_message_signature;
-	private CollatorMapInput[] map_inputs;
-	private CollatorMapOutput[] map_outputs;
+    private String splitter_type;
+	private String input_message_signature;
+	private SplitterMapInput[] map_inputs;
+	private SplitterMapOutput[] map_outputs;
 
-	public String getCollator_type() {
-		return collator_type;
+	public String getSplitter_type() {
+		return splitter_type;
 	}
 
-	public void setCollator_type(String collator_type) {
-		this.collator_type = collator_type;
+	public void setSplitter_type(String splitter_type) {
+		this.splitter_type = splitter_type;
 	}
 
-	public CollatorMapInput[] getMap_inputs() {
+	public String getInput_message_signature() {
+		return input_message_signature;
+	}
+
+	public void setInput_message_signature(String input_message_signature) {
+		this.input_message_signature = input_message_signature;
+	}
+
+	public SplitterMapInput[] getMap_inputs() {
 		return map_inputs;
 	}
 
-	public void setMap_inputs(CollatorMapInput[] map_inputs) {
+	public void setMap_inputs(SplitterMapInput[] map_inputs) {
 		this.map_inputs = map_inputs;
 	}
 
-	public CollatorMapOutput[] getMap_outputs() {
+	public SplitterMapOutput[] getMap_outputs() {
 		return map_outputs;
 	}
 
-	public void setMap_outputs(CollatorMapOutput[] map_outputs) {
+	public void setMap_outputs(SplitterMapOutput[] map_outputs) {
 		this.map_outputs = map_outputs;
-	}
-
-	public String getOutput_message_signature() {
-		return output_message_signature;
-	}
-
-	public void setOutput_message_signature(String output_message_signature) {
-		this.output_message_signature = output_message_signature;
 	}
 
 	/*
 	 * @Override public String toString() { return "MapInputs [" +
-	 * "              collatorType = " + collatorType +
-	 * ", outputMessageSignature = " + outputMessageSignature +
-	 * ",  mapInputs = " + mapInputs + ", mapOutputs = " + mapOutputs + "]"; }
+	 * " splitterType = " + splitterType + ", outputMessageSignature = " +
+	 * inputMessageSignature + ",  mapInputs = " + mapInputs + ", mapOutputs = "
+	 * + mapOutputs + "]"; }
 	 */
 
 }

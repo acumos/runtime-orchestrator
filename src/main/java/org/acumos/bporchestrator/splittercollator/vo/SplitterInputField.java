@@ -17,38 +17,47 @@
  * limitations under the License.
  * ===============LICENSE_END=========================================================
  */
-package org.acumos.bporchestrator.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import org.acumos.bporchestrator.MCAttributes;
+package org.acumos.bporchestrator.splittercollator.vo;
 
-public class DBResponseRunnable implements Runnable {
+import java.io.Serializable;
 
-	private static final Logger dblogger = LoggerFactory.getLogger(DBResponseRunnable.class);
+public class SplitterInputField implements Serializable{
 
-	private MCAttributes mcAttributes;
-
-	public DBResponseRunnable(MCAttributes mcAttributes) {
-		this.mcAttributes = mcAttributes;
+	private static final long serialVersionUID = 5530807834979193156L;
+	
+	private String parameter_name;
+	private String parameter_type;
+	private String parameter_tag;
+	private String parameter_role;
+	
+	
+	public String getParameter_role() {
+		return parameter_role;
 	}
-
-	@Override
-	public void run() {
-
-		dblogger.info("New Thread started due to DB response");
-
-		/*
-		 * try { new
-		 * BlueprintOrchestratorController().notifyNextNode(mcAttributes.
-		 * getOutput(), mcAttributes.getCurrentNode(),
-		 * mcAttributes.getCurrentOperation(), mcAttributes.isProbePresent(),
-		 * mcAttributes.getProbeContName(), mcAttributes.getProbeOperation(),
-		 * mcAttributes.getProbeUrl()); } catch (Exception e) { // TODO
-		 * Auto-generated catch block e.printStackTrace(); }
-		 */
-
+	public void setParameter_role(String parameter_role) {
+		this.parameter_role = parameter_role;
 	}
+	public String getParameter_name() {
+		return parameter_name;
+	}
+	public void setParameter_name(String parameter_name) {
+		this.parameter_name = parameter_name;
+	}
+	public String getParameter_type() {
+		return parameter_type;
+	}
+	public void setParameter_type(String parameter_type) {
+		this.parameter_type = parameter_type;
+	}
+	public String getParameter_tag() {
+		return parameter_tag;
+	}
+	public void setParameter_tag(String parameter_tag) {
+		this.parameter_tag = parameter_tag;
+	}
+	
+	
 
 }

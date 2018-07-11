@@ -8,33 +8,23 @@
  * under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *  
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *  
  * This file is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ===============LICENSE_END=========================================================
  */
-package org.acumos.bporchestrator.model;
+
+package org.acumos.bporchestrator.splittercollator.vo;
 
 import java.io.Serializable;
-import java.util.List;
-
-import org.acumos.bporchestrator.splittercollator.vo.CollatorMapInput;
-import org.acumos.bporchestrator.splittercollator.vo.CollatorMapOutput;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 public class CollatorMap implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 2105328157288866544L;
+	private static final long serialVersionUID = -6615382514857867003L;
 	
 	private String collator_type;
 	private String output_message_signature;
@@ -72,12 +62,6 @@ public class CollatorMap implements Serializable {
 	public void setOutput_message_signature(String output_message_signature) {
 		this.output_message_signature = output_message_signature;
 	}
-
-	/*
-	 * @Override public String toString() { return "MapInputs [" +
-	 * "              collatorType = " + collatorType +
-	 * ", outputMessageSignature = " + outputMessageSignature +
-	 * ",  mapInputs = " + mapInputs + ", mapOutputs = " + mapOutputs + "]"; }
-	 */
+	
 
 }

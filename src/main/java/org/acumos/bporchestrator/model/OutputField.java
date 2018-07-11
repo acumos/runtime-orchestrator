@@ -19,17 +19,30 @@ public class OutputField implements Serializable {
 	@JsonProperty("type_and_role_hierarchy_list")
 	private TypeAndRoleHierarchyList[] typeAndRoleHierarchyList;
 
+	@JsonProperty("message_signature")
+	private String messageSignature;
+
 	@JsonProperty("parameter_tag")
 	private String parameterTag;
+
 	@JsonProperty("parameter_name")
 	private String parameterName;
+
 	@JsonProperty("parameter_type")
 	private String parameterType;
-	@JsonProperty("parameter_rule")
-	private String parameterRule;
+
+	@JsonProperty("parameter_role")
+	private String parameterRole;
 
 	@JsonProperty("target_name")
 	private String targetName;
+
+	@JsonProperty("mapped_to_field")
+	private String mappedToField;
+
+	@JsonProperty("error_indicator")
+	private String errorIndicator;
+
 	@JsonProperty("other_attributes")
 	private String otherAttributes;
 
@@ -41,17 +54,21 @@ public class OutputField implements Serializable {
 	}
 
 	public OutputField(String tag, String name, TypeAndRoleHierarchyList[] typeAndRoleHierarchyList,
-			String parameterTag, String parameterName, String parameterType, String parameterRule, String targetName,
+			String messageSignature, String parameterTag, String parameterName, String parameterType,
+			String parameterRole, String targetName, String mappedToField, String errorIndicator,
 			String otherAttributes) {
 		super();
 		this.tag = tag;
 		this.name = name;
 		this.typeAndRoleHierarchyList = typeAndRoleHierarchyList;
+		this.messageSignature = messageSignature;
 		this.parameterTag = parameterTag;
 		this.parameterName = parameterName;
 		this.parameterType = parameterType;
-		this.parameterRule = parameterRule;
+		this.parameterRole = parameterRole;
 		this.targetName = targetName;
+		this.mappedToField = mappedToField;
+		this.errorIndicator = errorIndicator;
 		this.otherAttributes = otherAttributes;
 	}
 
@@ -85,14 +102,14 @@ public class OutputField implements Serializable {
 		this.parameterType = parameterType;
 	}
 
-	@JsonProperty("parameter_rule")
-	public String getParameterRule() {
-		return parameterRule;
+	@JsonProperty("parameter_role")
+	public String getParameterRole() {
+		return parameterRole;
 	}
 
-	@JsonProperty("parameter_rule")
-	public void setParameterRule(String parameterRule) {
-		this.parameterRule = parameterRule;
+	@JsonProperty("parameter_role")
+	public void setParameterRole(String parameterRole) {
+		this.parameterRole = parameterRole;
 	}
 
 	@JsonProperty("target_name")
@@ -145,12 +162,43 @@ public class OutputField implements Serializable {
 		this.typeAndRoleHierarchyList = typeAndRoleHierarchyList;
 	}
 
+	@JsonProperty("message_signature")
+	public String getMessageSignature() {
+		return messageSignature;
+	}
+
+	@JsonProperty("message_signature")
+	public void setMessageSignature(String messageSignature) {
+		this.messageSignature = messageSignature;
+	}
+
+	@JsonProperty("mapped_to_field")
+	public String getMappedToField() {
+		return mappedToField;
+	}
+
+	@JsonProperty("mapped_to_field")
+	public void setMappedToField(String mappedToField) {
+		this.mappedToField = mappedToField;
+	}
+
+	@JsonProperty("error_indicator")
+	public String getErrorIndicator() {
+		return errorIndicator;
+	}
+
+	@JsonProperty("error_indicator")
+	public void setErrorIndicator(String errorIndicator) {
+		this.errorIndicator = errorIndicator;
+	}
+
 	@Override
 	public String toString() {
 		return "OutputField [tag = " + tag + ", name = " + name + ", typeAndRoleHierarchyList = "
 				+ typeAndRoleHierarchyList + ",  parameterTag " + parameterTag + ",  parameterName " + parameterName
-				+ ",  parameterType " + parameterType + ",  parameterRule " + parameterRule + ", targetName "
-				+ targetName + ",   otherAttributes " + otherAttributes + "]";
+				+ ",  parameterType " + parameterType + ",  parameterRole " + parameterRole + ", targetName "
+				+ targetName + ",   otherAttributes " + otherAttributes + ",   mappedToField " + mappedToField
+				+ ",   errorIndicator " + errorIndicator + ",   messageSignature " + messageSignature + "]";
 
 	}
 }

@@ -18,19 +18,23 @@
  * ===============LICENSE_END=========================================================
  */
 
-package org.acumos.bporchestrator.collator.vo;
+package org.acumos.bporchestrator.splittercollator.vo;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
-public class ProtobufOption implements Serializable {
+public class ProtobufMessage implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 7851417616145877502L;
+	private static final long serialVersionUID = -1481673805292740045L;
+
+	private String name;
+	private List<ProtobufMessageField> fields;
 	
-	private String name; 
-	private String value;
+	
+	public ProtobufMessage(){
+		fields = new ArrayList<ProtobufMessageField>();
+	}
 	/**
 	 * @return the name
 	 */
@@ -44,22 +48,32 @@ public class ProtobufOption implements Serializable {
 		this.name = name;
 	}
 	/**
-	 * @return the value
+	 * @return the fields
 	 */
-	public String getValue() {
-		return value;
+	public List<ProtobufMessageField> getFields() {
+		return fields;
 	}
 	/**
-	 * @param value the value to set
+	 * @param fields the fields to set
 	 */
-	public void setValue(String value) {
-		this.value = value;
+	public void setFields(List<ProtobufMessageField> fields) {
+		this.fields = fields;
 	}
-	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
-		return "option " + name + " = " + value + ";\n";
+		StringBuilder sb = new StringBuilder();
+		sb.append("message " + name + " {\n");
+		for(ProtobufMessageField f : fields){
+			sb.append(f.toString());
+		}
+		sb.append("}\n");
+		return sb.toString();
 	}
+	
+	
 	
 	
 }

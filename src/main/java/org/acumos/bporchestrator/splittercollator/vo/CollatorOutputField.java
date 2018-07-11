@@ -2,7 +2,7 @@
  * ===============LICENSE_START=======================================================
  * Acumos
  * ===================================================================================
- * Copyright (C) 2017 - 2018 AT&T Intellectual Property & Tech Mahindra. All rights reserved.
+ * Copyright (C) 2017 AT&T Intellectual Property & Tech Mahindra. All rights reserved.
  * ===================================================================================
  * This Acumos software file is distributed by AT&T and Tech Mahindra
  * under the Apache License, Version 2.0 (the "License");
@@ -18,47 +18,36 @@
  * ===============LICENSE_END=========================================================
  */
 
-package org.acumos.bporchestrator.collator.vo;
+package org.acumos.bporchestrator.splittercollator.vo;
 
 import java.io.Serializable;
 
-public class Configuration implements Serializable, Cloneable  {
+public class CollatorOutputField implements Serializable {
 
-	private static final long serialVersionUID = -1157991065733494655L;
-
-	private String collator_type;
-	private String protobufFileStr;
+	private static final long serialVersionUID = -1031380220547607130L;
 	
-	/**
-	 * @return the collator_type
-	 */
-	public String getCollator_type() {
-		return collator_type;
+	private String parameter_tag;
+	private String parameter_name;
+	private String parameter_type;
+	
+	public String getParameter_tag() {
+		return parameter_tag;
 	}
-
-	/**
-	 * @param collator_type the collator_type to set
-	 */
-	public void setCollator_type(String collator_type) {
-		this.collator_type = collator_type;
+	public void setParameter_tag(String parameter_tag) {
+		this.parameter_tag = parameter_tag;
 	}
-
-	/**
-	 * @return the protobufFileStr
-	 */
-	public String getProtobufFileStr() {
-		return protobufFileStr;
+	public String getParameter_name() {
+		return parameter_name;
 	}
-
-	/**
-	 * @param protobufFileStr the protobufFileStr to set
-	 */
-	public void setProtobufFileStr(String protobufFileStr) {
-		this.protobufFileStr = protobufFileStr;
+	public void setParameter_name(String parameter_name) {
+		this.parameter_name = parameter_name;
 	}
-
-	public Object clone() throws CloneNotSupportedException {
-		return super.clone();
+	public String getParameter_type() {
+		return parameter_type;
 	}
+	public void setParameter_type(String parameter_type) {
+		this.parameter_type = parameter_type;
+	}
+	
 
 }

@@ -9,9 +9,6 @@ public class InputField implements Serializable {
 
 	private static final long serialVersionUID = 4500633480295491100L;
 
-	@JsonProperty("mapped_to_field")
-	private String mappedToField;
-
 	@JsonProperty("name")
 	private String name;
 
@@ -23,12 +20,24 @@ public class InputField implements Serializable {
 
 	@JsonProperty("source_name")
 	private String sourceName;
+
+	@JsonProperty("message_signature")
+	private String messageSignature;
+
 	@JsonProperty("parameter_name")
 	private String parameterName;
+
 	@JsonProperty("parameter_type")
 	private String parameterType;
+
 	@JsonProperty("parameter_tag")
 	private String parameterTag;
+
+	@JsonProperty("parameter_role")
+	private String parameterRole;
+
+	@JsonProperty("mapped_to_field")
+	private String mappedToField;
 
 	@JsonProperty("error_indicator")
 	private String errorIndicator;
@@ -44,7 +53,8 @@ public class InputField implements Serializable {
 	}
 
 	public InputField(String mappedToField, String name, String checked, String sourceName, String parameterName,
-			String parameterType, String parameterTag, String errorIndicator, String otherAttributes) {
+			String parameterType, String parameterTag, String errorIndicator, String otherAttributes,
+			String messageSignature, String parameterRole) {
 		super();
 		this.mappedToField = mappedToField;
 		this.name = name;
@@ -55,6 +65,8 @@ public class InputField implements Serializable {
 		this.parameterTag = parameterTag;
 		this.errorIndicator = errorIndicator;
 		this.otherAttributes = otherAttributes;
+		this.messageSignature = messageSignature;
+		this.parameterRole = parameterRole;
 	}
 
 	@JsonProperty("mapped_to_field")
@@ -157,12 +169,33 @@ public class InputField implements Serializable {
 		this.otherAttributes = otherAttributes;
 	}
 
+	@JsonProperty("message_signature")
+	public String getMessageSignature() {
+		return messageSignature;
+	}
+
+	@JsonProperty("message_signature")
+	public void setMessageSignature(String messageSignature) {
+		this.messageSignature = messageSignature;
+	}
+
+	@JsonProperty("parameter_role")
+	public String getParameterRole() {
+		return parameterRole;
+	}
+
+	@JsonProperty("parameter_role")
+	public void setParameterRole(String parameterRole) {
+		this.parameterRole = parameterRole;
+	}
+
 	@Override
 	public String toString() {
 		return "InputField [mappedToField = " + mappedToField + ", name = " + name + ", type = " + type + ", checked = "
 				+ checked + ", sourceName  = " + sourceName + ",  parameterName = " + parameterName
 				+ ", parameterType = " + parameterType + ", parameterTag = " + parameterTag + ",errorIndicator = "
-				+ errorIndicator + ", otherAttributes = " + otherAttributes + "]";
+				+ errorIndicator + ", otherAttributes = " + otherAttributes + ", messageSignature = " + messageSignature
+				+ ", parameterRole = " + parameterRole + "]";
 
 	}
 }

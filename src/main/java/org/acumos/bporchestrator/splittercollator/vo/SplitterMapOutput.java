@@ -17,38 +17,25 @@
  * limitations under the License.
  * ===============LICENSE_END=========================================================
  */
-package org.acumos.bporchestrator.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import org.acumos.bporchestrator.MCAttributes;
+package org.acumos.bporchestrator.splittercollator.vo;
 
-public class DBResponseRunnable implements Runnable {
+import java.io.Serializable;
 
-	private static final Logger dblogger = LoggerFactory.getLogger(DBResponseRunnable.class);
+public class SplitterMapOutput implements Serializable{
 
-	private MCAttributes mcAttributes;
+	private static final long serialVersionUID = -142963644521061377L;
+	
+	private SplitterOutputField output_field;
 
-	public DBResponseRunnable(MCAttributes mcAttributes) {
-		this.mcAttributes = mcAttributes;
+	public SplitterOutputField getOutput_field() {
+		return output_field;
 	}
 
-	@Override
-	public void run() {
-
-		dblogger.info("New Thread started due to DB response");
-
-		/*
-		 * try { new
-		 * BlueprintOrchestratorController().notifyNextNode(mcAttributes.
-		 * getOutput(), mcAttributes.getCurrentNode(),
-		 * mcAttributes.getCurrentOperation(), mcAttributes.isProbePresent(),
-		 * mcAttributes.getProbeContName(), mcAttributes.getProbeOperation(),
-		 * mcAttributes.getProbeUrl()); } catch (Exception e) { // TODO
-		 * Auto-generated catch block e.printStackTrace(); }
-		 */
-
+	public void setOutput_field(SplitterOutputField output_field) {
+		this.output_field = output_field;
 	}
+	
 
 }

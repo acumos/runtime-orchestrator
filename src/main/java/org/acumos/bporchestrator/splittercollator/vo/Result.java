@@ -18,11 +18,51 @@
  * ===============LICENSE_END=========================================================
  */
 
-package org.acumos.bporchestrator.collator.util;
+package org.acumos.bporchestrator.splittercollator.vo;
 
-public interface Constants {
-	public static final String PROTOBUF_DATA_TYPE="double,float,int32,int64,unit32,unit64,sint32,sint64,fixed32,fixed64,sfixed32,sfixed64,bool,string,bytes";
-	public static final String BEGIN_PARENTHESIS="[{(\"";
-	public static final String END_PARENTHESIS = "]})\"";
+public class Result {
+	private int status;
+	private Object message;
+	
+	public Result(){
+		
+	}
+	
+	
+	public Result(int status, Object message) {
+		super();
+		this.status = status;
+		this.message = message;
+	}
+	
+	/**
+	 * @return status
+	 * 			This method returns status
+	 */
+	public int getStatus() {
+		return status;
+	}
+	/**
+	 * @param status 
+	 * 			This method accepts status
+	 */
+	public void setStatus(int status) {
+		this.status = status;
+	}
+	/**
+	 * @return message
+	 * 		This method returns message
+	 */
+	public Object getMessage() {
+		return message;
+	}
+	/**
+	 * @param message 
+	 * 		This method accepts message
+	 */
+	public void setMessage(Object message) {
+		this.message = message;
+	}
+	
 	
 }

@@ -34,16 +34,25 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Node implements Serializable {
 
 	private static final long serialVersionUID = 3561091761587012180L;
+
 	@JsonProperty("container_name")
 	private String container = null;
+
 	@JsonProperty("node_type")
 	private String nodeType = null;
+
 	@JsonProperty("image")
 	private String image = null;
+
 	@JsonProperty("proto_uri")
 	private String protoUri = null;
+
 	@JsonProperty("operation_signature_list")
-	private ArrayList<OperationSignatureList> operationSignatureList = null; // OperationSignatureList itself is NOT a
+	private ArrayList<OperationSignatureList> operationSignatureList = null; // OperationSignatureList
+																				// itself
+																				// is
+																				// NOT
+																				// a
 																				// Arraylist
 	@JsonProperty("data_sources")
 	private List<DataSource> dataSources = null;
@@ -53,6 +62,17 @@ public class Node implements Serializable {
 
 	@JsonProperty("collator_map")
 	private CollatorMap collatorMap;
+
+	@JsonProperty("splitter_map")
+	private SplitterMap splitterMap;
+
+	private boolean outputAvailable = false;
+
+	private byte[] nodeOutput = null;
+
+	private List<Node> immediateAncestors = new ArrayList<Node>();
+
+	public boolean beingProcessedByAThread = false;
 
 	/**
 	 * Standard POJO no-arg constructor
@@ -64,18 +84,14 @@ public class Node implements Serializable {
 	/**
 	 * @param operationSignatureList
 	 *            List of operations supported by the node
-	 * @param mappingTable
-	 *            Required by the data broker
 	 * @param protoUri
 	 *            Url of protofile : required to be passed to the Probe
 	 * @param container
 	 *            Name of the container
 	 * @param image
-	 *            Url of the docker image of the named node in Nexus. Information
-	 *            consumed by deployer
+	 *            Url of the docker image of the named node in Nexus.
+	 *            Information consumed by deployer
 	 * @param dataSources
-	 *            Required by the data broker
-	 * @param script
 	 *            Required by the data broker
 	 * @param nodeType
 	 *            Type of the node: DataMapper or MLModel or DataBroker or
@@ -83,11 +99,22 @@ public class Node implements Serializable {
 	 * @param dataBrokerMap
 	 *            Data broker info data structure.
 	 * @param collatorMap
-	 * 			  Collator info structure
+	 *            Collator info structure
+	 * @param splitterMap
+	 *            Splitter info structure
+	 * @param outputAvailable
+	 *            Says if the node's output is available.
+	 * @param nodeOutput
+	 *            The node's output after it is called.
+	 * @param immediateAncestors
+	 *            The immediate ancestors of the node.
+	 * @param beingProcessedByAThread
+	 *            Says if the node is being processed by a thread
 	 */
 	public Node(String container, String nodeType, String image, String protoUri,
-			ArrayList<OperationSignatureList> operationSignatureList, String script, MappingTable mappingTable,
-			List<DataSource> dataSources, DataBrokerMap dataBrokerMap, CollatorMap collatorMap) {
+			ArrayList<OperationSignatureList> operationSignatureList, List<DataSource> dataSources,
+			DataBrokerMap dataBrokerMap, CollatorMap collatorMap, SplitterMap splitterMap, boolean outputAvailable,
+			byte[] nodeOutput, List<Node> immediateAncestors, boolean beingProcessedByAThread) {
 		super();
 		this.container = container;
 		this.nodeType = nodeType;
@@ -97,6 +124,11 @@ public class Node implements Serializable {
 		this.dataSources = dataSources;
 		this.dataBrokerMap = dataBrokerMap;
 		this.collatorMap = collatorMap;
+		this.splitterMap = splitterMap;
+		this.outputAvailable = outputAvailable;
+		this.nodeOutput = nodeOutput;
+		this.immediateAncestors = immediateAncestors;
+		this.beingProcessedByAThread = beingProcessedByAThread;
 	}
 
 	@JsonProperty("container_name")
@@ -179,10 +211,65 @@ public class Node implements Serializable {
 		this.collatorMap = collatorMap;
 	}
 
+	public boolean isOutputAvailable() {
+		return outputAvailable;
+	}
+
+	public void setOutputAvailable(boolean outputAvailable) {
+		this.outputAvailable = outputAvailable;
+	}
+
+	public byte[] getNodeOutput() {
+		return nodeOutput;
+	}
+
+	public void setNodeOutput(byte[] nodeOutput) {
+		this.nodeOutput = nodeOutput;
+	}
+
+	public List<Node> getImmediateAncestors() {
+		return immediateAncestors;
+	}
+
+	public void setImmediateAncestors(List<Node> immediateAncestors) {
+		this.immediateAncestors = immediateAncestors;
+	}
+
+	public SplitterMap getSplitterMap() {
+		return splitterMap;
+	}
+
+	public void setSplitterMap(SplitterMap splitterMap) {
+		this.splitterMap = splitterMap;
+	}
+
+	public boolean isBeingProcessedByAThread() {
+		return beingProcessedByAThread;
+	}
+
+	public void setBeingProcessedByAThread(boolean beingProcessedByAThread) {
+		this.beingProcessedByAThread = beingProcessedByAThread;
+	}
+
+	public boolean immediateAncestorsOutputAvailable() {
+		// Check all ancestors for output
+		for (Node n : this.immediateAncestors)
+
+		{
+			if (n.isOutputAvailable() == false) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	@Override
 	public String toString() {
 		return "Node [container=" + container + ", image=" + image + ", protoUri=" + protoUri + ", nodeType=" + nodeType
-				+ ", dataBrokerMap=" + dataBrokerMap + ",collatorMap=" + collatorMap + "]";
+				+ ", dataBrokerMap=" + dataBrokerMap + ",collatorMap=" + collatorMap + ",splitterMap=" + splitterMap
+				+ ",outputAvailable=" + outputAvailable + ",nodeOutput=" + nodeOutput + ",immediateAncestors="
+				+ immediateAncestors + "]";
 	}
 
 }
