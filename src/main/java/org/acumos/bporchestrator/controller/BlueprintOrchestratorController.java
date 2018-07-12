@@ -31,6 +31,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -193,10 +194,11 @@ public class BlueprintOrchestratorController {
 				}
 			}
 
-			/*// Find the url etc. for the probe
-			if (probePresent == true) {
-				probeUrl = constructURL(blueprint.getNodebyContainer(probeContName));
-			}*/
+			/*
+			 * // Find the url etc. for the probe if (probePresent == true) {
+			 * probeUrl =
+			 * constructURL(blueprint.getNodebyContainer(probeContName)); }
+			 */
 
 			// Now call the input node and its operation signature.
 			for (InputPort inport : inps) {
@@ -230,12 +232,13 @@ public class BlueprintOrchestratorController {
 			inpNode.setOutputAvailable(true);
 
 			// call probe if required.
-			/*if (probePresent == true) {
-
-				contactProbe(inpNodeOutput, probeUrl, probeContName,
-						inpNode.getOperationSignatureList().get(0).getOperationSignature().getInputMessageName(),
-						inpNode);
-			}*/
+			/*
+			 * if (probePresent == true) {
+			 * 
+			 * contactProbe(inpNodeOutput, probeUrl, probeContName,
+			 * inpNode.getOperationSignatureList().get(0).getOperationSignature(
+			 * ).getInputMessageName(), inpNode); }
+			 */
 
 			/*
 			 * if (probePresent == true) { // create a dummydepsofdeps null
@@ -267,8 +270,10 @@ public class BlueprintOrchestratorController {
 
 			while (true) {
 				Thread.sleep(1000);
-				/*//logger.info("Thread {} Inside while true. Final ouput is ", Thread.currentThread().getId(),
-						finalOutput);*/
+				/*
+				 * //logger.info("Thread {} Inside while true. Final ouput is ",
+				 * Thread.currentThread().getId(), finalOutput);
+				 */
 				if (finalOutput != null) {
 					logger.info("Sending back to the Data Source {}", finalOutput);
 					service3.shutdown();
@@ -1264,14 +1269,30 @@ public class BlueprintOrchestratorController {
 								splitterMap.setInput_message_signature(modelSplitterMap.getInput_message_signature());
 								splitterMap.setMap_inputs(modelSplitterMap.getMap_inputs());
 								splitterMap.setMap_outputs(modelSplitterMap.getMap_outputs());
-								
+
 								SplitterProtobufService protoServiceParameterSpl = new SplitterProtobufServiceImpl();
 
-								protoServiceParameterSpl.setConf(splitterMap);
+								try {
+									logger.info("Calling Parameter based Splitter's setconf with splittermap {}",
+											splitterMap);
+									protoServiceParameterSpl.setConf(splitterMap);
+								} catch (Exception e) {
+									logger.error("Exception {} in calling setConf for Parameter Based Splitter", e);
+									logger.error("SplitterMap value was {}", splitterMap);
 
-								Map<String, Object> paramSplitterOutput = protoServiceParameterSpl.parameterBasedSplitData(
-										successorNode.getImmediateAncestors().get(0).getNodeOutput());
+								}
 
+								Map<String, Object> paramSplitterOutput = new HashMap<String, Object>();
+								try {
+
+									paramSplitterOutput = protoServiceParameterSpl.parameterBasedSplitData(
+											successorNode.getImmediateAncestors().get(0).getNodeOutput());
+								} catch (Exception e) {
+									logger.info("Exception {} in calling parameterBasedSplitData for Splitter", e);
+									logger.error("Input List was ",
+											successorNode.getImmediateAncestors().get(0).getNodeOutput());
+
+								}
 								List<ConnectedTo> listOfNodesConnectedToSplitter = findconnectedto(successorNode,
 										successorNode.getOperationSignatureList().get(0).getOperationSignature()
 												.getOperationName());
@@ -1323,24 +1344,36 @@ public class BlueprintOrchestratorController {
 								collatorMap.setOutput_message_signature(modelCollatorMap.getOutput_message_signature());
 								collatorMap.setMap_inputs(modelCollatorMap.getMap_inputs());
 								collatorMap.setMap_outputs(modelCollatorMap.getMap_outputs());
-								
+
 								ProtobufService protoServiceArrbased = new ProtobufServiceImpl();
-								
-								protoServiceArrbased.setConf(collatorMap);
+
+								try {
+									logger.info("Calling setConf for Array-based Collator with collatorMap {}",
+											collatorMap);
+									protoServiceArrbased.setConf(collatorMap);
+								} catch (Exception e) {
+									logger.error("Exception {} in calling setConf for Array based Collator", e);
+									logger.error("Collator Map was", collatorMap);
+								}
+
 								// protobuf string required to be set???
 
 								// creates a list of outputs needed by Collatpr
 								// input API
 								List<Node> ancestors = successorNode.getImmediateAncestors();
-								List<byte[]> arrayCollateInput = null;
+								List<byte[]> arrayCollateInput = new ArrayList<byte[]>();
 								for (Node n : ancestors) {
 
 									arrayCollateInput.add(n.getNodeOutput());
 								}
 
 								// call collate Data
-								collatorOutput = protoServiceArrbased.arrayBasedCollateData(arrayCollateInput);
-
+								try {
+									collatorOutput = protoServiceArrbased.arrayBasedCollateData(arrayCollateInput);
+								} catch (Exception e) {
+									logger.error("Exception in calling arrayBasedCollateData {}", e);
+									logger.error("Input List was {}", arrayCollateInput);
+								}
 								// set output for Collator
 								successorNode.setNodeOutput(collatorOutput);
 
@@ -1358,14 +1391,20 @@ public class BlueprintOrchestratorController {
 								collatorMap.setOutput_message_signature(modelCollatorMap.getOutput_message_signature());
 								collatorMap.setMap_inputs(modelCollatorMap.getMap_inputs());
 								collatorMap.setMap_outputs(modelCollatorMap.getMap_outputs());
-								
-								ProtobufService protoServiceParameterBased = new ProtobufServiceImpl();
-								
-								protoServiceParameterBased.setConf(collatorMap);
 
+								ProtobufService protoServiceParameterBased = new ProtobufServiceImpl();
+
+								try {
+									logger.info("Calling setConf for Parameter based collator with collatorMap {}",
+											collatorMap);
+									protoServiceParameterBased.setConf(collatorMap);
+								} catch (Exception e) {
+									logger.error("Exception {} in calling setConf for Parameter based Collator", e);
+									logger.error("Collator Map was", collatorMap);
+								}
 								List<Node> collatorImmediateAncestors = successorNode.getImmediateAncestors();
 
-								Map<String, Object> paramCollateInput = null;
+								Map<String, Object> paramCollateInput = new HashMap<String, Object>();
 								for (Node n : collatorImmediateAncestors)
 
 								{
@@ -1378,8 +1417,14 @@ public class BlueprintOrchestratorController {
 								// children.
 
 								// call collate Data
-								collatorOutput = protoServiceParameterBased.parameterBasedCollateData(paramCollateInput);
+								try {
+									collatorOutput = protoServiceParameterBased
+											.parameterBasedCollateData(paramCollateInput);
+								} catch (Exception e) {
+									logger.error("Exception in calling parameterBasedCollateData {}", e);
+									logger.error("Input Map was {}", paramCollateInput);
 
+								}
 								// set output for Collator
 								successorNode.setNodeOutput(collatorOutput);
 
@@ -1458,24 +1503,30 @@ public class BlueprintOrchestratorController {
 									// contact probe for input and output
 									// messages for the last node.
 
-									/*if (probePresent == true) {
-
-										String probeUrl = constructURL(probeNode);
-										contactProbe(successorNode.getImmediateAncestors().get(0).getNodeOutput(),
-												probeUrl,
-												probeNode.getContainerName(), successorNode.getOperationSignatureList()
-														.get(0).getOperationSignature().getInputMessageName(),
-												successorNode);
-									}
-
-									if (probePresent == true) {
-
-										String probeUrl = constructURL(probeNode);
-										contactProbe(successorNode.getNodeOutput(), probeUrl,
-												probeNode.getContainerName(), successorNode.getOperationSignatureList()
-														.get(0).getOperationSignature().getInputMessageName(),
-												successorNode);
-									}*/
+									/*
+									 * if (probePresent == true) {
+									 * 
+									 * String probeUrl =
+									 * constructURL(probeNode);
+									 * contactProbe(successorNode.
+									 * getImmediateAncestors().get(0).
+									 * getNodeOutput(), probeUrl,
+									 * probeNode.getContainerName(),
+									 * successorNode.getOperationSignatureList()
+									 * .get(0).getOperationSignature().
+									 * getInputMessageName(), successorNode); }
+									 * 
+									 * if (probePresent == true) {
+									 * 
+									 * String probeUrl =
+									 * constructURL(probeNode);
+									 * contactProbe(successorNode.getNodeOutput(
+									 * ), probeUrl,
+									 * probeNode.getContainerName(),
+									 * successorNode.getOperationSignatureList()
+									 * .get(0).getOperationSignature().
+									 * getInputMessageName(), successorNode); }
+									 */
 
 									finalOutput = successorNode.getNodeOutput();
 									logger.info("Thread {} RETURNING FINAL OUTPUT {} FROM LAST NODE",
@@ -1484,14 +1535,17 @@ public class BlueprintOrchestratorController {
 								}
 
 								// call probe if required.
-								/*if (probePresent == true) {
-
-									String probeUrl = constructURL(probeNode);
-									contactProbe(successorNode.getImmediateAncestors().get(0).getNodeOutput(), probeUrl,
-											probeNode.getContainerName(), successorNode.getOperationSignatureList()
-													.get(0).getOperationSignature().getInputMessageName(),
-											successorNode);
-								}*/
+								/*
+								 * if (probePresent == true) {
+								 * 
+								 * String probeUrl = constructURL(probeNode);
+								 * contactProbe(successorNode.
+								 * getImmediateAncestors().get(0).getNodeOutput(
+								 * ), probeUrl, probeNode.getContainerName(),
+								 * successorNode.getOperationSignatureList()
+								 * .get(0).getOperationSignature().
+								 * getInputMessageName(), successorNode); }
+								 */
 
 								if (finalOutput == null) {
 									continue;
