@@ -72,7 +72,6 @@ public class SplitterProtobufServiceImpl implements SplitterProtobufService {
 		processProtobuf();
 	}
 
-	
 	private void processProtobuf() {
 		try {
 			protobuf = ProtobufUtil.parseProtoStrForSplit(splitterMap);
@@ -83,7 +82,6 @@ public class SplitterProtobufServiceImpl implements SplitterProtobufService {
 		}
 	}
 
-	
 	public Protobuf getProtobuf() throws NullPointerException {
 		if (null == protobuf) {
 			throw new NullPointerException();
@@ -207,13 +205,13 @@ public class SplitterProtobufServiceImpl implements SplitterProtobufService {
 			outputField = mapOutput.getOutput_field();
 			mappedToField = outputField.getMapped_to_field();
 			if (null != mappedToField && !mappedToField.trim().equals("")
-					&& outputFieldTag == Integer.parseInt(mappedToField)) {
+					&& outputFieldTag == Integer.parseInt(outputField.getParameter_tag())) {
 				targetName = outputField.getTarget_name();
 				messageSignature = outputField.getMessage_signature();
 				msg = mapper.readValue(messageSignature, Message.class);
 				if (targetName.equals(outputMessageName.split("\\_")[0])
 						&& msg.getMessageName().equals(outputMessageName.split("\\_")[1])) {
-					inputFieldDesc = parentInpuMsgDesc.findFieldByNumber(outputFieldTag);
+					inputFieldDesc = parentInpuMsgDesc.findFieldByNumber(Integer.parseInt(mappedToField));
 					inputFieldValue = inputDynamsg.getField(inputFieldDesc);
 				}
 			}
