@@ -23,11 +23,15 @@ Runtime Orchestrator Release Notes
 
 The server is deployed within a Docker image.
 
+Version 2.0.1 16th July 2018
+------------------------
+* ACUMOS-1379
+
 Version 2.0.0 11th July 2018
 ------------------------
 
 * Major upgrades to the Model connector to support Generic Directed Acyclic Graphs 
-* Supports Paramater based Splitter and Collation along with other use cases supported by previous versions.
+* Supports Parameter based Splitter and Collation along with other use cases supported by previous versions.
 * ACUMOS-1350
 
 Version 1.0.14 28th June 2018
