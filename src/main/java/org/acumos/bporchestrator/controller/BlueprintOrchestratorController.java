@@ -98,6 +98,88 @@ public class BlueprintOrchestratorController {
 	private static volatile byte[] finalOutput = null;
 	static volatile boolean probePresent = false;
 
+	// Dummy Method to check Splitter directly.
+	@ApiOperation(value = "operation on the first node in the chain", response = byte.class, responseContainer = "Page")
+	@RequestMapping(path = "/split", method = RequestMethod.POST)
+	public <T> ResponseEntity<T> notifysplitter(
+			@ApiParam(value = "Inital request to start deploying... This binary stream is in protobuf format.", required = false) @Valid @RequestBody byte[] binaryStream,
+			@ApiParam(value = "This operation should match with one of the input operation signatures in blueprint.json", required = true) String split)
+			throws Exception {
+
+		ExecutorService service6 = Executors.newFixedThreadPool(50);
+		Blueprint blueprint = TaskManager.getBlueprint();
+		Node spNode = blueprint.getNodebyContainer("Splitter1");
+
+		// call all its children on separate threads.
+		SplitterMap modelSplitterMap = spNode.getSplitterMap();
+
+		spNode.setNodeOutput(spNode.getImmediateAncestors().get(0).getNodeOutput());
+
+		// set the outputAvailable for the splitter
+		// inside it
+		spNode.setOutputAvailable(true);
+
+		org.acumos.bporchestrator.splittercollator.vo.SplitterMap splitterMap = new org.acumos.bporchestrator.splittercollator.vo.SplitterMap();
+		splitterMap.setSplitter_type(modelSplitterMap.getSplitter_type());
+		splitterMap.setInput_message_signature(modelSplitterMap.getInput_message_signature());
+		splitterMap.setMap_inputs(modelSplitterMap.getMap_inputs());
+		splitterMap.setMap_outputs(modelSplitterMap.getMap_outputs());
+
+		SplitterProtobufService dummyprotoservice = new SplitterProtobufServiceImpl();
+
+		try {
+			logger.info("Calling Parameter based Splitter's setconf with splittermap {}", splitterMap);
+			dummyprotoservice.setConf(splitterMap);
+		} catch (Exception e) {
+			logger.error("Exception {} in calling setConf for Parameter Based Splitter", e);
+			logger.error("SplitterMap value was {}", splitterMap);
+
+		}
+
+		Map<String, Object> spOutput = new HashMap<String, Object>();
+		try {
+
+			spOutput = dummyprotoservice.parameterBasedSplitData(binaryStream);
+			logger.info("Splitter output is {}", spOutput.toString());
+		} catch (Exception e) {
+			logger.info("Exception {} in calling parameterBasedSplitData for Splitter", e);
+			logger.error("Input List was ", spNode.getImmediateAncestors().get(0).getNodeOutput());
+
+		}
+
+		List<ConnectedTo> listOfNodesConnectedToSplitter = findconnectedto(spNode,
+				spNode.getOperationSignatureList().get(0).getOperationSignature().getOperationName());
+
+		for (ConnectedTo connectedTo : listOfNodesConnectedToSplitter) {
+
+			String connectedToContainer = connectedTo.getContainerName();
+			Node connectedToNode = blueprint.getNodebyContainer(connectedToContainer);
+
+			NewThreadAttributes newThreadAttributes = new NewThreadAttributes();
+			// set the all the required attributes.
+
+			if (connectedToContainer.equalsIgnoreCase("concatenate1")) {
+				String protobufRep = dummyprotoservice.readProtobufFormat("concatenate1_ConcatenateInput",
+						(byte[]) (spOutput.get(connectedToContainer)));
+
+				logger.info("Protobuf is ::::::: {}", protobufRep);
+			}
+			newThreadAttributes.setpNode(spNode);
+			newThreadAttributes.setsNode(connectedToNode);
+			newThreadAttributes.setOut((byte[]) (spOutput.get(connectedToContainer)));
+			newThreadAttributes.setId(1);
+
+			// create a thread with the
+			// newThreadAttributes
+			// objects
+			logger.info("Starting a new thread  with Node {} as predecessor", spNode.getContainerName());
+			service6.execute(new NewModelCaller(newThreadAttributes));
+
+		}
+		return (ResponseEntity<T>) new ResponseEntity<>(spOutput, HttpStatus.OK);
+
+	}
+
 	/**
 	 * The MC is triggerred by a /{operation} request. The requester also sends
 	 * the protobuf binary message.
@@ -122,6 +204,7 @@ public class BlueprintOrchestratorController {
 		ExecutorService service3 = Executors.newFixedThreadPool(10);
 		finalOutput = null;
 		byte[] finalResults = null;
+		boolean singleModel = false;
 		Blueprint blueprint = TaskManager.getBlueprint();
 		DockerInfoList dockerList = TaskManager.getDockerList();
 
@@ -184,8 +267,7 @@ public class BlueprintOrchestratorController {
 
 			// Check if Probe is present in the composite solution. If yes, get
 			// its container name, and operation. THIS PROBE DATA WILL BE USED
-			// FOR
-			// THE DATA SOURCE CASE ONLY.
+			// FOR THE DATA SOURCE CASE ONLY.
 
 			ArrayList<ProbeIndicator> list_of_pb_indicators = blueprint.getProbeIndicator();
 			for (ProbeIndicator pbindicator : list_of_pb_indicators) {
@@ -193,12 +275,6 @@ public class BlueprintOrchestratorController {
 					probePresent = true;
 				}
 			}
-
-			/*
-			 * // Find the url etc. for the probe if (probePresent == true) {
-			 * probeUrl =
-			 * constructURL(blueprint.getNodebyContainer(probeContName)); }
-			 */
 
 			// Now call the input node and its operation signature.
 			for (InputPort inport : inps) {
@@ -219,6 +295,13 @@ public class BlueprintOrchestratorController {
 				break;
 			}
 
+			// Check if the input node has any dependencies? if no, then set
+			// singlemodel to true.
+			ArrayList<ConnectedTo> inpNodeDeps = findconnectedto(inpNode, inpOperation);
+			if (inpNodeDeps == null || inpNodeDeps.isEmpty()) {
+				singleModel = true;
+			}
+
 			// call contact node.
 			String url = constructURL(inpNode);
 
@@ -231,23 +314,41 @@ public class BlueprintOrchestratorController {
 			// set outputAvailable for input node
 			inpNode.setOutputAvailable(true);
 
-			// call probe if required.
-			/*
-			 * if (probePresent == true) {
-			 * 
-			 * contactProbe(inpNodeOutput, probeUrl, probeContName,
-			 * inpNode.getOperationSignatureList().get(0).getOperationSignature(
-			 * ).getInputMessageName(), inpNode); }
-			 */
+			// Find the url etc. for the probe
+			if (probePresent == true) {
+				probeUrl = constructProbeUrl(probeContName, probeOperation);
+			}
 
-			/*
-			 * if (probePresent == true) { // create a dummydepsofdeps null
-			 * object ArrayList<ConnectedTo> dummydepsofdeps = null;
-			 * prepareAndContactprobe(inpOperation, probeUrl, inpContainer,
-			 * binaryStream, output, dummydepsofdeps, singleModel);
-			 * 
-			 * }
-			 */
+			// call probe if required.
+			if (probePresent == true) {
+
+				try {
+					contactProbe(binaryStream, probeUrl, probeContName,
+							inpNode.getOperationSignatureList().get(0).getOperationSignature().getInputMessageName(),
+							inpNode);
+				} catch (Exception e) {
+					logger.info("Exception while contacting probe for {} and msg is {}", inpNode.getContainerName(),
+							e.toString());
+				}
+				// If it is a single model, then also send the output to the
+				// probe
+				if (singleModel == true) {
+
+					try {
+						contactProbe(inpNodeOutput, probeUrl, probeContName, inpNode.getOperationSignatureList().get(0)
+								.getOperationSignature().getOutputMessageName(), inpNode);
+					} catch (Exception e) {
+						logger.info("Exception while contacting probe for {} and msg is {}", inpNode.getContainerName(),
+								e.toString());
+					}
+				}
+			}
+
+			// if it is a single model then return the output to the caller
+			if (singleModel == true) {
+
+				return (ResponseEntity<T>) new ResponseEntity<>(inpNodeOutput, HttpStatus.OK);
+			}
 
 			// Initial call to traverseEachNode
 			logger.info("Calling traverseEachNode");
@@ -259,7 +360,8 @@ public class BlueprintOrchestratorController {
 			newThreadAttributes.setsNode(null);
 			newThreadAttributes.setOut(inpNodeOutput);
 			newThreadAttributes.setId(0);
-			newThreadAttributes.setPbNode(blueprint.getNodebyContainer(probeContName));
+			newThreadAttributes.setProbeCont(probeContName);
+			newThreadAttributes.setProbeOp(probeOperation);
 
 			// create a thread with the newThreadAttributes objects
 			logger.info("Starting a new thread  with Node {} as predecessor", inpNode.getContainerName());
@@ -280,275 +382,18 @@ public class BlueprintOrchestratorController {
 					return (ResponseEntity<T>) new ResponseEntity<>(finalOutput, HttpStatus.OK);
 				}
 			}
-			/*
-			 * boolean singleModel = false;
-			 * 
-			 * // Check if the input node has any dependencies? if no, set //
-			 * singlemodel to true. ArrayList<ConnectedTo> inpNodeDeps =
-			 * findconnectedto(inpNode, inpOperation); if (inpNodeDeps == null
-			 * || inpNodeDeps.isEmpty()) { singleModel = true; }
-			 * 
-			 * String inpUrl = constructURL(inpNode); try { output =
-			 * contactnode(binaryStream, inpUrl, inpContainer); } catch
-			 * (Exception e) { return (ResponseEntity<T>) new ResponseEntity<>(
-			 * "Exception for" + " " + inpContainer + ":::" + e.getMessage(),
-			 * HttpStatus.INTERNAL_SERVER_ERROR);
-			 * 
-			 * }
-			 * 
-			 * 
-			 * // If output of the first model is null, stop execution and
-			 * return // to the data source.
-			 * 
-			 * if (output == null || (output.length == 0)) { logger.error(
-			 * "The output of {} is null. Model connector will not proceed.",
-			 * inpContainer);
-			 * 
-			 * FinalResults f = new FinalResults(); f.setMsgname(
-			 * "Error from container " + inpContainer);
-			 * f.setFinalresults(output); TaskManager.setFinalResults(f);
-			 * 
-			 * badExecutionMsg = f.getMsgname(); return (ResponseEntity<T>) new
-			 * ResponseEntity<>(badExecutionMsg,
-			 * HttpStatus.INTERNAL_SERVER_ERROR);
-			 * 
-			 * }
-			 * 
-			 * 
-			 * 
-			 * if probe in composite solution send the input message of input
-			 * //node to probe also and wait for http }
-			 * 
-			 * if (probePresent == true) {
-			 * 
-			 * // create a dummydepsofdeps null object ArrayList<ConnectedTo>
-			 * dummydepsofdeps = null; prepareAndContactprobe(inpOperation,
-			 * probeUrl, inpContainer, binaryStream, output, dummydepsofdeps,
-			 * singleModel);
-			 * 
-			 * }
-			 * 
-			 * // If it is a single model, then return the correct output of the
-			 * // single model. if (singleModel != true) {
-			 * notifyNextNode(output, inpNode, inpOperation, probePresent,
-			 * probeContName, probeOperation, probeUrl); } else { return
-			 * (ResponseEntity<T>) new ResponseEntity<>(output, HttpStatus.OK);
-			 * }
-			 * 
-			 */
+
 		} // try ends for notify method's chunk
-		catch (Exception ex) {
+		catch (
+
+		Exception ex) {
 			logger.error("notify: Notify failed", ex);
 			return (ResponseEntity<T>) new ResponseEntity<>(ex.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
 
 		}
 
-		// if no exceptions in the notifyNextNode
-
-		/*
-		 * FinalResults f2 = TaskManager.getFinalResults(); finalResults =
-		 * f2.getFinalresults(); badExecutionMsg = f2.getMsgname(); if
-		 * ((badExecutionMsg).contains("Error")) { // Return error due to
-		 * correct execution of notifyNextNode but // output null due to wrong
-		 * model behaviours return (ResponseEntity<T>) new
-		 * ResponseEntity<>(badExecutionMsg, HttpStatus.INTERNAL_SERVER_ERROR);
-		 * } else { return (ResponseEntity<T>) new
-		 * ResponseEntity<>(finalResults, HttpStatus.OK); }
-		 * 
-		 * 
-		 */
 	}
 
-	/**
-	 * @param output
-	 *            The result of the previous node
-	 * @param n
-	 *            Current node
-	 * @param oprn
-	 *            Current node's operation which was called
-	 * @param prbPresent
-	 *            Indicator of probe presence in the blueprint
-	 * @param prbcontainername
-	 *            Probe's container name if Probe is present
-	 * @param prboperation
-	 *            Probe's operation name if Probe is present
-	 * @param prbUrl
-	 *            Probe's url if Probe is present
-	 * @return byte[] output stream
-	 * @throws Exception
-	 *             : Exception
-	 */
-	/*
-	 * public byte[] notifyNextNode(byte[] output, Node n, String oprn, boolean
-	 * prbPresent, String prbcontainername, String prboperation, String prbUrl)
-	 * throws Exception {
-	 * 
-	 * Blueprint blueprint = TaskManager.getBlueprint(); DockerInfoList
-	 * dockerList = TaskManager.getDockerList();
-	 * 
-	 * // Find dependents of the node. If the dependent is null, then send the
-	 * // output // message to the probe and stop looping.
-	 * ArrayList<ConnectedTo> deps = null; ArrayList<ConnectedTo> depsOfDeps =
-	 * null; try { deps = findconnectedto(n, oprn); } catch (Exception e) {
-	 * logger.error("notifyNextNode: Finding Connected to failed", e); }
-	 * 
-	 * // First time the loop executes (i.e when we call 1st dependent node, //
-	 * the value // of depoutput is output from previous databroker or input
-	 * node. // Later on on every call it will be the output of the contactnode
-	 * call // passed // as depoutput2) byte[] depOutput = output; byte[]
-	 * depOutput2 = null;
-	 * 
-	 * // for loop here to loop through the dependents. for (ConnectedTo depItem
-	 * : deps) {
-	 * 
-	 * String depContainerName = depItem.getContainerName(); String depOperation
-	 * = depItem.getOperationSignature().getOperationName(); Node depNode =
-	 * blueprint.getNodebyContainer(depContainerName);
-	 * 
-	 * // Find dependent's url and name for the node. Url finding will also //
-	 * need the // dependent's operation DockerInfo d3 =
-	 * dockerList.findDockerInfoByContainer(depContainerName);
-	 * 
-	 * if (d3 == null && !(depContainerName.contains("Splitter") ||
-	 * depContainerName.contains("Collator"))) { // what to do if the deployer
-	 * passed incomplete dockerInfo ??? logger.error(
-	 * "Cannot find docker info about the container {}", depContainerName); }
-	 * 
-	 * // Contact the dependent node. if
-	 * (!(((depNode.getNodeType()).equals("Splitter")) ||
-	 * ((depNode.getNodeType()).equals("Collator")))) {
-	 * 
-	 * URIBuilder builder = new URIBuilder();
-	 * builder.setScheme("http").setHost(d3.getIpAddress()).setPort(new
-	 * Integer(d3.getPort()).intValue()) .setPath("/" + depOperation);
-	 * 
-	 * String depurl = builder.build().toURL().toString();
-	 * 
-	 * try { depOutput2 = contactnode(depOutput, depurl, depContainerName);
-	 * 
-	 * } catch (Exception ex) { logger.error(
-	 * "Exception in notifyNextNode method while calling a dependent node {}",
-	 * depContainerName + " ", ex); throw ex;
-	 * 
-	 * }
-	 * 
-	 * // If output of any model is null, Model connector stops // immediately
-	 * and returns. if (depOutput2 == null || (depOutput2.length == 0)) {
-	 * logger.error(
-	 * "The output of {} is null. Model connector will not proceed.",
-	 * depContainerName);
-	 * 
-	 * FinalResults f4 = new FinalResults(); f4.setMsgname(
-	 * "Error from container " + depContainerName);
-	 * f4.setFinalresults(depOutput2); TaskManager.setFinalResults(f4); return
-	 * depOutput2;
-	 * 
-	 * }
-	 * 
-	 * }
-	 * 
-	 * // find dependents of the current dependent to see if we need to // send
-	 * input msg // or both the input and output msg. try { depsOfDeps =
-	 * findconnectedto(depNode, depOperation);
-	 * 
-	 * if ((depNode.getNodeType()).equals("Splitter")) { List<byte[]>
-	 * mergedOutput;
-	 * 
-	 * // CALLING MULTIPLE MODELS WITH SPLITTER INPUT i.e // SPLITTER's
-	 * PRECEDING NODE's // OUTPUT. // THIS NEEDS TO CHANGE IN PARAMETER BASED
-	 * SPLITTER WHERE // ITS INPUT AND OUTPUT // WILL NOT BE THE SAME.
-	 * 
-	 * // CALL MULTIPLE MODELS SEQUENTIALLY // mergedoutput =
-	 * callMultipleModels(depoutput, depsofdeps, // prburl,prbpresent);
-	 * 
-	 * // CALL MULTIPLE MODELS PARALLELY mergedOutput =
-	 * callMultipleModelsParallelyClient(depOutput, depsOfDeps, prbUrl,
-	 * prbPresent);
-	 * 
-	 * // Stop execution if any of the PARALLEL models had sent // null output
-	 * or not responded. FinalResults f5 = TaskManager.getFinalResults(); if (f5
-	 * != null && f5.getMsgname() != null) { String executionStatusMsg =
-	 * f5.getMsgname(); if ((executionStatusMsg.contains("Error"))) {
-	 * 
-	 * // Return from here. return null; } } // whether splitter has collator
-	 * reference or not depsOfDeps = linkRelatedCollator(depsOfDeps);
-	 * 
-	 * // configure collator here String collatorContainer =
-	 * depsOfDeps.get(0).getContainerName(); Node collatorNode =
-	 * blueprint.getNodebyContainer(collatorContainer); String
-	 * containerOperation =
-	 * collatorNode.getOperationSignatureList().get(0).getOperationSignature()
-	 * .getOperationName(); String collatorType =
-	 * collatorNode.getCollatorMap().getCollatorType(); String protobufFileStr =
-	 * collatorNode.getCollatorMap().getOutputMessageSignature(); logger.info(
-	 * "set all the configuration related values for the collator is started");
-	 * Configuration configuration = new Configuration();
-	 * logger.info("collatortype" + collatorType);
-	 * configuration.setCollator_type(collatorType);
-	 * logger.info("protobufFileStr" + protobufFileStr);
-	 * 
-	 * configuration.setProtobufFileStr(protobufFileStr);
-	 * protoService.setConf(configuration); try {
-	 * protoService.processProtobuf(); } catch (Exception ex) { logger.error(
-	 * "Exception in processProtobuf()", ex); }
-	 * 
-	 * logger.info(
-	 * "set all the configuration related values for the collator is ended");
-	 * 
-	 * // call collator // ProtobufService protobufService1 = new //
-	 * ProtobufServiceImpl();
-	 * 
-	 * // REAL CALL logger.info("Call the protoService.collateData api");
-	 * 
-	 * try { if (null != mergedOutput && !mergedOutput.isEmpty()) { logger.info(
-	 * "collate data input" + mergedOutput); depOutput2 =
-	 * protoService.collateData(mergedOutput); logger.info("collate data output"
-	 * + depOutput2); } else { logger.debug(
-	 * "Please check final combine result from multiple models are working or not"
-	 * ); }
-	 * 
-	 * } catch (Exception ex) { logger.error(
-	 * "calling collateData method of the Collator failed", ex); }
-	 * 
-	 * // SIMULATED CALL // depoutput2 =
-	 * httpPost("http://127.0.0.1:9222/collate%22, // output);
-	 * 
-	 * // Set depnode to collator node before call notifyNextNode // recursively
-	 * depNode = collatorNode; depOperation = containerOperation;
-	 * depContainerName = collatorContainer;
-	 * 
-	 * }
-	 * 
-	 * }
-	 * 
-	 * catch (Exception e1) { logger.error("notifyNextNode failed", e1); throw
-	 * e1; }
-	 * 
-	 * if (prbPresent == true && !(((depContainerName.contains("Splitter")) ||
-	 * (depContainerName.contains("Collator"))))) {
-	 * 
-	 * // For any node (if probe is present), contact probe with input //
-	 * message // For the last node(if probe is present), contact probe with //
-	 * input message name // & contact probe with output message name
-	 * 
-	 * prepareAndContactprobe(depOperation, prbUrl, depContainerName, depOutput,
-	 * depOutput2, depsOfDeps, false);
-	 * 
-	 * }
-	 * 
-	 * if (depsOfDeps.isEmpty()) { FinalResults f3 = new FinalResults(); // Set
-	 * the correct output. Set the msg to be success. // The output is the
-	 * output of the composite solution upon // correct execution.
-	 * f3.setMsgname("success"); f3.setFinalresults(depOutput2);
-	 * TaskManager.setFinalResults(f3); }
-	 * 
-	 * // Call notifyNextNode function if (!(depsOfDeps.isEmpty())) { byte[]
-	 * mdOutput = notifyNextNode(depOutput2, depNode, depOperation, prbPresent,
-	 * prbcontainername, prboperation, prbUrl); if (mdOutput == null ||
-	 * mdOutput.length == 0) { return null; }
-	 * 
-	 * } } return output; }
-	 */
 	/**
 	 * Contacting probe
 	 *
@@ -584,78 +429,6 @@ public class BlueprintOrchestratorController {
 		output2 = httpPost(probeUrl, binaryStream, n.getProtoUri(), msgName);
 		return output2;
 	}
-
-	/*
-	 * void prepareAndContactprobe(String depOperation, String prbUrl, String
-	 * depContainerName, byte[] depOutput, byte[] depOutput2,
-	 * ArrayList<ConnectedTo> depsOfDeps, boolean singleModel) {
-	 * 
-	 * // Call notifyprobe if indicator is true. // Message name needed for
-	 * sending to probe. (Find the input message // name for // the node. This
-	 * will be needed later if probe is present.)
-	 * 
-	 * Blueprint blueprint = TaskManager.getBlueprint(); DockerInfoList
-	 * dockerInfoList = TaskManager.getDockerList(); String depInpMsgName =
-	 * null; String depoutMsgName = null; byte[] probeOut = null; byte[]
-	 * probeOut2 = null; Node depNode =
-	 * blueprint.getNodebyContainer(depContainerName);
-	 * ArrayList<OperationSignatureList> deplosl =
-	 * depNode.getOperationSignatureList(); for (OperationSignatureList deposl :
-	 * deplosl) { // checking if the operation is the same as requested
-	 * operation. // Only then // proceed to set the depinpmsgname and
-	 * depoutmsgname accordingly. if
-	 * ((deposl.getOperationSignature().getOperationName()).equals(depOperation)
-	 * )
-	 * 
-	 * { depInpMsgName = deposl.getOperationSignature().getInputMessageName();
-	 * depoutMsgName = deposl.getOperationSignature().getOutputMessageName();
-	 * break; }
-	 * 
-	 * }
-	 * 
-	 * 
-	 * If probe is present- For first node (with dummydepsofdeps = null) or any
-	 * node with depsofdeps not empty, contact probe with input message
-	 * 
-	 * 
-	 * if (((depsOfDeps == null) || !(depsOfDeps.isEmpty())) && singleModel ==
-	 * false) { try { logger.info(
-	 * "notifyNextNode: Thread {} : Notifying PROBE for node name: {}, inp msg name: {} , msg: {}"
-	 * , Thread.currentThread().getId(), depContainerName, depInpMsgName,
-	 * (Arrays.toString(depOutput)).substring(0, 20));
-	 * 
-	 * probeOut = contactProbe(depOutput, prbUrl, depContainerName,
-	 * depInpMsgName, depNode); } catch (Exception e) { logger.error(
-	 * "Contacting probe failed", e); } }
-	 * 
-	 * // If probe is present -For the last node contact probe with input //
-	 * message name // & contact probe with output message name if (((depsOfDeps
-	 * != null) && (depsOfDeps.isEmpty())) || (singleModel == true)) {
-	 * 
-	 * try {
-	 * 
-	 * logger.info(
-	 * "notifyNextNode: Thread {} : Notifying PROBE for node name: {}, inp msg name: {} , msg: {}"
-	 * , Thread.currentThread().getId(), depContainerName, depInpMsgName,
-	 * (Arrays.toString(depOutput)).substring(0, 20));
-	 * 
-	 * probeOut = contactProbe(depOutput, prbUrl, depContainerName,
-	 * depInpMsgName, depNode); } catch (Exception e) { logger.error(
-	 * "notifyNextNode: Contacting probe failed", e); } try { // Note here
-	 * depoutput2 is assigned to local depoutputof this // function.
-	 * logger.info(
-	 * "notifyNextNode: Thread {} : Notifying PROBE for node name: {}, out msg name: {} , msg: {}"
-	 * , Thread.currentThread().getId(), depContainerName, depoutMsgName,
-	 * (Arrays.toString(depOutput2)).substring(0, 20));
-	 * 
-	 * probeOut2 = contactProbe(depOutput2, prbUrl, depContainerName,
-	 * depoutMsgName, depNode); } catch (Exception e) { logger.error(
-	 * "notifyNextNode: Contacting probe failed", e); }
-	 * 
-	 * }
-	 * 
-	 * }
-	 */
 
 	/**
 	 * Contacting a node
@@ -909,7 +682,7 @@ public class BlueprintOrchestratorController {
 			String dataBrokerOperation = null;
 
 			// Probe related.
-			boolean probePresent = false;
+
 			String probeContName = "Probe";
 			String probeOperation = "data";
 			String probeurl = null;
@@ -1144,8 +917,8 @@ public class BlueprintOrchestratorController {
 	}
 
 	// Read the Matrix and connect the models.
-	public synchronized void traverseEachNode(Node node, Node secondNode, byte[] out, int identifier, Node probeNode)
-			throws Exception {
+	public synchronized void traverseEachNode(Node node, Node secondNode, byte[] out, int identifier,
+			String probeContainer, String probeOperation) throws Exception {
 
 		ExecutorService service4 = Executors.newFixedThreadPool(50);
 		Blueprint blueprint = TaskManager.getBlueprint();
@@ -1238,7 +1011,8 @@ public class BlueprintOrchestratorController {
 									newThreadAttributes.setsNode(connectedToNode);
 									newThreadAttributes.setOut(successorNode.getNodeOutput());
 									newThreadAttributes.setId(1);
-									newThreadAttributes.setPbNode(probeNode);
+									newThreadAttributes.setProbeCont(probeContainer);
+									newThreadAttributes.setProbeOp(probeOperation);
 
 									// create a thread with the
 									// newThreadAttributes objects
@@ -1283,10 +1057,15 @@ public class BlueprintOrchestratorController {
 								}
 
 								Map<String, Object> paramSplitterOutput = new HashMap<String, Object>();
+								byte[] splitOut = new byte[20];
 								try {
 
 									paramSplitterOutput = protoServiceParameterSpl.parameterBasedSplitData(
 											successorNode.getImmediateAncestors().get(0).getNodeOutput());
+
+									// Dummy Splitter output
+									// new Random().nextBytes(splitOut);
+
 								} catch (Exception e) {
 									logger.info("Exception {} in calling parameterBasedSplitData for Splitter", e);
 									logger.error("Input List was ",
@@ -1306,10 +1085,16 @@ public class BlueprintOrchestratorController {
 
 									newThreadAttributes.setpNode(successorNode);
 									newThreadAttributes.setsNode(connectedToNode);
+
 									newThreadAttributes
 											.setOut((byte[]) (paramSplitterOutput.get(connectedToContainer)));
+
+									// Dummy Splitter spawning new threads
+									// newThreadAttributes.setOut(splitOut);
+
 									newThreadAttributes.setId(1);
-									newThreadAttributes.setPbNode(probeNode);
+									newThreadAttributes.setProbeCont(probeContainer);
+									newThreadAttributes.setProbeOp(probeOperation);
 
 									// create a thread with the
 									// newThreadAttributes
@@ -1321,8 +1106,6 @@ public class BlueprintOrchestratorController {
 								}
 
 							}
-
-							// call probe if required.
 
 							if (finalOutput == null) {
 								continue;
@@ -1356,8 +1139,6 @@ public class BlueprintOrchestratorController {
 									logger.error("Collator Map was", collatorMap);
 								}
 
-								// protobuf string required to be set???
-
 								// creates a list of outputs needed by Collatpr
 								// input API
 								List<Node> ancestors = successorNode.getImmediateAncestors();
@@ -1367,9 +1148,29 @@ public class BlueprintOrchestratorController {
 									arrayCollateInput.add(n.getNodeOutput());
 								}
 
+								// Create a byte[] array data for mocking
+								// mergout
+
+								byte[] mergout = new byte[20];
+								new Random().nextBytes(mergout);
+
 								// call collate Data
 								try {
+
+									// Call to Real Collator
 									collatorOutput = protoServiceArrbased.arrayBasedCollateData(arrayCollateInput);
+
+									// Call to Dummy Collator
+									/*
+									 * String url = constructURL(successorNode);
+									 * logger.info(
+									 * "Thread {} - Contacting node {}",
+									 * Thread.currentThread().getId(),
+									 * successorNode.getContainerName());
+									 * collatorOutput = contactnode(mergout,
+									 * url, successorNode.getContainerName());
+									 */
+
 								} catch (Exception e) {
 									logger.error("Exception in calling arrayBasedCollateData {}", e);
 									logger.error("Input List was {}", arrayCollateInput);
@@ -1412,14 +1213,28 @@ public class BlueprintOrchestratorController {
 
 								}
 
-								// set some dummy output for Collator. It has
-								// already given out the correct output to its
-								// children.
+								byte[] mergout = new byte[20];
+								new Random().nextBytes(mergout);
 
 								// call collate Data
 								try {
+
+									// Call to Real Collator
 									collatorOutput = protoServiceParameterBased
 											.parameterBasedCollateData(paramCollateInput);
+
+									// Call to Dummy Collator
+									/*
+									 * String url = constructURL(successorNode);
+									 * logger.info(
+									 * "Thread {} - Contacting node {}",
+									 * Thread.currentThread().getId(),
+									 * successorNode.getContainerName());
+									 * 
+									 * collatorOutput = contactnode(mergout,
+									 * url, successorNode.getContainerName());
+									 * 
+									 */
 								} catch (Exception e) {
 									logger.error("Exception in calling parameterBasedCollateData {}", e);
 									logger.error("Input Map was {}", paramCollateInput);
@@ -1441,7 +1256,8 @@ public class BlueprintOrchestratorController {
 							newThreadAttributes.setsNode(null);
 							newThreadAttributes.setOut(collatorOutput);
 							newThreadAttributes.setId(1);
-							newThreadAttributes.setPbNode(probeNode);
+							newThreadAttributes.setProbeCont(probeContainer);
+							newThreadAttributes.setProbeOp(probeOperation);
 
 							// create a thread with the newThreadAttributes
 							// objects
@@ -1472,14 +1288,28 @@ public class BlueprintOrchestratorController {
 								// set outputAvailable for successorNode
 								successorNode.setOutputAvailable(true);
 
+								// contact probe if required
+
+								if (probePresent == true) {
+									String probeUrl = constructProbeUrl(probeContainer, probeOperation);
+									
+									try{contactProbe(successorNode.getImmediateAncestors().get(0).getNodeOutput(), probeUrl,
+											probeContainer, successorNode.getOperationSignatureList().get(0)
+													.getOperationSignature().getInputMessageName(),
+											successorNode);
+									}
+									catch (Exception e) {
+										logger.info("Exception while contacting probe for {} and msg is {}", successorNode.getContainerName(), e.toString());
+									}
+									
+								}
+
 								// IF THIS IS NOT THE LAST NODE, call
 								// traverseEachNode on a separate thread.
 								ArrayList<ConnectedTo> connectedToListofSuccessorNode = findconnectedto(successorNode,
 										successorNode.getOperationSignatureList().get(0).getOperationSignature()
 												.getOperationName());
 								if (!connectedToListofSuccessorNode.isEmpty()) {
-									// traverseEachNode(successorNode, null,
-									// successorNode.getNodeOutput(), 1);
 
 									NewThreadAttributes newThreadAttributes = new NewThreadAttributes();
 									// set the all the required attributes.
@@ -1488,7 +1318,8 @@ public class BlueprintOrchestratorController {
 									newThreadAttributes.setsNode(null);
 									newThreadAttributes.setOut(successorNode.getNodeOutput());
 									newThreadAttributes.setId(1);
-									newThreadAttributes.setPbNode(probeNode);
+									newThreadAttributes.setProbeCont(probeContainer);
+									newThreadAttributes.setProbeOp(probeOperation);
 
 									// create a thread with the
 									// newThreadAttributes
@@ -1500,33 +1331,23 @@ public class BlueprintOrchestratorController {
 
 								} else {
 
-									// contact probe for input and output
-									// messages for the last node.
+									// if probe is present, contact probe for
+									// output messages for the last
+									// node.
 
-									/*
-									 * if (probePresent == true) {
-									 * 
-									 * String probeUrl =
-									 * constructURL(probeNode);
-									 * contactProbe(successorNode.
-									 * getImmediateAncestors().get(0).
-									 * getNodeOutput(), probeUrl,
-									 * probeNode.getContainerName(),
-									 * successorNode.getOperationSignatureList()
-									 * .get(0).getOperationSignature().
-									 * getInputMessageName(), successorNode); }
-									 * 
-									 * if (probePresent == true) {
-									 * 
-									 * String probeUrl =
-									 * constructURL(probeNode);
-									 * contactProbe(successorNode.getNodeOutput(
-									 * ), probeUrl,
-									 * probeNode.getContainerName(),
-									 * successorNode.getOperationSignatureList()
-									 * .get(0).getOperationSignature().
-									 * getInputMessageName(), successorNode); }
-									 */
+									if (probePresent == true) {
+
+										String probeUrl = constructProbeUrl(probeContainer, probeOperation);
+
+										try{contactProbe(successorNode.getNodeOutput(),
+												probeUrl, probeOperation, successorNode.getOperationSignatureList()
+														.get(0).getOperationSignature().getInputMessageName(),
+												successorNode);
+										}
+										catch (Exception e) {
+											logger.info("Exception while contacting probe for {} and msg is {}", successorNode.getContainerName(), e.toString());
+										}
+									}
 
 									finalOutput = successorNode.getNodeOutput();
 									logger.info("Thread {} RETURNING FINAL OUTPUT {} FROM LAST NODE",
@@ -1534,31 +1355,12 @@ public class BlueprintOrchestratorController {
 									service4.shutdown();
 								}
 
-								// call probe if required.
-								/*
-								 * if (probePresent == true) {
-								 * 
-								 * String probeUrl = constructURL(probeNode);
-								 * contactProbe(successorNode.
-								 * getImmediateAncestors().get(0).getNodeOutput(
-								 * ), probeUrl, probeNode.getContainerName(),
-								 * successorNode.getOperationSignatureList()
-								 * .get(0).getOperationSignature().
-								 * getInputMessageName(), successorNode); }
-								 */
-
 								if (finalOutput == null) {
 									continue;
 								} else
 									break;
 
 							} catch (Exception e) {
-								/*
-								 * return (ResponseEntity<T>) new
-								 * ResponseEntity<>( "Exception for" + " " +
-								 * inpContainer + ":::" + e.getMessage(),
-								 * HttpStatus.INTERNAL_SERVER_ERROR);
-								 */
 
 							}
 
@@ -1580,6 +1382,27 @@ public class BlueprintOrchestratorController {
 
 		} // outer for loop ends
 		logger.info("Thread {} reporting from outer TRAVERSENODE ENDS ", Thread.currentThread().getId());
+
+	}
+
+	private String constructProbeUrl(String prbCont, String prbOp) {
+
+		String probeUrl = "";
+
+		DockerInfoList dockerList = TaskManager.getDockerList();
+		DockerInfo dInfo = dockerList.findDockerInfoByContainer(prbCont);
+		URIBuilder builder = new URIBuilder();
+		builder.setScheme("http").setHost(dInfo.getIpAddress()).setPort(new Integer(dInfo.getPort()).intValue())
+				.setPath("/" + prbOp);
+
+		try {
+			probeUrl = builder.build().toURL().toString();
+		} catch (MalformedURLException | URISyntaxException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		return probeUrl;
 
 	}
 

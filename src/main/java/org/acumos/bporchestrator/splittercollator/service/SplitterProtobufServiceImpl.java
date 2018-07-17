@@ -25,10 +25,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
+import org.acumos.bporchestrator.controller.BlueprintOrchestratorController;
 import org.acumos.bporchestrator.splittercollator.util.Constants;
 import org.acumos.bporchestrator.splittercollator.util.ProtobufUtil;
 import org.acumos.bporchestrator.splittercollator.vo.CollatorInputField;
@@ -40,6 +42,8 @@ import org.acumos.bporchestrator.splittercollator.vo.ProtobufServiceOperation;
 import org.acumos.bporchestrator.splittercollator.vo.SplitterMap;
 import org.acumos.bporchestrator.splittercollator.vo.SplitterMapOutput;
 import org.acumos.bporchestrator.splittercollator.vo.SplitterOutputField;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -57,6 +61,7 @@ import com.google.protobuf.ServiceException;
 @Component("SplitterProtobufServiceImpl")
 public class SplitterProtobufServiceImpl implements SplitterProtobufService {
 
+	private static final Logger logger = LoggerFactory.getLogger(SplitterProtobufServiceImpl.class);
 	private SplitterMap splitterMap;
 	private Protobuf protobuf;
 	private DynamicSchema protobufSchema;
@@ -141,7 +146,7 @@ public class SplitterProtobufServiceImpl implements SplitterProtobufService {
 	@Override
 	public Map<String, Object> parameterBasedSplitData(byte[] inputData) throws NullPointerException,
 			CloneNotSupportedException, JsonParseException, JsonMappingException, IOException {
-		Map<String, Object> result = new HashMap<String, Object>();
+		Map<String, Object> result = new LinkedHashMap<String, Object>();
 
 		org.acumos.bporchestrator.splittercollator.vo.ProtobufService rpc = protobuf.getService();
 		List<ProtobufServiceOperation> operations = rpc.getOperations();
@@ -185,6 +190,8 @@ public class SplitterProtobufServiceImpl implements SplitterProtobufService {
 
 		}
 
+		logger.info("Printing from local splitter {}", result.toString());
+		System.out.println("Printing from local splitter" + result.toString());
 		return result;
 	}
 

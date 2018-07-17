@@ -41,14 +41,14 @@ public class NewModelCaller implements Runnable {
 	@Override
 	public void run() {
 
-		ntlogger.info("NewModelCaller response thread {} started for {}", Thread.currentThread().getId(),
-				newThreadAttributes.getsNode());
+		ntlogger.info("NewModelCaller response thread {} started for {} with input as {}",
+				Thread.currentThread().getId(), newThreadAttributes.getsNode(), newThreadAttributes.getOut());
 
 		try {
 
 			new BlueprintOrchestratorController().traverseEachNode(newThreadAttributes.getpNode(),
 					newThreadAttributes.getsNode(), newThreadAttributes.getOut(), newThreadAttributes.getId(),
-					newThreadAttributes.getPbNode());
+					newThreadAttributes.getProbeCont(), newThreadAttributes.getProbeOp());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
