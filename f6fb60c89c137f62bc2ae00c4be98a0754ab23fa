@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a8239282_21fff5fc",
+        "filename": "src/main/java/org/acumos/bporchestrator/splittercollator/service/SplitterProtobufServiceImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-07-18T13:49:27Z",
+      "side": 1,
+      "message": "pls remove",
+      "range": {
+        "startLine": 194,
+        "startChar": 2,
+        "endLine": 194,
+        "endChar": 20
+      },
+      "revId": "f6fb60c89c137f62bc2ae00c4be98a0754ab23fa",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    }
+  ]
+}
