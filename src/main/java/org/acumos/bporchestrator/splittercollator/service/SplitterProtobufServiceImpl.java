@@ -191,7 +191,6 @@ public class SplitterProtobufServiceImpl implements SplitterProtobufService {
 		}
 
 		logger.info("Printing from local splitter {}", result.toString());
-		System.out.println("Printing from local splitter" + result.toString());
 		return result;
 	}
 

@@ -23,6 +23,17 @@ Runtime Orchestrator Release Notes
 
 The server is deployed within a Docker image.
 
+
+Version 2.0.3 19th July 2018
+------------------------
+* Add Protobuf readable messages for connected to nodes of the Splitter.
+* Better logs
+
+Version 2.0.2 17th July 2018
+------------------------
+* Probe Integration - MC will now send inputs of all models to the Probe. And also outputs for the last model to the probe.
+
+
 Version 2.0.1 16th July 2018
 ------------------------
 * ACUMOS-1379

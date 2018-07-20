@@ -115,10 +115,10 @@ public class BlueprintOrchestratorController {
 
 		spNode.setNodeOutput(spNode.getImmediateAncestors().get(0).getNodeOutput());
 
-		// set the outputAvailable for the splitter
-		// inside it
+		// set the outputAvailable for the splitter inside it
 		spNode.setOutputAvailable(true);
 
+		// Convert between SplitterMap objects.
 		org.acumos.bporchestrator.splittercollator.vo.SplitterMap splitterMap = new org.acumos.bporchestrator.splittercollator.vo.SplitterMap();
 		splitterMap.setSplitter_type(modelSplitterMap.getSplitter_type());
 		splitterMap.setInput_message_signature(modelSplitterMap.getInput_message_signature());
@@ -158,6 +158,7 @@ public class BlueprintOrchestratorController {
 			NewThreadAttributes newThreadAttributes = new NewThreadAttributes();
 			// set the all the required attributes.
 
+			// Print out the protobuf representation.
 			if (connectedToContainer.equalsIgnoreCase("concatenate1")) {
 				String protobufRep = dummyprotoservice.readProtobufFormat("concatenate1_ConcatenateInput",
 						(byte[]) (spOutput.get(connectedToContainer)));
@@ -305,7 +306,8 @@ public class BlueprintOrchestratorController {
 			// call contact node.
 			String url = constructURL(inpNode);
 
-			logger.info("Thread {} - Contacting node {}", Thread.currentThread().getId(), inpNode.getContainerName());
+			logger.info("notify : Thread {} - Contacting node {}", Thread.currentThread().getId(),
+					inpNode.getContainerName());
 			byte[] inpNodeOutput = contactnode(binaryStream, url, inpNode.getContainerName());
 
 			// set the output for input node
@@ -327,8 +329,8 @@ public class BlueprintOrchestratorController {
 							inpNode.getOperationSignatureList().get(0).getOperationSignature().getInputMessageName(),
 							inpNode);
 				} catch (Exception e) {
-					logger.info("Exception while contacting probe for {} and msg is {}", inpNode.getContainerName(),
-							e.toString());
+					logger.info("notify: Exception while contacting probe for {} and msg is {}",
+							inpNode.getContainerName(), e.toString());
 				}
 				// If it is a single model, then also send the output to the
 				// probe
@@ -338,8 +340,8 @@ public class BlueprintOrchestratorController {
 						contactProbe(inpNodeOutput, probeUrl, probeContName, inpNode.getOperationSignatureList().get(0)
 								.getOperationSignature().getOutputMessageName(), inpNode);
 					} catch (Exception e) {
-						logger.info("Exception while contacting probe for {} and msg is {}", inpNode.getContainerName(),
-								e.toString());
+						logger.info("notify: Exception while contacting probe for {} and msg is {}",
+								inpNode.getContainerName(), e.toString());
 					}
 				}
 			}
@@ -351,7 +353,7 @@ public class BlueprintOrchestratorController {
 			}
 
 			// Initial call to traverseEachNode
-			logger.info("Calling traverseEachNode");
+			logger.info("notify : Calling traverseEachNode");
 
 			NewThreadAttributes newThreadAttributes = new NewThreadAttributes();
 			// set the all the required attributes.
@@ -364,7 +366,7 @@ public class BlueprintOrchestratorController {
 			newThreadAttributes.setProbeOp(probeOperation);
 
 			// create a thread with the newThreadAttributes objects
-			logger.info("Starting a new thread  with Node {} as predecessor", inpNode.getContainerName());
+			logger.info("notify: Starting a new thread  with Node {} as predecessor", inpNode.getContainerName());
 
 			service3.execute(new NewModelCaller(newThreadAttributes));
 
@@ -377,7 +379,8 @@ public class BlueprintOrchestratorController {
 				 * Thread.currentThread().getId(), finalOutput);
 				 */
 				if (finalOutput != null) {
-					logger.info("Sending back to the Data Source {}", finalOutput);
+					logger.info("notify : Sending back to the Data Source {}",
+							(Arrays.toString(finalOutput)).substring(0, 200));
 					service3.shutdown();
 					return (ResponseEntity<T>) new ResponseEntity<>(finalOutput, HttpStatus.OK);
 				}
@@ -802,7 +805,7 @@ public class BlueprintOrchestratorController {
 					Thread.currentThread().getId());
 			return new ResponseEntity<>(dbresults, HttpStatus.OK);
 		} catch (Exception ex) {
-			logger.error("putDockerInfo(): failed to put dockerInfo: " + ex);
+			logger.error("putDockerInfo: failed to put dockerInfo: " + ex);
 			return new ResponseEntity<>(dbresults, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
@@ -966,7 +969,7 @@ public class BlueprintOrchestratorController {
 							&& !successorNode.beingProcessedByAThread) {
 
 						successorNode.beingProcessedByAThread = true;
-						logger.info("********  Thread {} is PROCESSING {} -> {} ********",
+						logger.info("traverseEachNode : ********  Thread {} is PROCESSING {} -> {} ********",
 								Thread.currentThread().getId(), predecessorNodeName, successorNodeName);
 
 						// Splitter node case
@@ -1016,8 +1019,9 @@ public class BlueprintOrchestratorController {
 
 									// create a thread with the
 									// newThreadAttributes objects
-									logger.info("Starting a new thread  with Node {} as predecessor",
-											successorNode.getContainerName());
+									logger.info(
+											" traverseEachNode: Thread {}: Starting a new thread  with Node {} as predecessor",
+											Thread.currentThread().getId(), successorNode.getContainerName());
 
 									service4.execute(new NewModelCaller(newThreadAttributes));
 
@@ -1047,12 +1051,16 @@ public class BlueprintOrchestratorController {
 								SplitterProtobufService protoServiceParameterSpl = new SplitterProtobufServiceImpl();
 
 								try {
-									logger.info("Calling Parameter based Splitter's setconf with splittermap {}",
-											splitterMap);
+									logger.info(
+											"traverseEachNode: Thread {}: Calling Parameter based Splitter's setconf with splittermap {}",
+											Thread.currentThread().getId(), splitterMap);
 									protoServiceParameterSpl.setConf(splitterMap);
 								} catch (Exception e) {
-									logger.error("Exception {} in calling setConf for Parameter Based Splitter", e);
-									logger.error("SplitterMap value was {}", splitterMap);
+									logger.error(
+											"traverseEachNode: Thread {}: Exception {} in calling setConf for Parameter Based Splitter",
+											Thread.currentThread().getId(), e);
+									logger.error("traverseEachNode: Thread {}: SplitterMap value was {}",
+											Thread.currentThread().getId(), splitterMap);
 
 								}
 
@@ -1067,8 +1075,11 @@ public class BlueprintOrchestratorController {
 									// new Random().nextBytes(splitOut);
 
 								} catch (Exception e) {
-									logger.info("Exception {} in calling parameterBasedSplitData for Splitter", e);
-									logger.error("Input List was ",
+									logger.info(
+											"traverseEachNode: Thread {}: Exception {} in calling parameterBasedSplitData for Splitter",
+											Thread.currentThread().getId(), e);
+									logger.error("traverseEachNode: Thread {}: Input List was ",
+											Thread.currentThread().getId(),
 											successorNode.getImmediateAncestors().get(0).getNodeOutput());
 
 								}
@@ -1082,6 +1093,20 @@ public class BlueprintOrchestratorController {
 
 									NewThreadAttributes newThreadAttributes = new NewThreadAttributes();
 									// set the all the required attributes.
+
+									// Print out the Protobuf input being passed
+									// to next nodes
+									// Remove for local tests
+
+									String protobufRep = protoServiceParameterSpl.readProtobufFormat(
+											connectedToContainer + "_"
+													+ connectedToNode.getOperationSignatureList().get(0)
+															.getOperationSignature().getInputMessageName(),
+											(byte[]) (paramSplitterOutput.get(connectedToContainer)));
+
+									logger.info(
+											"traverseEachNode: Thread {} : Protobuf input for Node {} is ::::::: {}",
+											Thread.currentThread().getId(), connectedToContainer, protobufRep);
 
 									newThreadAttributes.setpNode(successorNode);
 									newThreadAttributes.setsNode(connectedToNode);
@@ -1099,8 +1124,9 @@ public class BlueprintOrchestratorController {
 									// create a thread with the
 									// newThreadAttributes
 									// objects
-									logger.info("Starting a new thread  with Node {} as predecessor",
-											successorNode.getContainerName());
+									logger.info(
+											"traverseEachNode: Thread {} : Starting a new thread  with Node {} as predecessor",
+											Thread.currentThread().getId(), successorNode.getContainerName());
 									service4.execute(new NewModelCaller(newThreadAttributes));
 
 								}
@@ -1131,12 +1157,15 @@ public class BlueprintOrchestratorController {
 								ProtobufService protoServiceArrbased = new ProtobufServiceImpl();
 
 								try {
-									logger.info("Calling setConf for Array-based Collator with collatorMap {}",
-											collatorMap);
+									logger.info(
+											"traverseEachNode: Thread {}: Calling setConf for Array-based Collator with collatorMap {}",
+											Thread.currentThread().getId(), collatorMap);
 									protoServiceArrbased.setConf(collatorMap);
 								} catch (Exception e) {
-									logger.error("Exception {} in calling setConf for Array based Collator", e);
-									logger.error("Collator Map was", collatorMap);
+									logger.error(
+											"traverseEachNode: Thread {} :Exception {} in calling setConf for Array based Collator",
+											Thread.currentThread().getId(), e);
+									logger.error("traverseEachNode: Collator Map was", collatorMap);
 								}
 
 								// creates a list of outputs needed by Collatpr
@@ -1172,8 +1201,11 @@ public class BlueprintOrchestratorController {
 									 */
 
 								} catch (Exception e) {
-									logger.error("Exception in calling arrayBasedCollateData {}", e);
-									logger.error("Input List was {}", arrayCollateInput);
+									logger.error(
+											"traverseEachNode: Thread {}: Exception in calling arrayBasedCollateData {}",
+											Thread.currentThread().getId(), e);
+									logger.error("traverseEachNode: Thread {}: Input List was {}",
+											Thread.currentThread().getId(), arrayCollateInput);
 								}
 								// set output for Collator
 								successorNode.setNodeOutput(collatorOutput);
@@ -1196,12 +1228,16 @@ public class BlueprintOrchestratorController {
 								ProtobufService protoServiceParameterBased = new ProtobufServiceImpl();
 
 								try {
-									logger.info("Calling setConf for Parameter based collator with collatorMap {}",
+									logger.info(
+											"traverseEachNode: Thread {} : Calling setConf for Parameter based collator with collatorMap {}",
 											collatorMap);
 									protoServiceParameterBased.setConf(collatorMap);
 								} catch (Exception e) {
-									logger.error("Exception {} in calling setConf for Parameter based Collator", e);
-									logger.error("Collator Map was", collatorMap);
+									logger.error(
+											"traverseEachNode: Thread {}: Exception {} in calling setConf for Parameter based Collator {}",
+											Thread.currentThread().getId(), e);
+									logger.error("traverseEachNode: Thread {}: Collator Map was {}",
+											Thread.currentThread().getId(), collatorMap);
 								}
 								List<Node> collatorImmediateAncestors = successorNode.getImmediateAncestors();
 
@@ -1236,8 +1272,11 @@ public class BlueprintOrchestratorController {
 									 * 
 									 */
 								} catch (Exception e) {
-									logger.error("Exception in calling parameterBasedCollateData {}", e);
-									logger.error("Input Map was {}", paramCollateInput);
+									logger.error(
+											"traverseEachNode: Thread{} Exception in calling parameterBasedCollateData {}",
+											Thread.currentThread().getId(), e);
+									logger.error("traverseEachNode: Thread{} Input Map was {}",
+											Thread.currentThread().getId(), paramCollateInput);
 
 								}
 								// set output for Collator
@@ -1261,8 +1300,9 @@ public class BlueprintOrchestratorController {
 
 							// create a thread with the newThreadAttributes
 							// objects
-							logger.info("Starting a new thread with Node {} as predecessor",
-									successorNode.getContainerName());
+							logger.info(
+									"traverseEachNode: Thread{} : Starting a new thread with Node {} as predecessor",
+									Thread.currentThread().getId(), successorNode.getContainerName());
 							service4.execute(new NewModelCaller(newThreadAttributes));
 
 							if (finalOutput == null) {
@@ -1277,8 +1317,8 @@ public class BlueprintOrchestratorController {
 							try {
 								// call contact node.
 								String url = constructURL(successorNode);
-								logger.info("Thread {} - Contacting node {}", Thread.currentThread().getId(),
-										successorNode.getContainerName());
+								logger.info("traverseEachNode: Thread {} : Contacting node {}",
+										Thread.currentThread().getId(), successorNode.getContainerName());
 								byte[] normalNodeOutput = contactnode(predecessorNode.getNodeOutput(), url,
 										successorNode.getContainerName());
 
@@ -1292,16 +1332,19 @@ public class BlueprintOrchestratorController {
 
 								if (probePresent == true) {
 									String probeUrl = constructProbeUrl(probeContainer, probeOperation);
-									
-									try{contactProbe(successorNode.getImmediateAncestors().get(0).getNodeOutput(), probeUrl,
-											probeContainer, successorNode.getOperationSignatureList().get(0)
-													.getOperationSignature().getInputMessageName(),
-											successorNode);
+
+									try {
+										contactProbe(successorNode.getImmediateAncestors().get(0).getNodeOutput(),
+												probeUrl, probeContainer, successorNode.getOperationSignatureList()
+														.get(0).getOperationSignature().getInputMessageName(),
+												successorNode);
+									} catch (Exception e) {
+										logger.info(
+												"traverseEachNode: Thread{} :Exception while contacting probe for {} and msg is {}",
+												Thread.currentThread().getId(), successorNode.getContainerName(),
+												e.toString());
 									}
-									catch (Exception e) {
-										logger.info("Exception while contacting probe for {} and msg is {}", successorNode.getContainerName(), e.toString());
-									}
-									
+
 								}
 
 								// IF THIS IS NOT THE LAST NODE, call
@@ -1324,8 +1367,9 @@ public class BlueprintOrchestratorController {
 									// create a thread with the
 									// newThreadAttributes
 									// objects
-									logger.info("Starting a new thread with Node {} as predecessor",
-											successorNode.getContainerName());
+									logger.info(
+											"traverseEachNode: Thread {} : Starting a new thread with Node {} as predecessor",
+											Thread.currentThread().getId(), successorNode.getContainerName());
 
 									service4.execute(new NewModelCaller(newThreadAttributes));
 
@@ -1339,19 +1383,23 @@ public class BlueprintOrchestratorController {
 
 										String probeUrl = constructProbeUrl(probeContainer, probeOperation);
 
-										try{contactProbe(successorNode.getNodeOutput(),
-												probeUrl, probeOperation, successorNode.getOperationSignatureList()
-														.get(0).getOperationSignature().getInputMessageName(),
-												successorNode);
-										}
-										catch (Exception e) {
-											logger.info("Exception while contacting probe for {} and msg is {}", successorNode.getContainerName(), e.toString());
+										try {
+											contactProbe(successorNode.getNodeOutput(), probeUrl, probeOperation,
+													successorNode.getOperationSignatureList().get(0)
+															.getOperationSignature().getInputMessageName(),
+													successorNode);
+										} catch (Exception e) {
+											logger.info(
+													"traverseEachNode:Thread {}: Exception while contacting probe for {} and msg is {}",
+													Thread.currentThread().getId(), successorNode.getContainerName(),
+													e.toString());
 										}
 									}
 
 									finalOutput = successorNode.getNodeOutput();
-									logger.info("Thread {} RETURNING FINAL OUTPUT {} FROM LAST NODE",
-											Thread.currentThread().getId(), finalOutput);
+									logger.info("traverseEachNode: Thread {} RETURNING FINAL OUTPUT {} FROM LAST NODE",
+											Thread.currentThread().getId(),
+											(Arrays.toString(finalOutput)).substring(0, 200));
 									service4.shutdown();
 								}
 
@@ -1381,7 +1429,8 @@ public class BlueprintOrchestratorController {
 				break;
 
 		} // outer for loop ends
-		logger.info("Thread {} reporting from outer TRAVERSENODE ENDS ", Thread.currentThread().getId());
+		logger.info("traverseEachNode: Thread {} reporting from outer TRAVERSENODE ENDS ",
+				Thread.currentThread().getId());
 
 	}
 
