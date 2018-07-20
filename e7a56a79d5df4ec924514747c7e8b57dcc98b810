@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "991f4ba8_f7d76fad",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 332,
+      "author": {
+        "id": 11
+      },
+      "writtenOn": "2018-07-20T15:46:54Z",
+      "side": 1,
+      "message": "in case of error used logger.error instead of logger.info",
+      "range": {
+        "startLine": 332,
+        "startChar": 12,
+        "endLine": 332,
+        "endChar": 16
+      },
+      "revId": "e7a56a79d5df4ec924514747c7e8b57dcc98b810",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b745687c_153f76f3",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 343,
+      "author": {
+        "id": 11
+      },
+      "writtenOn": "2018-07-20T15:46:54Z",
+      "side": 1,
+      "message": "in case of error used logger.error instead of logger.info",
+      "range": {
+        "startLine": 343,
+        "startChar": 17,
+        "endLine": 343,
+        "endChar": 19
+      },
+      "revId": "e7a56a79d5df4ec924514747c7e8b57dcc98b810",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0827df53_45d7893e",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 369,
+      "author": {
+        "id": 11
+      },
+      "writtenOn": "2018-07-20T15:46:54Z",
+      "side": 1,
+      "message": "avoid using info if not required, use debug instead",
+      "range": {
+        "startLine": 369,
+        "startChar": 10,
+        "endLine": 369,
+        "endChar": 14
+      },
+      "revId": "e7a56a79d5df4ec924514747c7e8b57dcc98b810",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "46865dee_5a5cc464",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 382,
+      "author": {
+        "id": 11
+      },
+      "writtenOn": "2018-07-20T15:46:54Z",
+      "side": 1,
+      "message": "avoid using info if possible",
+      "range": {
+        "startLine": 382,
+        "startChar": 12,
+        "endLine": 382,
+        "endChar": 16
+      },
+      "revId": "e7a56a79d5df4ec924514747c7e8b57dcc98b810",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    }
+  ]
+}
