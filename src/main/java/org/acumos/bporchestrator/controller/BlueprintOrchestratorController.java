@@ -370,17 +370,11 @@ public class BlueprintOrchestratorController {
 
 			service3.execute(new NewModelCaller(newThreadAttributes));
 
-			// traverseEachNode(inpNode, null, inpNodeOutput, 0);
-
 			while (true) {
 				Thread.sleep(1000);
-				/*
-				 * //logger.info("Thread {} Inside while true. Final ouput is ",
-				 * Thread.currentThread().getId(), finalOutput);
-				 */
+
 				if (finalOutput != null) {
-					logger.info("notify : Sending back to the Data Source {}",
-							(Arrays.toString(finalOutput)).substring(0, 200));
+					logger.info("notify : Sending back to the Data Source {}", finalOutput);
 					service3.shutdown();
 					return (ResponseEntity<T>) new ResponseEntity<>(finalOutput, HttpStatus.OK);
 				}
@@ -1398,8 +1392,7 @@ public class BlueprintOrchestratorController {
 
 									finalOutput = successorNode.getNodeOutput();
 									logger.info("traverseEachNode: Thread {} RETURNING FINAL OUTPUT {} FROM LAST NODE",
-											Thread.currentThread().getId(),
-											(Arrays.toString(finalOutput)).substring(0, 200));
+											Thread.currentThread().getId(), finalOutput);
 									service4.shutdown();
 								}
 
