@@ -22,7 +22,9 @@ package org.acumos.bporchestrator.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -74,6 +76,8 @@ public class Node implements Serializable {
 
 	public boolean beingProcessedByAThread = false;
 
+	private Map<String, List<String>> nodeHeaders = new HashMap<String, List<String>>();
+
 	/**
 	 * Standard POJO no-arg constructor
 	 */
@@ -110,11 +114,14 @@ public class Node implements Serializable {
 	 *            The immediate ancestors of the node.
 	 * @param beingProcessedByAThread
 	 *            Says if the node is being processed by a thread
+	 * @param nodeHeaders
+	 *            Http Headers received from the model's response.
 	 */
 	public Node(String container, String nodeType, String image, String protoUri,
 			ArrayList<OperationSignatureList> operationSignatureList, List<DataSource> dataSources,
 			DataBrokerMap dataBrokerMap, CollatorMap collatorMap, SplitterMap splitterMap, boolean outputAvailable,
-			byte[] nodeOutput, List<Node> immediateAncestors, boolean beingProcessedByAThread) {
+			byte[] nodeOutput, List<Node> immediateAncestors, boolean beingProcessedByAThread,
+			Map<String, List<String>> nodeHeaders) {
 		super();
 		this.container = container;
 		this.nodeType = nodeType;
@@ -129,6 +136,7 @@ public class Node implements Serializable {
 		this.nodeOutput = nodeOutput;
 		this.immediateAncestors = immediateAncestors;
 		this.beingProcessedByAThread = beingProcessedByAThread;
+		this.nodeHeaders = nodeHeaders;
 	}
 
 	@JsonProperty("container_name")
@@ -249,6 +257,14 @@ public class Node implements Serializable {
 
 	public void setBeingProcessedByAThread(boolean beingProcessedByAThread) {
 		this.beingProcessedByAThread = beingProcessedByAThread;
+	}
+
+	public Map<String, List<String>> getNodeHeaders() {
+		return nodeHeaders;
+	}
+
+	public void setNodeHeaders(Map<String, List<String>> nodeHeaders) {
+		this.nodeHeaders = nodeHeaders;
 	}
 
 	public boolean immediateAncestorsOutputAvailable() {

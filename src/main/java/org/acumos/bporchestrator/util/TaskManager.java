@@ -33,7 +33,6 @@ import org.acumos.bporchestrator.controller.FinalResults;
 public class TaskManager {
 
 	private static Blueprint blueprint = null;
-
 	private static DockerInfoList dockerList = null;
 	private static FinalResults fr = null;
 	private static List listOfSockeTimoutModels = null;

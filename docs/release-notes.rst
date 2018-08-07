@@ -23,6 +23,13 @@ Runtime Orchestrator Release Notes
 
 The server is deployed within a Docker image.
 
+
+Version 2.0.5 7th August 2018
+------------------------
+* Print data sent to every model before POST.
+* Bug fix for incorrect traversal.
+* ACUMOS-1523
+
 Version 2.0.4 25th July 2018
 ------------------------
 * Bug fix for printing final output

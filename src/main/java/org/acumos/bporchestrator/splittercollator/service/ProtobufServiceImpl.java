@@ -74,15 +74,7 @@ public class ProtobufServiceImpl implements ProtobufService {
 		processProtobuf();
 	}
 
-	/**
-	 * This method process the protobuf and sets the details.
-	 * 
-	 * @param conf
-	 *            This method accepts conf
-	 * @throws NullPointerException
-	 *             In case of any exception, this method throws the
-	 *             ServiceException
-	 */
+	
 	private void processProtobuf() {
 		try {
 			protobuf = ProtobufUtil.parseProtoStr(collatorMap);

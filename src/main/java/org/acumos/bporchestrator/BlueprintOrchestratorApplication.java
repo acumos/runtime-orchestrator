@@ -50,7 +50,7 @@ public class BlueprintOrchestratorApplication implements ApplicationContextAware
 		} else {
 			logger.warn("main: no configuration found in environment {}", CONFIG_ENV_VAR_NAME);
 		}
-		
+
 		ConfigurableApplicationContext cxt = SpringApplication.run(BlueprintOrchestratorApplication.class, args);
 		logger.info("main: context is {}", cxt);
 		// Closing the context stops the application, so ignore
@@ -61,6 +61,5 @@ public class BlueprintOrchestratorApplication implements ApplicationContextAware
 	public void setApplicationContext(ApplicationContext context) {
 		((ConfigurableEnvironment) context.getEnvironment()).setActiveProfiles("src");
 	}
-
 
 }

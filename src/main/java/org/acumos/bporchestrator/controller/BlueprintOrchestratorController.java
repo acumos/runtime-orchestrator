@@ -48,8 +48,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -86,14 +88,6 @@ public class BlueprintOrchestratorController {
 
 	private static final Logger logger = LoggerFactory.getLogger(BlueprintOrchestratorController.class);
 	private static final String DATABROKER = "Databroker";
-
-	@Autowired
-	@Qualifier("ProtobufServiceImpl")
-	private ProtobufService protoService1;
-
-	@Autowired
-	@Qualifier("SplitterProtobufServiceImpl")
-	private SplitterProtobufService protoService2;
 
 	private static volatile byte[] finalOutput = null;
 	static volatile boolean probePresent = false;
@@ -133,7 +127,6 @@ public class BlueprintOrchestratorController {
 		} catch (Exception e) {
 			logger.error("Exception {} in calling setConf for Parameter Based Splitter", e);
 			logger.error("SplitterMap value was {}", splitterMap);
-
 		}
 
 		Map<String, Object> spOutput = new HashMap<String, Object>();
@@ -193,14 +186,18 @@ public class BlueprintOrchestratorController {
 	 *            This specifies the input_operation_signature of the runtime
 	 *            orchestrator should invoke on the first node based on
 	 *            blueprint.json
+	 * @param dataSourceHeaders
+	 *            The headers sent by the data source
 	 * @return The correct response on the error message
 	 */
 
+	@CrossOrigin
 	@ApiOperation(value = "operation on the first node in the chain", response = byte.class, responseContainer = "Page")
 	@RequestMapping(path = "/{operation}", method = RequestMethod.POST)
 	public <T> ResponseEntity<T> notify(
 			@ApiParam(value = "Inital request to start deploying... This binary stream is in protobuf format.", required = false) @Valid @RequestBody byte[] binaryStream,
-			@ApiParam(value = "This operation should match with one of the input operation signatures in blueprint.json", required = true) @PathVariable("operation") String operation) {
+			@ApiParam(value = "This operation should match with one of the input operation signatures in blueprint.json", required = true) @PathVariable("operation") String operation,
+			@ApiParam(value = "Http Headers, if any", required = false) @RequestHeader Map<String, String> dataSourceHeaders) {
 
 		ExecutorService service3 = Executors.newFixedThreadPool(10);
 		finalOutput = null;
@@ -308,7 +305,24 @@ public class BlueprintOrchestratorController {
 
 			logger.info("notify : Thread {} - Contacting node {}", Thread.currentThread().getId(),
 					inpNode.getContainerName());
-			byte[] inpNodeOutput = contactnode(binaryStream, url, inpNode.getContainerName());
+
+			// CONVERT dataSourceHeaders type to Map <String,Strings> to
+			// Map<String, List<String>>
+
+			Map<String, List<String>> newDSHeaderMap = new HashMap<String, List<String>>();
+
+			for (Map.Entry<String, String> dsHeader : dataSourceHeaders.entrySet()) {
+
+				String newDSMapKey = dsHeader.getKey();
+				String newDSMapValue = dsHeader.getValue();
+				List<String> newDSMapList = new ArrayList<String>();
+				newDSMapList.add(newDSMapValue);
+
+				newDSHeaderMap.put(newDSMapKey, newDSMapList);
+
+			}
+
+			byte[] inpNodeOutput = contactnode(binaryStream, url, inpNode.getContainerName(), newDSHeaderMap);
 
 			// set the output for input node
 			inpNode.setNodeOutput(inpNodeOutput);
@@ -329,8 +343,8 @@ public class BlueprintOrchestratorController {
 							inpNode.getOperationSignatureList().get(0).getOperationSignature().getInputMessageName(),
 							inpNode);
 				} catch (Exception e) {
-					logger.info("notify: Exception while contacting probe for {} and msg is {}",
-							inpNode.getContainerName(), e.toString());
+					logger.info("notify: Thread {} : Exception while contacting probe for {} and msg is",
+							Thread.currentThread().getId(), inpNode.getContainerName(), e);
 				}
 				// If it is a single model, then also send the output to the
 				// probe
@@ -340,8 +354,8 @@ public class BlueprintOrchestratorController {
 						contactProbe(inpNodeOutput, probeUrl, probeContName, inpNode.getOperationSignatureList().get(0)
 								.getOperationSignature().getOutputMessageName(), inpNode);
 					} catch (Exception e) {
-						logger.info("notify: Exception while contacting probe for {} and msg is {}",
-								inpNode.getContainerName(), e.toString());
+						logger.info("notify: Tread {} Exception while contacting probe for {} and msg is {}",
+								Thread.currentThread().getId(), inpNode.getContainerName(), e);
 					}
 				}
 			}
@@ -353,7 +367,7 @@ public class BlueprintOrchestratorController {
 			}
 
 			// Initial call to traverseEachNode
-			logger.info("notify : Calling traverseEachNode");
+			logger.info("notify : Thread {} : Calling traverseEachNode", Thread.currentThread().getId());
 
 			NewThreadAttributes newThreadAttributes = new NewThreadAttributes();
 			// set the all the required attributes.
@@ -366,7 +380,8 @@ public class BlueprintOrchestratorController {
 			newThreadAttributes.setProbeOp(probeOperation);
 
 			// create a thread with the newThreadAttributes objects
-			logger.info("notify: Starting a new thread  with Node {} as predecessor", inpNode.getContainerName());
+			logger.info("notify: Thread {} : Starting a new thread  with Node {} as predecessor",
+					Thread.currentThread().getId(), inpNode.getContainerName());
 
 			service3.execute(new NewModelCaller(newThreadAttributes));
 
@@ -374,7 +389,8 @@ public class BlueprintOrchestratorController {
 				Thread.sleep(1000);
 
 				if (finalOutput != null) {
-					logger.info("notify : Sending back to the Data Source {}", finalOutput);
+					logger.info("notify : Thread {} : Sending back to the Data Source {}",
+							Thread.currentThread().getId(), finalOutput);
 					service3.shutdown();
 					return (ResponseEntity<T>) new ResponseEntity<>(finalOutput, HttpStatus.OK);
 				}
@@ -384,7 +400,7 @@ public class BlueprintOrchestratorController {
 		catch (
 
 		Exception ex) {
-			logger.error("notify: Notify failed", ex);
+			logger.error("notify: Thread {} : Notify failed", Thread.currentThread().getId(), ex);
 			return (ResponseEntity<T>) new ResponseEntity<>(ex.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
 
 		}
@@ -419,11 +435,10 @@ public class BlueprintOrchestratorController {
 		DockerInfoList dockerList = TaskManager.getDockerList();
 
 		byte[] output2;
-		Node probeNode = blueprint.getNodebyContainer(prbCname);
 		logger.info("contactProbe: Thread {} : Notifying probe: {}, POST: {}, proto uri: {} , message Name: {}",
 				Thread.currentThread().getId(), prbCname, probeUrl, n.getProtoUri(), msgName);
 
-		output2 = httpPost(probeUrl, binaryStream, n.getProtoUri(), msgName);
+		output2 = httpPost(probeUrl, binaryStream, n.getProtoUri(), msgName, prbCname, null);
 		return output2;
 	}
 
@@ -436,18 +451,21 @@ public class BlueprintOrchestratorController {
 	 *            : url of the data broker
 	 * @param name
 	 *            : url of the databroker
+	 * @param headersBeingSent
+	 *            : Headers being sent to this node
 	 * @return byte[] : received protobuf message
 	 * @throws Exception
 	 *             : Exception
 	 */
 
-	public byte[] contactnode(byte[] binaryStream, String url, String name) throws Exception {
+	public byte[] contactnode(byte[] binaryStream, String url, String name, Map<String, List<String>> headersBeingSent)
+			throws Exception {
 
 		logger.info("contactnode: Thread {} : Notifying node: {}, POST: {}", Thread.currentThread().getId(), name, url);
 
 		byte[] output4 = null;
 		try {
-			output4 = httpPost(url, binaryStream);
+			output4 = httpPost(url, binaryStream, name, headersBeingSent);
 		} catch (Exception e) {
 			logger.error("contactnode: Contacting node failed", e);
 			throw e;
@@ -574,7 +592,8 @@ public class BlueprintOrchestratorController {
 					continue;
 				} else {
 					if (checkConnectedNode(node, successorNodeName)) {
-						System.out.println(predecessorNodeName + "->" + successorNodeName);
+
+						logger.info("{} -> {} ", predecessorNodeName, successorNodeName);
 						sourceDestinatioNodeMappingTable[i][j] = 1;
 					} else {
 						sourceDestinatioNodeMappingTable[i][j] = 0;
@@ -601,7 +620,8 @@ public class BlueprintOrchestratorController {
 					// immediate ancestor.
 					// So, add that node to the current node's immediate
 					// ancestor list.
-					System.out.println(node1.getContainerName() + "'s ancestor is " + node.getContainerName());
+
+					logger.info("{}'s ancestor is {}", node1.getContainerName(), node.getContainerName());
 					node1.getImmediateAncestors().add(node);
 
 				}
@@ -812,12 +832,18 @@ public class BlueprintOrchestratorController {
 	 *            : url to post to
 	 * @param binaryStream
 	 *            : the binary message
+	 * @param name
+	 *            : Name of the container for which the post request is being
+	 *            made
+	 * @param headersBeingSent
+	 *            : Headers being sent in this request
 	 * @return: returns byte[]
-	 * @throws IOException
-	 *             : IO exception
+	 * @throws Exception
+	 *             : Exception
 	 */
-	private byte[] httpPost(String url, byte[] binaryStream) throws Exception {
-		return httpPost(url, binaryStream, null, null);
+	private synchronized byte[] httpPost(String url, byte[] binaryStream, String name,
+			Map<String, List<String>> headersBeingSent) throws Exception {
+		return httpPost(url, binaryStream, null, null, name, headersBeingSent);
 	}
 
 	/**
@@ -831,18 +857,42 @@ public class BlueprintOrchestratorController {
 	 *            : probe specific data
 	 * @param messageName
 	 *            : probe specific data
+	 * @param containerName
+	 *            : Name of the container for which the post request is being
+	 *            made
+	 * @param headersBeingSent
+	 *            : Headers being sent in this request
 	 * @return: returns byte[] type
-	 * @throws IOException
-	 *             : IOException
+	 * @throws Exception
+	 *             : Exception
 	 */
-	private byte[] httpPost(String url, byte[] binaryStream, String protoUrl, String messageName) throws Exception {
+	private synchronized byte[] httpPost(String url, byte[] binaryStream, String protoUrl, String messageName,
+			String containerName, Map<String, List<String>> headersBeingSent) throws Exception {
+
+		Blueprint blueprint = TaskManager.getBlueprint();
+		DockerInfoList dockerList = TaskManager.getDockerList();
+
+		Node n = blueprint.getNodebyContainer(containerName);
 
 		URL obj = new URL(url);
-
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-
 		con.setRequestMethod("POST");
-		con.setRequestProperty("Content-Type", "application/octet-stream;");
+		con.setRequestProperty("Content-Type", "application/octet-stream");
+
+		if ((headersBeingSent != null) && !headersBeingSent.isEmpty()) {
+			String multipleHeaderValue;
+			for (Map.Entry<String, List<String>> header : headersBeingSent.entrySet())
+
+			{
+				// Converts List<String> to String,String,String,String
+				multipleHeaderValue = String.join(",", header.getValue());
+				if (header.getKey() != null) {
+					con.setRequestProperty(header.getKey(), multipleHeaderValue);
+				}
+			}
+
+		}
+
 		con.setConnectTimeout(20000);
 		if (protoUrl != null)
 			con.setRequestProperty("PROTO-URL", protoUrl);
@@ -853,10 +903,26 @@ public class BlueprintOrchestratorController {
 		out.write(binaryStream);
 		out.flush();
 		out.close();
-		logger.info("httpPost: Thread {}: HTTPS POST Sent {}", Thread.currentThread().getId(), url);
+
+		SplitterProtobufService protoService2 = new SplitterProtobufServiceImpl();
+
+		String protobufRepresentation = protoService2.readProtobufFormat(containerName + "_" + messageName,
+
+				binaryStream);
+
+		logger.info("httpPost: Thread {}: HTTPS POST Sent to {} at {} with input", Thread.currentThread().getId(),
+				containerName, url, protobufRepresentation);
+
+		logger.info("httpPost: Thread {}: HTTPS POST Sent to {} at {} with input {}", Thread.currentThread().getId(),
+				containerName, url, Arrays.toString(binaryStream));
 		String responseMessage = con.getResponseMessage();
 		logger.info("httpPost: Thread {}: GOT RESPONSE Message {}", Thread.currentThread().getId(), responseMessage);
 		int responseCode = con.getResponseCode();
+
+		Map<String, List<String>> receivedHeaders = con.getHeaderFields();
+		if ((receivedHeaders != null) && !(receivedHeaders.isEmpty()) && !(containerName.contains("Probe"))) {
+			n.setNodeHeaders(receivedHeaders);
+		}
 		logger.info("httpPost: Thread {}: GOT RESPONSE CODE {}", Thread.currentThread().getId(), responseCode);
 		if ((responseCode == HttpURLConnection.HTTP_OK) || (responseCode == HttpURLConnection.HTTP_CREATED)
 				|| (responseCode == HttpURLConnection.HTTP_ACCEPTED)
@@ -932,7 +998,7 @@ public class BlueprintOrchestratorController {
 
 		i = i + listOfPredecessorName.indexOf(node);
 
-		for (; i < listOfPredecessorName.size(); i++) {
+		for (i = 0; i < listOfPredecessorName.size(); i++) {
 
 			Node predecessorNode = listOfPredecessorName.get(i);
 			String predecessorNodeName = predecessorNode.getContainerName();
@@ -953,8 +1019,10 @@ public class BlueprintOrchestratorController {
 
 				Node successorNode = listofSuccessorName.get(j);
 				String successorNodeName = successorNode.getContainerName();
+				int firstIndex = listOfPredecessorName.indexOf(predecessorNode);
+				int secondIndex = listOfPredecessorName.indexOf(successorNode);
 
-				if (TaskManager.getSourceDestinatioNodeMappingTable()[i][j] == 1) {
+				if (TaskManager.getSourceDestinatioNodeMappingTable()[firstIndex][secondIndex] == 1) {
 
 					// Only execute this if the successor's output is not
 					// available.
@@ -973,9 +1041,6 @@ public class BlueprintOrchestratorController {
 							// correct
 							// function based on array based or copy based
 							// splitter.
-
-							// set output for the splitter inside it
-							// successorNode.setNodeOutput(null);
 
 							if (successorNode.getSplitterMap().getSplitter_type().equalsIgnoreCase("Copy-based")) {
 								// successor is splitter
@@ -1066,7 +1131,7 @@ public class BlueprintOrchestratorController {
 											successorNode.getImmediateAncestors().get(0).getNodeOutput());
 
 									// Dummy Splitter output
-									// new Random().nextBytes(splitOut);
+									new Random().nextBytes(splitOut);
 
 								} catch (Exception e) {
 									logger.info(
@@ -1105,6 +1170,7 @@ public class BlueprintOrchestratorController {
 									newThreadAttributes.setpNode(successorNode);
 									newThreadAttributes.setsNode(connectedToNode);
 
+									// Real Splitter
 									newThreadAttributes
 											.setOut((byte[]) (paramSplitterOutput.get(connectedToContainer)));
 
@@ -1137,7 +1203,6 @@ public class BlueprintOrchestratorController {
 						else if (successorNodeName.contains("Collator")) {
 
 							byte[] collatorOutput = null;
-
 							if (successorNode.getCollatorMap().getCollator_type().equalsIgnoreCase("Array-based"))
 
 							{
@@ -1162,7 +1227,7 @@ public class BlueprintOrchestratorController {
 									logger.error("traverseEachNode: Collator Map was", collatorMap);
 								}
 
-								// creates a list of outputs needed by Collatpr
+								// creates a list of outputs needed by Collator
 								// input API
 								List<Node> ancestors = successorNode.getImmediateAncestors();
 								List<byte[]> arrayCollateInput = new ArrayList<byte[]>();
@@ -1184,6 +1249,7 @@ public class BlueprintOrchestratorController {
 									collatorOutput = protoServiceArrbased.arrayBasedCollateData(arrayCollateInput);
 
 									// Call to Dummy Collator
+
 									/*
 									 * String url = constructURL(successorNode);
 									 * logger.info(
@@ -1191,9 +1257,9 @@ public class BlueprintOrchestratorController {
 									 * Thread.currentThread().getId(),
 									 * successorNode.getContainerName());
 									 * collatorOutput = contactnode(mergout,
-									 * url, successorNode.getContainerName());
+									 * url, successorNode.getContainerName(),
+									 * null);
 									 */
-
 								} catch (Exception e) {
 									logger.error(
 											"traverseEachNode: Thread {}: Exception in calling arrayBasedCollateData {}",
@@ -1254,6 +1320,7 @@ public class BlueprintOrchestratorController {
 											.parameterBasedCollateData(paramCollateInput);
 
 									// Call to Dummy Collator
+
 									/*
 									 * String url = constructURL(successorNode);
 									 * logger.info(
@@ -1262,8 +1329,8 @@ public class BlueprintOrchestratorController {
 									 * successorNode.getContainerName());
 									 * 
 									 * collatorOutput = contactnode(mergout,
-									 * url, successorNode.getContainerName());
-									 * 
+									 * url, successorNode.getContainerName(),
+									 * null);
 									 */
 								} catch (Exception e) {
 									logger.error(
@@ -1314,7 +1381,7 @@ public class BlueprintOrchestratorController {
 								logger.info("traverseEachNode: Thread {} : Contacting node {}",
 										Thread.currentThread().getId(), successorNode.getContainerName());
 								byte[] normalNodeOutput = contactnode(predecessorNode.getNodeOutput(), url,
-										successorNode.getContainerName());
+										successorNode.getContainerName(), predecessorNode.getNodeHeaders());
 
 								// set the output for successorNode
 								successorNode.setNodeOutput(normalNodeOutput);
@@ -1335,8 +1402,7 @@ public class BlueprintOrchestratorController {
 									} catch (Exception e) {
 										logger.info(
 												"traverseEachNode: Thread{} :Exception while contacting probe for {} and msg is {}",
-												Thread.currentThread().getId(), successorNode.getContainerName(),
-												e.toString());
+												Thread.currentThread().getId(), successorNode.getContainerName(), e);
 									}
 
 								}
@@ -1378,7 +1444,7 @@ public class BlueprintOrchestratorController {
 										String probeUrl = constructProbeUrl(probeContainer, probeOperation);
 
 										try {
-											contactProbe(successorNode.getNodeOutput(), probeUrl, probeOperation,
+											contactProbe(successorNode.getNodeOutput(), probeUrl, probeContainer,
 													successorNode.getOperationSignatureList().get(0)
 															.getOperationSignature().getInputMessageName(),
 													successorNode);
@@ -1386,7 +1452,7 @@ public class BlueprintOrchestratorController {
 											logger.info(
 													"traverseEachNode:Thread {}: Exception while contacting probe for {} and msg is {}",
 													Thread.currentThread().getId(), successorNode.getContainerName(),
-													e.toString());
+													e);
 										}
 									}
 

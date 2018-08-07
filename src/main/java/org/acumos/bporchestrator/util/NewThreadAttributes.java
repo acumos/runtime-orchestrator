@@ -1,5 +1,9 @@
 package org.acumos.bporchestrator.util;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.acumos.bporchestrator.model.Node;
 
 public class NewThreadAttributes {
@@ -10,11 +14,13 @@ public class NewThreadAttributes {
 	int id = 0;
 	String probeCont = "";
 	String probeOp = "";
+	Map<String, List<String>> pNodeHeader = new HashMap<String, List<String>>();
 
 	public NewThreadAttributes() {
 	}
 
-	public NewThreadAttributes(Node pNode, Node sNode, byte[] out, int id, String probeCont, String probeOp) {
+	public NewThreadAttributes(Node pNode, Node sNode, byte[] out, int id, String probeCont, String probeOp,
+			Map<String, List<String>> pNodeHeader) {
 		super();
 		this.pNode = pNode;
 		this.sNode = sNode;
@@ -22,6 +28,7 @@ public class NewThreadAttributes {
 		this.id = id;
 		this.probeCont = probeCont;
 		this.probeOp = probeOp;
+		this.pNodeHeader = pNodeHeader;
 	}
 
 	public Node getpNode() {
@@ -70,6 +77,14 @@ public class NewThreadAttributes {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public Map<String, List<String>> getpNodeHeader() {
+		return pNodeHeader;
+	}
+
+	public void setpNodeHeader(Map<String, List<String>> pNodeHeader) {
+		this.pNodeHeader = pNodeHeader;
 	}
 
 }
