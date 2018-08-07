@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6a541189_5e288ff0",
+        "filename": "docs/release-notes.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 11
+      },
+      "writtenOn": "2018-08-07T14:29:40Z",
+      "side": 1,
+      "message": "Could you please provide Jira ids for these.",
+      "range": {
+        "startLine": 29,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 34
+      },
+      "revId": "ccacac386e1dedb33c2f737070c93a69e4a9ea45",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7edb9abd_f471159c",
+        "filename": "docs/release-notes.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 11
+      },
+      "writtenOn": "2018-08-07T14:29:40Z",
+      "side": 1,
+      "message": "please include description",
+      "range": {
+        "startLine": 31,
+        "startChar": 9,
+        "endLine": 31,
+        "endChar": 13
+      },
+      "revId": "ccacac386e1dedb33c2f737070c93a69e4a9ea45",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d880cf64_7281b296",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 306,
+      "author": {
+        "id": 11
+      },
+      "writtenOn": "2018-08-07T14:29:40Z",
+      "side": 1,
+      "message": "could you please use logger.debug instead of logger.info.  Please check other occurrence.",
+      "range": {
+        "startLine": 306,
+        "startChar": 10,
+        "endLine": 306,
+        "endChar": 14
+      },
+      "revId": "ccacac386e1dedb33c2f737070c93a69e4a9ea45",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "82ada48c_98e9e2c7",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1022,
+      "author": {
+        "id": 11
+      },
+      "writtenOn": "2018-08-07T14:29:40Z",
+      "side": 1,
+      "message": "Avoid declaring variable in for loop",
+      "range": {
+        "startLine": 1022,
+        "startChar": 8,
+        "endLine": 1022,
+        "endChar": 18
+      },
+      "revId": "ccacac386e1dedb33c2f737070c93a69e4a9ea45",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    }
+  ]
+}
