@@ -904,15 +904,6 @@ public class BlueprintOrchestratorController {
 		out.flush();
 		out.close();
 
-		SplitterProtobufService protoService2 = new SplitterProtobufServiceImpl();
-
-		String protobufRepresentation = protoService2.readProtobufFormat(containerName + "_" + messageName,
-
-				binaryStream);
-
-		logger.info("httpPost: Thread {}: HTTPS POST Sent to {} at {} with input", Thread.currentThread().getId(),
-				containerName, url, protobufRepresentation);
-
 		logger.info("httpPost: Thread {}: HTTPS POST Sent to {} at {} with input {}", Thread.currentThread().getId(),
 				containerName, url, Arrays.toString(binaryStream));
 		String responseMessage = con.getResponseMessage();
