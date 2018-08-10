@@ -23,6 +23,10 @@ Runtime Orchestrator Release Notes
 
 The server is deployed within a Docker image.
 
+Version 2.0.6 10th August 2018
+------------------------
+* Bug fix for incorrect output sent to some nodes.
+* ACUMOS-1556
 
 Version 2.0.5 7th August 2018
 ------------------------

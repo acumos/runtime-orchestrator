@@ -166,7 +166,8 @@ public class BlueprintOrchestratorController {
 			// create a thread with the
 			// newThreadAttributes
 			// objects
-			logger.info("Starting a new thread  with Node {} as predecessor", spNode.getContainerName());
+			logger.info("Starting a new thread  with Node {} as predecessor and {} as successor",
+					spNode.getContainerName(), connectedToNode.getContainerName());
 			service6.execute(new NewModelCaller(newThreadAttributes));
 
 		}
@@ -309,6 +310,8 @@ public class BlueprintOrchestratorController {
 			// CONVERT dataSourceHeaders type to Map <String,Strings> to
 			// Map<String, List<String>>
 
+			logger.info("The headers being received from the DATA SOURCE are {}", dataSourceHeaders.toString());
+
 			Map<String, List<String>> newDSHeaderMap = new HashMap<String, List<String>>();
 
 			for (Map.Entry<String, String> dsHeader : dataSourceHeaders.entrySet()) {
@@ -321,6 +324,8 @@ public class BlueprintOrchestratorController {
 				newDSHeaderMap.put(newDSMapKey, newDSMapList);
 
 			}
+
+			logger.info("The DATA SOURCE headers in format are {}", newDSHeaderMap.toString());
 
 			byte[] inpNodeOutput = contactnode(binaryStream, url, inpNode.getContainerName(), newDSHeaderMap);
 
@@ -372,16 +377,21 @@ public class BlueprintOrchestratorController {
 			NewThreadAttributes newThreadAttributes = new NewThreadAttributes();
 			// set the all the required attributes.
 
+			ArrayList<ConnectedTo> nextConnectedList = findconnectedto(inpNode,
+					inpNode.getOperationSignatureList().get(0).getOperationSignature().getOperationName());
+			ConnectedTo nextConnected = nextConnectedList.get(0);
+			Node nextNode = blueprint.getNodebyContainer((nextConnected.getContainerName()));
+
 			newThreadAttributes.setpNode(inpNode);
-			newThreadAttributes.setsNode(null);
+			newThreadAttributes.setsNode(nextNode);
 			newThreadAttributes.setOut(inpNodeOutput);
 			newThreadAttributes.setId(0);
 			newThreadAttributes.setProbeCont(probeContName);
 			newThreadAttributes.setProbeOp(probeOperation);
 
 			// create a thread with the newThreadAttributes objects
-			logger.info("notify: Thread {} : Starting a new thread  with Node {} as predecessor",
-					Thread.currentThread().getId(), inpNode.getContainerName());
+			logger.info("notify: Thread {} : Starting a new thread  with Node {} as predecessor and {} as successor",
+					Thread.currentThread().getId(), inpNode.getContainerName(), nextNode.getContainerName());
 
 			service3.execute(new NewModelCaller(newThreadAttributes));
 
@@ -428,8 +438,8 @@ public class BlueprintOrchestratorController {
 	 *             : IO exception
 	 */
 
-	public byte[] contactProbe(byte[] binaryStream, String probeUrl, String prbCname, String msgName, Node n)
-			throws Exception {
+	public synchronized byte[] contactProbe(byte[] binaryStream, String probeUrl, String prbCname, String msgName,
+			Node n) throws Exception {
 
 		Blueprint blueprint = TaskManager.getBlueprint();
 		DockerInfoList dockerList = TaskManager.getDockerList();
@@ -458,8 +468,8 @@ public class BlueprintOrchestratorController {
 	 *             : Exception
 	 */
 
-	public byte[] contactnode(byte[] binaryStream, String url, String name, Map<String, List<String>> headersBeingSent)
-			throws Exception {
+	public synchronized byte[] contactnode(byte[] binaryStream, String url, String name,
+			Map<String, List<String>> headersBeingSent) throws Exception {
 
 		logger.info("contactnode: Thread {} : Notifying node: {}, POST: {}", Thread.currentThread().getId(), name, url);
 
@@ -891,6 +901,7 @@ public class BlueprintOrchestratorController {
 				}
 			}
 
+			logger.info("The headers being sent to {} are {}", containerName, con.getRequestProperties());
 		}
 
 		con.setConnectTimeout(20000);
@@ -913,6 +924,7 @@ public class BlueprintOrchestratorController {
 		Map<String, List<String>> receivedHeaders = con.getHeaderFields();
 		if ((receivedHeaders != null) && !(receivedHeaders.isEmpty()) && !(containerName.contains("Probe"))) {
 			n.setNodeHeaders(receivedHeaders);
+			logger.info("The headers being received from {} are {}", containerName, receivedHeaders.toString());
 		}
 		logger.info("httpPost: Thread {}: GOT RESPONSE CODE {}", Thread.currentThread().getId(), responseCode);
 		if ((responseCode == HttpURLConnection.HTTP_OK) || (responseCode == HttpURLConnection.HTTP_CREATED)
@@ -1013,461 +1025,503 @@ public class BlueprintOrchestratorController {
 				int firstIndex = listOfPredecessorName.indexOf(predecessorNode);
 				int secondIndex = listOfPredecessorName.indexOf(successorNode);
 
-				if (TaskManager.getSourceDestinatioNodeMappingTable()[firstIndex][secondIndex] == 1) {
+				if (Thread.currentThread().getName().equals(successorNode.getContainerName() + "thread")) {
 
-					// Only execute this if the successor's output is not
-					// available.
-					// And its immediate Ancestors output is Available.
-					if (successorNode.immediateAncestorsOutputAvailable() && !successorNode.isOutputAvailable()
-							&& !successorNode.beingProcessedByAThread) {
+					if (TaskManager.getSourceDestinatioNodeMappingTable()[firstIndex][secondIndex] == 1) {
 
-						successorNode.beingProcessedByAThread = true;
-						logger.info("traverseEachNode : ********  Thread {} is PROCESSING {} -> {} ********",
-								Thread.currentThread().getId(), predecessorNodeName, successorNodeName);
+						// Only execute this if the successor's output is not
+						// available.
+						// And its immediate Ancestors output is Available.
+						if (successorNode.immediateAncestorsOutputAvailable() && !successorNode.isOutputAvailable()
+								&& !successorNode.beingProcessedByAThread) {
 
-						// Splitter node case
-						if (successorNodeName.contains("Splitter")) {
+							successorNode.beingProcessedByAThread = true;
+							logger.info("traverseEachNode : ********  Thread {} is PROCESSING {} -> {} ********",
+									Thread.currentThread().getId(), predecessorNodeName, successorNodeName);
 
-							// call local splitter function. call the
-							// correct
-							// function based on array based or copy based
-							// splitter.
+							// Splitter node case
+							if (successorNodeName.contains("Splitter")) {
 
-							if (successorNode.getSplitterMap().getSplitter_type().equalsIgnoreCase("Copy-based")) {
-								// successor is splitter
+								// call local splitter function. call the
+								// correct
+								// function based on array based or copy based
+								// splitter.
 
-								// For copy based splitter, the output is the
-								// same as its input i.e previous model's
-								// output.
-								successorNode
-										.setNodeOutput(successorNode.getImmediateAncestors().get(0).getNodeOutput());
+								if (successorNode.getSplitterMap().getSplitter_type().equalsIgnoreCase("Copy-based")) {
+									// successor is splitter
 
-								// set the outputAvailable for the splitter
-								// inside it
-								successorNode.setOutputAvailable(true);
-
-								// call all its children on separate threads.
-
-								List<ConnectedTo> listOfNodesConnectedToSplitter = findconnectedto(successorNode,
-										successorNode.getOperationSignatureList().get(0).getOperationSignature()
-												.getOperationName());
-								for (ConnectedTo connectedTo : listOfNodesConnectedToSplitter) {
-
-									String connectedToContainer = connectedTo.getContainerName();
-									Node connectedToNode = blueprint.getNodebyContainer(connectedToContainer);
-
-									// spawn child node threads
-									NewThreadAttributes newThreadAttributes = new NewThreadAttributes();
-
-									// set the all the required attributes.
-									newThreadAttributes.setpNode(successorNode);
-									newThreadAttributes.setsNode(connectedToNode);
-									newThreadAttributes.setOut(successorNode.getNodeOutput());
-									newThreadAttributes.setId(1);
-									newThreadAttributes.setProbeCont(probeContainer);
-									newThreadAttributes.setProbeOp(probeOperation);
-
-									// create a thread with the
-									// newThreadAttributes objects
-									logger.info(
-											" traverseEachNode: Thread {}: Starting a new thread  with Node {} as predecessor",
-											Thread.currentThread().getId(), successorNode.getContainerName());
-
-									service4.execute(new NewModelCaller(newThreadAttributes));
-
-								}
-
-							}
-
-							if (successorNode.getSplitterMap().getSplitter_type().equalsIgnoreCase("Parameter-based")) {
-								// Setting a dummy output in the SPlitter node
-								// in case of Parameter based splitter
-								successorNode
-										.setNodeOutput(successorNode.getImmediateAncestors().get(0).getNodeOutput());
-
-								// set the outputAvailable for the splitter
-								// inside it
-								successorNode.setOutputAvailable(true);
-
-								// call all its children on separate threads.
-								SplitterMap modelSplitterMap = successorNode.getSplitterMap();
-
-								org.acumos.bporchestrator.splittercollator.vo.SplitterMap splitterMap = new org.acumos.bporchestrator.splittercollator.vo.SplitterMap();
-								splitterMap.setSplitter_type(modelSplitterMap.getSplitter_type());
-								splitterMap.setInput_message_signature(modelSplitterMap.getInput_message_signature());
-								splitterMap.setMap_inputs(modelSplitterMap.getMap_inputs());
-								splitterMap.setMap_outputs(modelSplitterMap.getMap_outputs());
-
-								SplitterProtobufService protoServiceParameterSpl = new SplitterProtobufServiceImpl();
-
-								try {
-									logger.info(
-											"traverseEachNode: Thread {}: Calling Parameter based Splitter's setconf with splittermap {}",
-											Thread.currentThread().getId(), splitterMap);
-									protoServiceParameterSpl.setConf(splitterMap);
-								} catch (Exception e) {
-									logger.error(
-											"traverseEachNode: Thread {}: Exception {} in calling setConf for Parameter Based Splitter",
-											Thread.currentThread().getId(), e);
-									logger.error("traverseEachNode: Thread {}: SplitterMap value was {}",
-											Thread.currentThread().getId(), splitterMap);
-
-								}
-
-								Map<String, Object> paramSplitterOutput = new HashMap<String, Object>();
-								byte[] splitOut = new byte[20];
-								try {
-
-									paramSplitterOutput = protoServiceParameterSpl.parameterBasedSplitData(
+									// For copy based splitter, the output is
+									// the
+									// same as its input i.e previous model's
+									// output.
+									successorNode.setNodeOutput(
 											successorNode.getImmediateAncestors().get(0).getNodeOutput());
 
-									// Dummy Splitter output
-									new Random().nextBytes(splitOut);
+									// set the outputAvailable for the splitter
+									// inside it
+									successorNode.setOutputAvailable(true);
 
-								} catch (Exception e) {
-									logger.info(
-											"traverseEachNode: Thread {}: Exception {} in calling parameterBasedSplitData for Splitter",
-											Thread.currentThread().getId(), e);
-									logger.error("traverseEachNode: Thread {}: Input List was ",
-											Thread.currentThread().getId(),
+									// call all its children on separate
+									// threads.
+
+									List<ConnectedTo> listOfNodesConnectedToSplitter = findconnectedto(successorNode,
+											successorNode.getOperationSignatureList().get(0).getOperationSignature()
+													.getOperationName());
+									for (ConnectedTo connectedTo : listOfNodesConnectedToSplitter) {
+
+										String connectedToContainer = connectedTo.getContainerName();
+										Node connectedToNode = blueprint.getNodebyContainer(connectedToContainer);
+
+										// spawn child node threads
+										NewThreadAttributes newThreadAttributes = new NewThreadAttributes();
+
+										// set the all the required attributes.
+										newThreadAttributes.setpNode(successorNode);
+										newThreadAttributes.setsNode(connectedToNode);
+										newThreadAttributes.setOut(successorNode.getNodeOutput());
+										newThreadAttributes.setId(1);
+										newThreadAttributes.setProbeCont(probeContainer);
+										newThreadAttributes.setProbeOp(probeOperation);
+
+										// create a thread with the
+										// newThreadAttributes objects
+										logger.info(
+												" traverseEachNode: Thread {}: Starting a new thread  with Node {} as predecessor and {} as successor",
+												Thread.currentThread().getId(), successorNode.getContainerName(),
+												connectedToNode.getContainerName());
+
+										service4.execute(new NewModelCaller(newThreadAttributes));
+
+									}
+
+								}
+
+								if (successorNode.getSplitterMap().getSplitter_type()
+										.equalsIgnoreCase("Parameter-based")) {
+									// Setting a dummy output in the SPlitter
+									// node
+									// in case of Parameter based splitter
+									successorNode.setNodeOutput(
 											successorNode.getImmediateAncestors().get(0).getNodeOutput());
 
-								}
-								List<ConnectedTo> listOfNodesConnectedToSplitter = findconnectedto(successorNode,
-										successorNode.getOperationSignatureList().get(0).getOperationSignature()
-												.getOperationName());
-								for (ConnectedTo connectedTo : listOfNodesConnectedToSplitter) {
+									// set the outputAvailable for the splitter
+									// inside it
+									successorNode.setOutputAvailable(true);
 
-									String connectedToContainer = connectedTo.getContainerName();
-									Node connectedToNode = blueprint.getNodebyContainer(connectedToContainer);
+									// call all its children on separate
+									// threads.
+									SplitterMap modelSplitterMap = successorNode.getSplitterMap();
 
-									NewThreadAttributes newThreadAttributes = new NewThreadAttributes();
-									// set the all the required attributes.
+									org.acumos.bporchestrator.splittercollator.vo.SplitterMap splitterMap = new org.acumos.bporchestrator.splittercollator.vo.SplitterMap();
+									splitterMap.setSplitter_type(modelSplitterMap.getSplitter_type());
+									splitterMap
+											.setInput_message_signature(modelSplitterMap.getInput_message_signature());
+									splitterMap.setMap_inputs(modelSplitterMap.getMap_inputs());
+									splitterMap.setMap_outputs(modelSplitterMap.getMap_outputs());
 
-									// Print out the Protobuf input being passed
-									// to next nodes
-									// Remove for local tests
-
-									String protobufRep = protoServiceParameterSpl.readProtobufFormat(
-											connectedToContainer + "_"
-													+ connectedToNode.getOperationSignatureList().get(0)
-															.getOperationSignature().getInputMessageName(),
-											(byte[]) (paramSplitterOutput.get(connectedToContainer)));
-
-									logger.info(
-											"traverseEachNode: Thread {} : Protobuf input for Node {} is ::::::: {}",
-											Thread.currentThread().getId(), connectedToContainer, protobufRep);
-
-									newThreadAttributes.setpNode(successorNode);
-									newThreadAttributes.setsNode(connectedToNode);
-
-									// Real Splitter
-									newThreadAttributes
-											.setOut((byte[]) (paramSplitterOutput.get(connectedToContainer)));
-
-									// Dummy Splitter spawning new threads
-									// newThreadAttributes.setOut(splitOut);
-
-									newThreadAttributes.setId(1);
-									newThreadAttributes.setProbeCont(probeContainer);
-									newThreadAttributes.setProbeOp(probeOperation);
-
-									// create a thread with the
-									// newThreadAttributes
-									// objects
-									logger.info(
-											"traverseEachNode: Thread {} : Starting a new thread  with Node {} as predecessor",
-											Thread.currentThread().getId(), successorNode.getContainerName());
-									service4.execute(new NewModelCaller(newThreadAttributes));
-
-								}
-
-							}
-
-							if (finalOutput == null) {
-								continue;
-							} else
-								break;
-						}
-
-						// Collator node case
-						else if (successorNodeName.contains("Collator")) {
-
-							byte[] collatorOutput = null;
-							if (successorNode.getCollatorMap().getCollator_type().equalsIgnoreCase("Array-based"))
-
-							{
-								CollatorMap modelCollatorMap = successorNode.getCollatorMap();
-								org.acumos.bporchestrator.splittercollator.vo.CollatorMap collatorMap = new org.acumos.bporchestrator.splittercollator.vo.CollatorMap();
-								collatorMap.setCollator_type(modelCollatorMap.getCollator_type());
-								collatorMap.setOutput_message_signature(modelCollatorMap.getOutput_message_signature());
-								collatorMap.setMap_inputs(modelCollatorMap.getMap_inputs());
-								collatorMap.setMap_outputs(modelCollatorMap.getMap_outputs());
-
-								ProtobufService protoServiceArrbased = new ProtobufServiceImpl();
-
-								try {
-									logger.info(
-											"traverseEachNode: Thread {}: Calling setConf for Array-based Collator with collatorMap {}",
-											Thread.currentThread().getId(), collatorMap);
-									protoServiceArrbased.setConf(collatorMap);
-								} catch (Exception e) {
-									logger.error(
-											"traverseEachNode: Thread {} :Exception {} in calling setConf for Array based Collator",
-											Thread.currentThread().getId(), e);
-									logger.error("traverseEachNode: Collator Map was", collatorMap);
-								}
-
-								// creates a list of outputs needed by Collator
-								// input API
-								List<Node> ancestors = successorNode.getImmediateAncestors();
-								List<byte[]> arrayCollateInput = new ArrayList<byte[]>();
-								for (Node n : ancestors) {
-
-									arrayCollateInput.add(n.getNodeOutput());
-								}
-
-								// Create a byte[] array data for mocking
-								// mergout
-
-								byte[] mergout = new byte[20];
-								new Random().nextBytes(mergout);
-
-								// call collate Data
-								try {
-
-									// Call to Real Collator
-									collatorOutput = protoServiceArrbased.arrayBasedCollateData(arrayCollateInput);
-
-									// Call to Dummy Collator
-
-									/*
-									 * String url = constructURL(successorNode);
-									 * logger.info(
-									 * "Thread {} - Contacting node {}",
-									 * Thread.currentThread().getId(),
-									 * successorNode.getContainerName());
-									 * collatorOutput = contactnode(mergout,
-									 * url, successorNode.getContainerName(),
-									 * null);
-									 */
-								} catch (Exception e) {
-									logger.error(
-											"traverseEachNode: Thread {}: Exception in calling arrayBasedCollateData {}",
-											Thread.currentThread().getId(), e);
-									logger.error("traverseEachNode: Thread {}: Input List was {}",
-											Thread.currentThread().getId(), arrayCollateInput);
-								}
-								// set output for Collator
-								successorNode.setNodeOutput(collatorOutput);
-
-								// set output available for Collator
-								successorNode.setOutputAvailable(true);
-
-							}
-
-							if (successorNode.getCollatorMap().getCollator_type().equalsIgnoreCase("Parameter-based"))
-
-							{
-								CollatorMap modelCollatorMap = successorNode.getCollatorMap();
-								org.acumos.bporchestrator.splittercollator.vo.CollatorMap collatorMap = new org.acumos.bporchestrator.splittercollator.vo.CollatorMap();
-								collatorMap.setCollator_type(modelCollatorMap.getCollator_type());
-								collatorMap.setOutput_message_signature(modelCollatorMap.getOutput_message_signature());
-								collatorMap.setMap_inputs(modelCollatorMap.getMap_inputs());
-								collatorMap.setMap_outputs(modelCollatorMap.getMap_outputs());
-
-								ProtobufService protoServiceParameterBased = new ProtobufServiceImpl();
-
-								try {
-									logger.info(
-											"traverseEachNode: Thread {} : Calling setConf for Parameter based collator with collatorMap {}",
-											collatorMap);
-									protoServiceParameterBased.setConf(collatorMap);
-								} catch (Exception e) {
-									logger.error(
-											"traverseEachNode: Thread {}: Exception {} in calling setConf for Parameter based Collator {}",
-											Thread.currentThread().getId(), e);
-									logger.error("traverseEachNode: Thread {}: Collator Map was {}",
-											Thread.currentThread().getId(), collatorMap);
-								}
-								List<Node> collatorImmediateAncestors = successorNode.getImmediateAncestors();
-
-								Map<String, Object> paramCollateInput = new HashMap<String, Object>();
-								for (Node n : collatorImmediateAncestors)
-
-								{
-									paramCollateInput.put(n.getContainerName(), n.getNodeOutput());
-
-								}
-
-								byte[] mergout = new byte[20];
-								new Random().nextBytes(mergout);
-
-								// call collate Data
-								try {
-
-									// Call to Real Collator
-									collatorOutput = protoServiceParameterBased
-											.parameterBasedCollateData(paramCollateInput);
-
-									// Call to Dummy Collator
-
-									/*
-									 * String url = constructURL(successorNode);
-									 * logger.info(
-									 * "Thread {} - Contacting node {}",
-									 * Thread.currentThread().getId(),
-									 * successorNode.getContainerName());
-									 * 
-									 * collatorOutput = contactnode(mergout,
-									 * url, successorNode.getContainerName(),
-									 * null);
-									 */
-								} catch (Exception e) {
-									logger.error(
-											"traverseEachNode: Thread{} Exception in calling parameterBasedCollateData {}",
-											Thread.currentThread().getId(), e);
-									logger.error("traverseEachNode: Thread{} Input Map was {}",
-											Thread.currentThread().getId(), paramCollateInput);
-
-								}
-								// set output for Collator
-								successorNode.setNodeOutput(collatorOutput);
-
-								// set output available for Collator
-								successorNode.setOutputAvailable(true);
-							}
-
-							// call probe if required.
-
-							NewThreadAttributes newThreadAttributes = new NewThreadAttributes();
-							// set the all the required attributes.
-
-							newThreadAttributes.setpNode(successorNode);
-							newThreadAttributes.setsNode(null);
-							newThreadAttributes.setOut(collatorOutput);
-							newThreadAttributes.setId(1);
-							newThreadAttributes.setProbeCont(probeContainer);
-							newThreadAttributes.setProbeOp(probeOperation);
-
-							// create a thread with the newThreadAttributes
-							// objects
-							logger.info(
-									"traverseEachNode: Thread{} : Starting a new thread with Node {} as predecessor",
-									Thread.currentThread().getId(), successorNode.getContainerName());
-							service4.execute(new NewModelCaller(newThreadAttributes));
-
-							if (finalOutput == null) {
-								continue;
-							} else
-								break;
-
-						}
-
-						// Normal node i.e. ML model case
-						else {
-							try {
-								// call contact node.
-								String url = constructURL(successorNode);
-								logger.info("traverseEachNode: Thread {} : Contacting node {}",
-										Thread.currentThread().getId(), successorNode.getContainerName());
-								byte[] normalNodeOutput = contactnode(predecessorNode.getNodeOutput(), url,
-										successorNode.getContainerName(), predecessorNode.getNodeHeaders());
-
-								// set the output for successorNode
-								successorNode.setNodeOutput(normalNodeOutput);
-
-								// set outputAvailable for successorNode
-								successorNode.setOutputAvailable(true);
-
-								// contact probe if required
-
-								if (probePresent == true) {
-									String probeUrl = constructProbeUrl(probeContainer, probeOperation);
+									SplitterProtobufService protoServiceParameterSpl = new SplitterProtobufServiceImpl();
 
 									try {
-										contactProbe(successorNode.getImmediateAncestors().get(0).getNodeOutput(),
-												probeUrl, probeContainer, successorNode.getOperationSignatureList()
-														.get(0).getOperationSignature().getInputMessageName(),
-												successorNode);
+										logger.info(
+												"traverseEachNode: Thread {}: Calling Parameter based Splitter's setconf with splittermap {}",
+												Thread.currentThread().getId(), splitterMap);
+										protoServiceParameterSpl.setConf(splitterMap);
+									} catch (Exception e) {
+										logger.error(
+												"traverseEachNode: Thread {}: Exception {} in calling setConf for Parameter Based Splitter",
+												Thread.currentThread().getId(), e);
+										logger.error("traverseEachNode: Thread {}: SplitterMap value was {}",
+												Thread.currentThread().getId(), splitterMap);
+
+									}
+
+									Map<String, Object> paramSplitterOutput = new HashMap<String, Object>();
+									byte[] splitOut = new byte[20];
+									try {
+
+										paramSplitterOutput = protoServiceParameterSpl.parameterBasedSplitData(
+												successorNode.getImmediateAncestors().get(0).getNodeOutput());
+
+										// Dummy Splitter output
+										new Random().nextBytes(splitOut);
+
 									} catch (Exception e) {
 										logger.info(
-												"traverseEachNode: Thread{} :Exception while contacting probe for {} and msg is {}",
-												Thread.currentThread().getId(), successorNode.getContainerName(), e);
+												"traverseEachNode: Thread {}: Exception {} in calling parameterBasedSplitData for Splitter",
+												Thread.currentThread().getId(), e);
+										logger.error("traverseEachNode: Thread {}: Input List was ",
+												Thread.currentThread().getId(),
+												successorNode.getImmediateAncestors().get(0).getNodeOutput());
+
+									}
+									List<ConnectedTo> listOfNodesConnectedToSplitter = findconnectedto(successorNode,
+											successorNode.getOperationSignatureList().get(0).getOperationSignature()
+													.getOperationName());
+									for (ConnectedTo connectedTo : listOfNodesConnectedToSplitter) {
+
+										String connectedToContainer = connectedTo.getContainerName();
+										Node connectedToNode = blueprint.getNodebyContainer(connectedToContainer);
+
+										NewThreadAttributes newThreadAttributes = new NewThreadAttributes();
+										// set the all the required attributes.
+
+										// Print out the Protobuf input being
+										// passed
+										// to next nodes
+										// Remove for local tests
+
+										String protobufRep = protoServiceParameterSpl.readProtobufFormat(
+												connectedToContainer + "_"
+														+ connectedToNode.getOperationSignatureList().get(0)
+																.getOperationSignature().getInputMessageName(),
+												(byte[]) (paramSplitterOutput.get(connectedToContainer)));
+
+										logger.info(
+												"traverseEachNode: Thread {} : Protobuf input for Node {} is ::::::: {}",
+												Thread.currentThread().getId(), connectedToContainer, protobufRep);
+
+										newThreadAttributes.setpNode(successorNode);
+										newThreadAttributes.setsNode(connectedToNode);
+
+										// Real Splitter
+										newThreadAttributes
+												.setOut((byte[]) (paramSplitterOutput.get(connectedToContainer)));
+
+										// Dummy Splitter spawning new threads
+										// newThreadAttributes.setOut(splitOut);
+
+										newThreadAttributes.setId(1);
+										newThreadAttributes.setProbeCont(probeContainer);
+										newThreadAttributes.setProbeOp(probeOperation);
+
+										// create a thread with the
+										// newThreadAttributes
+										// objects
+										logger.info(
+												"traverseEachNode: Thread {} : Starting a new thread  with Node {} as predecessor and {} as successor",
+												Thread.currentThread().getId(), successorNode.getContainerName(),
+												connectedToNode.getContainerName());
+
+										service4.execute(new NewModelCaller(newThreadAttributes));
+
 									}
 
-								}
-
-								// IF THIS IS NOT THE LAST NODE, call
-								// traverseEachNode on a separate thread.
-								ArrayList<ConnectedTo> connectedToListofSuccessorNode = findconnectedto(successorNode,
-										successorNode.getOperationSignatureList().get(0).getOperationSignature()
-												.getOperationName());
-								if (!connectedToListofSuccessorNode.isEmpty()) {
-
-									NewThreadAttributes newThreadAttributes = new NewThreadAttributes();
-									// set the all the required attributes.
-
-									newThreadAttributes.setpNode(successorNode);
-									newThreadAttributes.setsNode(null);
-									newThreadAttributes.setOut(successorNode.getNodeOutput());
-									newThreadAttributes.setId(1);
-									newThreadAttributes.setProbeCont(probeContainer);
-									newThreadAttributes.setProbeOp(probeOperation);
-
-									// create a thread with the
-									// newThreadAttributes
-									// objects
-									logger.info(
-											"traverseEachNode: Thread {} : Starting a new thread with Node {} as predecessor",
-											Thread.currentThread().getId(), successorNode.getContainerName());
-
-									service4.execute(new NewModelCaller(newThreadAttributes));
-
-								} else {
-
-									// if probe is present, contact probe for
-									// output messages for the last
-									// node.
-
-									if (probePresent == true) {
-
-										String probeUrl = constructProbeUrl(probeContainer, probeOperation);
-
-										try {
-											contactProbe(successorNode.getNodeOutput(), probeUrl, probeContainer,
-													successorNode.getOperationSignatureList().get(0)
-															.getOperationSignature().getInputMessageName(),
-													successorNode);
-										} catch (Exception e) {
-											logger.info(
-													"traverseEachNode:Thread {}: Exception while contacting probe for {} and msg is {}",
-													Thread.currentThread().getId(), successorNode.getContainerName(),
-													e);
-										}
-									}
-
-									finalOutput = successorNode.getNodeOutput();
-									logger.info("traverseEachNode: Thread {} RETURNING FINAL OUTPUT {} FROM LAST NODE",
-											Thread.currentThread().getId(), finalOutput);
-									service4.shutdown();
 								}
 
 								if (finalOutput == null) {
 									continue;
 								} else
 									break;
+							}
 
-							} catch (Exception e) {
+							// Collator node case
+							else if (successorNodeName.contains("Collator")) {
+
+								byte[] collatorOutput = null;
+								if (successorNode.getCollatorMap().getCollator_type().equalsIgnoreCase("Array-based"))
+
+								{
+									CollatorMap modelCollatorMap = successorNode.getCollatorMap();
+									org.acumos.bporchestrator.splittercollator.vo.CollatorMap collatorMap = new org.acumos.bporchestrator.splittercollator.vo.CollatorMap();
+									collatorMap.setCollator_type(modelCollatorMap.getCollator_type());
+									collatorMap.setOutput_message_signature(
+											modelCollatorMap.getOutput_message_signature());
+									collatorMap.setMap_inputs(modelCollatorMap.getMap_inputs());
+									collatorMap.setMap_outputs(modelCollatorMap.getMap_outputs());
+
+									ProtobufService protoServiceArrbased = new ProtobufServiceImpl();
+
+									try {
+										logger.info(
+												"traverseEachNode: Thread {}: Calling setConf for Array-based Collator with collatorMap {}",
+												Thread.currentThread().getId(), collatorMap);
+										protoServiceArrbased.setConf(collatorMap);
+									} catch (Exception e) {
+										logger.error(
+												"traverseEachNode: Thread {} :Exception {} in calling setConf for Array based Collator",
+												Thread.currentThread().getId(), e);
+										logger.error("traverseEachNode: Collator Map was", collatorMap);
+									}
+
+									// creates a list of outputs needed by
+									// Collator
+									// input API
+									List<Node> ancestors = successorNode.getImmediateAncestors();
+									List<byte[]> arrayCollateInput = new ArrayList<byte[]>();
+									for (Node n : ancestors) {
+
+										arrayCollateInput.add(n.getNodeOutput());
+									}
+
+									// Create a byte[] array data for mocking
+									// mergout
+
+									byte[] mergout = new byte[20];
+									new Random().nextBytes(mergout);
+
+									// call collate Data
+									try {
+
+										// Call to Real Collator
+										collatorOutput = protoServiceArrbased.arrayBasedCollateData(arrayCollateInput);
+
+										// Call to Dummy Collator
+
+										/*
+										 * String url =
+										 * constructURL(successorNode);
+										 * logger.info(
+										 * "Thread {} - Contacting node {}",
+										 * Thread.currentThread().getId(),
+										 * successorNode.getContainerName());
+										 * collatorOutput = contactnode(mergout,
+										 * url,
+										 * successorNode.getContainerName(),
+										 * null);
+										 */
+									} catch (Exception e) {
+										logger.error(
+												"traverseEachNode: Thread {}: Exception in calling arrayBasedCollateData {}",
+												Thread.currentThread().getId(), e);
+										logger.error("traverseEachNode: Thread {}: Input List was {}",
+												Thread.currentThread().getId(), arrayCollateInput);
+									}
+									// set output for Collator
+									successorNode.setNodeOutput(collatorOutput);
+
+									// set output available for Collator
+									successorNode.setOutputAvailable(true);
+
+								}
+
+								if (successorNode.getCollatorMap().getCollator_type()
+										.equalsIgnoreCase("Parameter-based"))
+
+								{
+									CollatorMap modelCollatorMap = successorNode.getCollatorMap();
+									org.acumos.bporchestrator.splittercollator.vo.CollatorMap collatorMap = new org.acumos.bporchestrator.splittercollator.vo.CollatorMap();
+									collatorMap.setCollator_type(modelCollatorMap.getCollator_type());
+									collatorMap.setOutput_message_signature(
+											modelCollatorMap.getOutput_message_signature());
+									collatorMap.setMap_inputs(modelCollatorMap.getMap_inputs());
+									collatorMap.setMap_outputs(modelCollatorMap.getMap_outputs());
+
+									ProtobufService protoServiceParameterBased = new ProtobufServiceImpl();
+
+									try {
+										logger.info(
+												"traverseEachNode: Thread {} : Calling setConf for Parameter based collator with collatorMap {}",
+												collatorMap);
+										protoServiceParameterBased.setConf(collatorMap);
+									} catch (Exception e) {
+										logger.error(
+												"traverseEachNode: Thread {}: Exception {} in calling setConf for Parameter based Collator {}",
+												Thread.currentThread().getId(), e);
+										logger.error("traverseEachNode: Thread {}: Collator Map was {}",
+												Thread.currentThread().getId(), collatorMap);
+									}
+									List<Node> collatorImmediateAncestors = successorNode.getImmediateAncestors();
+
+									Map<String, Object> paramCollateInput = new HashMap<String, Object>();
+									for (Node n : collatorImmediateAncestors)
+
+									{
+										paramCollateInput.put(n.getContainerName(), n.getNodeOutput());
+
+									}
+
+									byte[] mergout = new byte[20];
+									new Random().nextBytes(mergout);
+
+									// call collate Data
+									try {
+
+										// Call to Real Collator
+										collatorOutput = protoServiceParameterBased
+												.parameterBasedCollateData(paramCollateInput);
+
+										// Call to Dummy Collator
+
+										/*
+										 * String url =
+										 * constructURL(successorNode);
+										 * logger.info(
+										 * "Thread {} - Contacting node {}",
+										 * Thread.currentThread().getId(),
+										 * successorNode.getContainerName());
+										 * 
+										 * collatorOutput = contactnode(mergout,
+										 * url,
+										 * successorNode.getContainerName(),
+										 * null);
+										 */
+									} catch (Exception e) {
+										logger.error(
+												"traverseEachNode: Thread{} Exception in calling parameterBasedCollateData {}",
+												Thread.currentThread().getId(), e);
+										logger.error("traverseEachNode: Thread{} Input Map was {}",
+												Thread.currentThread().getId(), paramCollateInput);
+
+									}
+									// set output for Collator
+									successorNode.setNodeOutput(collatorOutput);
+
+									// set output available for Collator
+									successorNode.setOutputAvailable(true);
+								}
+
+								// call probe if required.
+
+								NewThreadAttributes newThreadAttributes = new NewThreadAttributes();
+								// set the all the required attributes.
+
+								newThreadAttributes.setpNode(successorNode);
+
+								ArrayList<ConnectedTo> nextConnectedList = findconnectedto(successorNode, successorNode
+										.getOperationSignatureList().get(0).getOperationSignature().getOperationName());
+								ConnectedTo nextConnected = nextConnectedList.get(0);
+								Node nextNode = blueprint.getNodebyContainer((nextConnected.getContainerName()));
+
+								newThreadAttributes.setsNode(nextNode);
+								newThreadAttributes.setOut(collatorOutput);
+								newThreadAttributes.setId(1);
+								newThreadAttributes.setProbeCont(probeContainer);
+								newThreadAttributes.setProbeOp(probeOperation);
+
+								// create a thread with the newThreadAttributes
+								// objects
+								logger.info(
+										"traverseEachNode: Thread{} : Starting a new thread with Node {} as predecessor and {} as successor",
+										Thread.currentThread().getId(), successorNode.getContainerName(),
+										nextNode.getContainerName());
+
+								service4.execute(new NewModelCaller(newThreadAttributes));
+
+								if (finalOutput == null) {
+									continue;
+								} else
+									break;
 
 							}
 
-						} // normal node ends
+							// Normal node i.e. ML model case
+							else {
+								try {
+									// call contact node.
+									String url = constructURL(successorNode);
+									logger.info("traverseEachNode: Thread {} : Contacting node {}",
+											Thread.currentThread().getId(), successorNode.getContainerName());
+									byte[] normalNodeOutput = contactnode(predecessorNode.getNodeOutput(), url,
+											successorNode.getContainerName(), predecessorNode.getNodeHeaders());
 
-					} // immediate Ancestors output available checking loop.
-						// Else waste time here and re-check.
+									// set the output for successorNode
+									successorNode.setNodeOutput(normalNodeOutput);
 
-				} // matrix location integer checking ends.
+									// set outputAvailable for successorNode
+									successorNode.setOutputAvailable(true);
+
+									// contact probe if required
+
+									if (probePresent == true) {
+										String probeUrl = constructProbeUrl(probeContainer, probeOperation);
+
+										try {
+											contactProbe(successorNode.getImmediateAncestors().get(0).getNodeOutput(),
+													probeUrl, probeContainer,
+													successorNode.getOperationSignatureList().get(0)
+															.getOperationSignature().getInputMessageName(),
+													successorNode);
+										} catch (Exception e) {
+											logger.info(
+													"traverseEachNode: Thread{} :Exception while contacting probe for {} and msg is {}",
+													Thread.currentThread().getId(), successorNode.getContainerName(),
+													e);
+										}
+
+									}
+
+									// IF THIS IS NOT THE LAST NODE, call
+									// traverseEachNode on a separate thread.
+									ArrayList<ConnectedTo> connectedToListofSuccessorNode = findconnectedto(
+											successorNode, successorNode.getOperationSignatureList().get(0)
+													.getOperationSignature().getOperationName());
+									if (!connectedToListofSuccessorNode.isEmpty()) {
+
+										NewThreadAttributes newThreadAttributes = new NewThreadAttributes();
+										// set the all the required attributes.
+
+										ArrayList<ConnectedTo> nextConnectedList = findconnectedto(successorNode,
+												successorNode.getOperationSignatureList().get(0).getOperationSignature()
+														.getOperationName());
+										ConnectedTo nextConnected = nextConnectedList.get(0);
+										Node nextNode = blueprint
+												.getNodebyContainer((nextConnected.getContainerName()));
+
+										newThreadAttributes.setpNode(successorNode);
+										newThreadAttributes.setsNode(nextNode);
+										newThreadAttributes.setOut(successorNode.getNodeOutput());
+										newThreadAttributes.setId(1);
+										newThreadAttributes.setProbeCont(probeContainer);
+										newThreadAttributes.setProbeOp(probeOperation);
+
+										// create a thread with the
+										// newThreadAttributes
+										// objects
+										logger.info(
+												"traverseEachNode: Thread {} : Starting a new thread with Node {} as predecessor and {} as successor",
+												Thread.currentThread().getId(), successorNode.getContainerName(),
+												nextNode.getContainerName());
+
+										service4.execute(new NewModelCaller(newThreadAttributes));
+
+									} else {
+
+										// if probe is present, contact probe
+										// for
+										// output messages for the last
+										// node.
+
+										if (probePresent == true) {
+
+											String probeUrl = constructProbeUrl(probeContainer, probeOperation);
+
+											try {
+												contactProbe(successorNode.getNodeOutput(), probeUrl, probeContainer,
+														successorNode.getOperationSignatureList().get(0)
+																.getOperationSignature().getInputMessageName(),
+														successorNode);
+											} catch (Exception e) {
+												logger.info(
+														"traverseEachNode:Thread {}: Exception while contacting probe for {} and msg is {}",
+														Thread.currentThread().getId(),
+														successorNode.getContainerName(), e);
+											}
+										}
+
+										finalOutput = successorNode.getNodeOutput();
+										logger.info(
+												"traverseEachNode: Thread {} RETURNING FINAL OUTPUT {} FROM LAST NODE",
+												Thread.currentThread().getId(), finalOutput);
+										service4.shutdown();
+									}
+
+									if (finalOutput == null) {
+										continue;
+									} else
+										break;
+
+								} catch (Exception e) {
+
+								}
+
+							} // normal node ends
+
+						} // immediate Ancestors output available checking loop.
+							// Else waste time here and re-check.
+
+					} // matrix location integer checking ends.
+
+				} // Thread name checking ends
 
 			} // inner for loop ends
 
@@ -1482,6 +1536,21 @@ public class BlueprintOrchestratorController {
 		logger.info("traverseEachNode: Thread {} reporting from outer TRAVERSENODE ENDS ",
 				Thread.currentThread().getId());
 
+	}
+
+	private boolean splitterSuccessorsOutputAvailable(List<ConnectedTo> listOfNodesConnectedToSplitter) {
+		Blueprint blueprint = TaskManager.getBlueprint();
+
+		for (ConnectedTo connectedTo : listOfNodesConnectedToSplitter) {
+
+			String connectedToContainer = connectedTo.getContainerName();
+			Node connectedToNode = blueprint.getNodebyContainer(connectedToContainer);
+
+			if (connectedToNode.isOutputAvailable() == false) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private String constructProbeUrl(String prbCont, String prbOp) {

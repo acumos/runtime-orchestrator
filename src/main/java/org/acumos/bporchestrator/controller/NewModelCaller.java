@@ -41,8 +41,11 @@ public class NewModelCaller implements Runnable {
 	@Override
 	public void run() {
 
-		ntlogger.info("NewModelCaller response thread {} started for {} with input as {}",
-				Thread.currentThread().getId(), newThreadAttributes.getsNode(), newThreadAttributes.getOut());
+        Thread.currentThread().setName(newThreadAttributes.getsNode().getContainerName()+"thread");
+        
+        ntlogger.info("NewModelCaller response thread  {} i.e {} started by {} for {} with input as {}",
+                                        Thread.currentThread().getId(),Thread.currentThread().getName() , newThreadAttributes.getpNode().getContainerName().toUpperCase(),newThreadAttributes.getsNode().getContainerName().toUpperCase(), newThreadAttributes.getOut());
+
 
 		try {
 
