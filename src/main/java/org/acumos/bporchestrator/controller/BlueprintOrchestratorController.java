@@ -46,6 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -91,6 +92,7 @@ public class BlueprintOrchestratorController {
 
 	private static volatile byte[] finalOutput = null;
 	static volatile boolean probePresent = false;
+	static volatile HttpHeaders mcResponseHeaders = new HttpHeaders();
 
 	// Dummy Method to check Splitter directly.
 	@ApiOperation(value = "operation on the first node in the chain", response = byte.class, responseContainer = "Page")
@@ -402,7 +404,7 @@ public class BlueprintOrchestratorController {
 					logger.info("notify : Thread {} : Sending back to the Data Source {}",
 							Thread.currentThread().getId(), finalOutput);
 					service3.shutdown();
-					return (ResponseEntity<T>) new ResponseEntity<>(finalOutput, HttpStatus.OK);
+					return (ResponseEntity<T>) new ResponseEntity<>(finalOutput, mcResponseHeaders,HttpStatus.OK);
 				}
 			}
 
@@ -1502,6 +1504,10 @@ public class BlueprintOrchestratorController {
 										logger.info(
 												"traverseEachNode: Thread {} RETURNING FINAL OUTPUT {} FROM LAST NODE",
 												Thread.currentThread().getId(), finalOutput);
+										
+										logger.info("Returning headers {}",successorNode.getNodeHeaders() );
+										mcResponseHeaders.putAll(successorNode.getNodeHeaders());
+										
 										service4.shutdown();
 									}
 

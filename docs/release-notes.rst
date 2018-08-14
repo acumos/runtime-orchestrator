@@ -23,6 +23,11 @@ Runtime Orchestrator Release Notes
 
 The server is deployed within a Docker image.
 
+Version 2.0.7 14th August 2018
+------------------------
+* Return headers of last model response to the Data source
+* ACUMOS-1346
+
 Version 2.0.6 10th August 2018
 ------------------------
 * Bug fix for incorrect output sent to some nodes.
