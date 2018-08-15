@@ -1413,7 +1413,7 @@ public class BlueprintOrchestratorController {
 									String url = constructURL(successorNode);
 									logger.info("traverseEachNode: Thread {} : Contacting node {}",
 											Thread.currentThread().getId(), successorNode.getContainerName());
-									byte[] normalNodeOutput = contactnode(predecessorNode.getNodeOutput(), url,
+									byte[] normalNodeOutput = contactnode(out, url,
 											successorNode.getContainerName(), predecessorNode.getNodeHeaders());
 
 									// set the output for successorNode
@@ -1428,7 +1428,7 @@ public class BlueprintOrchestratorController {
 										String probeUrl = constructProbeUrl(probeContainer, probeOperation);
 
 										try {
-											contactProbe(successorNode.getImmediateAncestors().get(0).getNodeOutput(),
+											contactProbe(out,
 													probeUrl, probeContainer,
 													successorNode.getOperationSignatureList().get(0)
 															.getOperationSignature().getInputMessageName(),
@@ -1490,7 +1490,7 @@ public class BlueprintOrchestratorController {
 											try {
 												contactProbe(successorNode.getNodeOutput(), probeUrl, probeContainer,
 														successorNode.getOperationSignatureList().get(0)
-																.getOperationSignature().getInputMessageName(),
+																.getOperationSignature().getOutputMessageName(),
 														successorNode);
 											} catch (Exception e) {
 												logger.info(
