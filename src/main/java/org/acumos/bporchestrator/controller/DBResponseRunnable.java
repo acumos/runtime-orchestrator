@@ -19,10 +19,9 @@
  */
 package org.acumos.bporchestrator.controller;
 
+import org.acumos.bporchestrator.MCAttributes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.acumos.bporchestrator.MCAttributes;
 
 public class DBResponseRunnable implements Runnable {
 

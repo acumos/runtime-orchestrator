@@ -22,30 +22,45 @@ package org.acumos.bporchestrator.controller;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.SocketTimeoutException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
-import java.util.Stack;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.validation.Valid;
 
+import org.acumos.bporchestrator.MCAttributes;
+import org.acumos.bporchestrator.model.Blueprint;
+import org.acumos.bporchestrator.model.CollatorMap;
+import org.acumos.bporchestrator.model.ConnectedTo;
+import org.acumos.bporchestrator.model.DockerInfo;
+import org.acumos.bporchestrator.model.DockerInfoList;
+import org.acumos.bporchestrator.model.InputPort;
+import org.acumos.bporchestrator.model.Node;
+import org.acumos.bporchestrator.model.OperationSignatureList;
+import org.acumos.bporchestrator.model.ProbeIndicator;
+import org.acumos.bporchestrator.model.SplitterMap;
+import org.acumos.bporchestrator.splittercollator.service.ProtobufService;
+import org.acumos.bporchestrator.splittercollator.service.ProtobufServiceImpl;
+import org.acumos.bporchestrator.splittercollator.service.SplitterProtobufService;
+import org.acumos.bporchestrator.splittercollator.service.SplitterProtobufServiceImpl;
+import org.acumos.bporchestrator.util.NewThreadAttributes;
+import org.acumos.bporchestrator.util.TaskManager;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.client.utils.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -56,27 +71,9 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.acumos.bporchestrator.controller.DBResponseRunnable;
-import org.acumos.bporchestrator.MCAttributes;
-import org.acumos.bporchestrator.splittercollator.service.ProtobufService;
-import org.acumos.bporchestrator.splittercollator.service.ProtobufServiceImpl;
-import org.acumos.bporchestrator.splittercollator.service.SplitterProtobufService;
-import org.acumos.bporchestrator.splittercollator.service.SplitterProtobufServiceImpl;
-import org.acumos.bporchestrator.splittercollator.vo.Configuration;
-import org.acumos.bporchestrator.model.*;
-import org.acumos.bporchestrator.util.NewThreadAttributes;
-import org.acumos.bporchestrator.util.TaskManager;
-import org.apache.commons.io.IOUtils;
-import org.apache.http.client.utils.URIBuilder;
-
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.acumos.bporchestrator.controller.FinalResults;
 
 /**
  * Rest Controller that handles the API end points

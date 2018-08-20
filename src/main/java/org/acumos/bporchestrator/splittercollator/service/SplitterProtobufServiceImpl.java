@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-import org.acumos.bporchestrator.controller.BlueprintOrchestratorController;
 import org.acumos.bporchestrator.splittercollator.util.Constants;
 import org.acumos.bporchestrator.splittercollator.util.ProtobufUtil;
 import org.acumos.bporchestrator.splittercollator.vo.CollatorInputField;
@@ -56,7 +55,6 @@ import com.google.protobuf.Descriptors.DescriptorValidationException;
 import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.DynamicMessage;
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.protobuf.ServiceException;
 
 @Component("SplitterProtobufServiceImpl")
 public class SplitterProtobufServiceImpl implements SplitterProtobufService {

@@ -20,11 +20,11 @@
 
 package org.acumos.bporchestrator.util;
 
-import org.acumos.bporchestrator.model.*;
-
 import java.util.List;
 
 import org.acumos.bporchestrator.controller.FinalResults;
+import org.acumos.bporchestrator.model.Blueprint;
+import org.acumos.bporchestrator.model.DockerInfoList;
 
 /**
  * The TaskManager that holds copies of blueprint.json and DockerInfo.json

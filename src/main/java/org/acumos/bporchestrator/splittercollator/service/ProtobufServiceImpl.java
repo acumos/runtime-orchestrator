@@ -31,13 +31,10 @@ import java.util.Stack;
 
 import org.acumos.bporchestrator.splittercollator.util.Constants;
 import org.acumos.bporchestrator.splittercollator.util.ProtobufUtil;
-import org.acumos.bporchestrator.splittercollator.vo.Argument;
 import org.acumos.bporchestrator.splittercollator.vo.CollatorInputField;
 import org.acumos.bporchestrator.splittercollator.vo.CollatorMap;
 import org.acumos.bporchestrator.splittercollator.vo.CollatorMapInput;
-import org.acumos.bporchestrator.splittercollator.vo.ComplexType;
 import org.acumos.bporchestrator.splittercollator.vo.Message;
-import org.acumos.bporchestrator.splittercollator.vo.MessageargumentList;
 import org.acumos.bporchestrator.splittercollator.vo.Protobuf;
 import org.acumos.bporchestrator.splittercollator.vo.ProtobufMessage;
 import org.acumos.bporchestrator.splittercollator.vo.ProtobufMessageField;
@@ -54,7 +51,6 @@ import com.google.protobuf.Descriptors.DescriptorValidationException;
 import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.DynamicMessage;
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.protobuf.ServiceException;
 
 @Component("ProtobufServiceImpl")
 public class ProtobufServiceImpl implements ProtobufService {

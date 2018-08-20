@@ -19,14 +19,6 @@
  */
 package org.acumos.bporchestrator.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.acumos.bporchestrator.model.InputPort;
-import org.acumos.bporchestrator.model.Node;
-import org.acumos.bporchestrator.model.ProbeIndicator;
-import org.acumos.bporchestrator.model.TrainingClient;
-
 public class FinalResults {
 
 	private byte[] finalResults;

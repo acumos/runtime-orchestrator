@@ -22,7 +22,6 @@
 package org.acumos.bporchestrator.splittercollator.service;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 import org.acumos.bporchestrator.splittercollator.vo.Protobuf;
@@ -31,7 +30,6 @@ import org.acumos.bporchestrator.splittercollator.vo.SplitterMap;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.protobuf.ServiceException;
 
 public interface SplitterProtobufService {
 	

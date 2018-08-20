@@ -20,14 +20,9 @@
 package org.acumos.bporchestrator.model;
 
 import java.io.Serializable;
-import java.util.List;
 
 import org.acumos.bporchestrator.splittercollator.vo.CollatorMapInput;
 import org.acumos.bporchestrator.splittercollator.vo.CollatorMapOutput;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 public class CollatorMap implements Serializable {
 

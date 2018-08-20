@@ -21,6 +21,7 @@
 package org.acumos.bporchestrator.model;
 
 import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
