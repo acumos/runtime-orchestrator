@@ -19,7 +19,7 @@
  */
 package org.acumos.bporchestrator.controller;
 
-import org.acumos.bporchestrator.MCAttributes;
+import org.acumos.bporchestrator.util.DBThreadAttributes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,26 +27,30 @@ public class DBResponseRunnable implements Runnable {
 
 	private static final Logger dblogger = LoggerFactory.getLogger(DBResponseRunnable.class);
 
-	private MCAttributes mcAttributes;
+	private DBThreadAttributes dbAttributes;
 
-	public DBResponseRunnable(MCAttributes mcAttributes) {
-		this.mcAttributes = mcAttributes;
+	public DBResponseRunnable(DBThreadAttributes dbAttributes) {
+		this.dbAttributes = dbAttributes;
 	}
 
 	@Override
 	public void run() {
 
-		dblogger.info("New Thread started due to DB response");
+		Thread.currentThread().setName(dbAttributes.getsNode().getContainerName() + "thread");
 
-		/*
-		 * try { new
-		 * BlueprintOrchestratorController().notifyNextNode(mcAttributes.
-		 * getOutput(), mcAttributes.getCurrentNode(),
-		 * mcAttributes.getCurrentOperation(), mcAttributes.isProbePresent(),
-		 * mcAttributes.getProbeContName(), mcAttributes.getProbeOperation(),
-		 * mcAttributes.getProbeUrl()); } catch (Exception e) { // TODO
-		 * Auto-generated catch block e.printStackTrace(); }
-		 */
+		dblogger.info("DB thread  {} i.e {} started by {} for {} with input as {}", Thread.currentThread().getId(),
+				Thread.currentThread().getName(), dbAttributes.getpNode().getContainerName().toUpperCase(),
+				dbAttributes.getsNode().getContainerName().toUpperCase(), dbAttributes.getOut());
+
+		try {
+
+			new BlueprintOrchestratorController().traverseEachNode(dbAttributes.getpNode(), dbAttributes.getsNode(),
+					dbAttributes.getOut(), dbAttributes.getId(), dbAttributes.getProbeCont(),
+					dbAttributes.getProbeOp());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 

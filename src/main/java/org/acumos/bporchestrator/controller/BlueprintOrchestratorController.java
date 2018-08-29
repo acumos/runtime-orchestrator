@@ -40,7 +40,7 @@ import java.util.concurrent.Executors;
 
 import javax.validation.Valid;
 
-import org.acumos.bporchestrator.MCAttributes;
+import org.acumos.bporchestrator.util.DBThreadAttributes;
 import org.acumos.bporchestrator.model.Blueprint;
 import org.acumos.bporchestrator.model.CollatorMap;
 import org.acumos.bporchestrator.model.ConnectedTo;
@@ -401,7 +401,7 @@ public class BlueprintOrchestratorController {
 					logger.info("notify : Thread {} : Sending back to the Data Source {}",
 							Thread.currentThread().getId(), finalOutput);
 					service3.shutdown();
-					return (ResponseEntity<T>) new ResponseEntity<>(finalOutput, mcResponseHeaders,HttpStatus.OK);
+					return (ResponseEntity<T>) new ResponseEntity<>(finalOutput, mcResponseHeaders, HttpStatus.OK);
 				}
 			}
 
@@ -712,6 +712,7 @@ public class BlueprintOrchestratorController {
 			String probeContName = "Probe";
 			String probeOperation = "data";
 			String probeurl = null;
+			probePresent = false;
 
 			// Check if data broker is present in the composite solution. If
 			// yes, get its
@@ -801,24 +802,41 @@ public class BlueprintOrchestratorController {
 			 * broker which will send the message. This is your message}
 			 */
 
-			Node dbnode = blueprint.getNodebyContainer(dataBrokerContName);
 			if (dataBrokerPresent == true) {
+
+				Node dbnode = blueprint.getNodebyContainer(dataBrokerContName);
+
+				ArrayList<ConnectedTo> nextConnectedList = findconnectedto(dbnode,
+						dbnode.getOperationSignatureList().get(0).getOperationSignature().getOperationName());
+				ConnectedTo nextConnected = nextConnectedList.get(0);
+				Node nextNode = blueprint.getNodebyContainer((nextConnected.getContainerName()));
+
 				ExecutorService service2 = Executors.newFixedThreadPool(1);
 				// make a GET request to the databroker and receive response
 				do {
+					// clear final output
+					finalOutput = null;
 					output = contactDataBroker(databrokerurl, dataBrokerContName);
 					if ((output != null) && (output.length != 0)) {
-						MCAttributes mcAttributes = new MCAttributes();
+
+						
 						// set the all the required attributes.
-						mcAttributes.setOutput(output);
-						mcAttributes.setCurrentNode(dbnode);
-						mcAttributes.setCurrentOperation(dataBrokerOperation);
-						mcAttributes.setProbePresent(probePresent);
-						mcAttributes.setProbeContName(probeContName);
-						mcAttributes.setProbeOperation(probeOperation);
-						mcAttributes.setProbeUrl(probeurl);
-						// create a thread with the mcAttribute objects
-						service2.execute(new DBResponseRunnable(mcAttributes));
+						DBThreadAttributes dbAttributes = new DBThreadAttributes();
+						dbAttributes.setOut(output);
+						dbAttributes.setpNode(dbnode);
+						dbAttributes.setProbeCont(probeContName);
+						dbAttributes.setProbeOp(probeOperation);
+						dbAttributes.setsNode(nextNode);
+						dbAttributes.setId(0);
+						dbAttributes.setpNodeHeader(null);
+						// create a thread with the dbAttribute objects
+						service2.execute(new DBResponseRunnable(dbAttributes));
+
+						// Current thread will sleep until finalOutput is not
+						// null i.e Output is available
+						while (finalOutput == null) {
+							Thread.sleep(1000);
+						}
 					}
 
 				} while ((output != null) && (output.length != 0));
@@ -1410,8 +1428,8 @@ public class BlueprintOrchestratorController {
 									String url = constructURL(successorNode);
 									logger.info("traverseEachNode: Thread {} : Contacting node {}",
 											Thread.currentThread().getId(), successorNode.getContainerName());
-									byte[] normalNodeOutput = contactnode(out, url,
-											successorNode.getContainerName(), predecessorNode.getNodeHeaders());
+									byte[] normalNodeOutput = contactnode(out, url, successorNode.getContainerName(),
+											predecessorNode.getNodeHeaders());
 
 									// set the output for successorNode
 									successorNode.setNodeOutput(normalNodeOutput);
@@ -1425,8 +1443,7 @@ public class BlueprintOrchestratorController {
 										String probeUrl = constructProbeUrl(probeContainer, probeOperation);
 
 										try {
-											contactProbe(out,
-													probeUrl, probeContainer,
+											contactProbe(out, probeUrl, probeContainer,
 													successorNode.getOperationSignatureList().get(0)
 															.getOperationSignature().getInputMessageName(),
 													successorNode);
@@ -1501,10 +1518,10 @@ public class BlueprintOrchestratorController {
 										logger.info(
 												"traverseEachNode: Thread {} RETURNING FINAL OUTPUT {} FROM LAST NODE",
 												Thread.currentThread().getId(), finalOutput);
-										
-										logger.info("Returning headers {}",successorNode.getNodeHeaders() );
+
+										logger.info("Returning headers {}", successorNode.getNodeHeaders());
 										mcResponseHeaders.putAll(successorNode.getNodeHeaders());
-										
+
 										service4.shutdown();
 									}
 

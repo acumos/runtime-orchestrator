@@ -23,6 +23,11 @@ Runtime Orchestrator Release Notes
 
 The server is deployed within a Docker image.
 
+
+Version 2.0.9 29th August 2018
+------------------------
+* Additions for Data Broker Support
+
 Version 2.0.8 14th August 2018
 ------------------------
 * Bug fix 2 for incorrect output sent to some nodes.
