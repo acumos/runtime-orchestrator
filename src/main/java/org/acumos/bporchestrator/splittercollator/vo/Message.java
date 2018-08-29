@@ -24,8 +24,18 @@
 package org.acumos.bporchestrator.splittercollator.vo;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 public class Message implements Serializable{
+	public Message() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	@Override
+	public String toString() {
+		return "Message [messageName=" + messageName + ", messageargumentList=" + Arrays.toString(messageargumentList)
+				+ "]";
+	}
 	private static final long serialVersionUID = -1288328507537289159L;
 	
 	private String messageName; 

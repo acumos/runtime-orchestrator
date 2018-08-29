@@ -24,6 +24,11 @@ import java.io.Serializable;
 
 public class ProtobufOption implements Serializable {
 
+	public ProtobufOption() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
 	/**
 	 * 
 	 */

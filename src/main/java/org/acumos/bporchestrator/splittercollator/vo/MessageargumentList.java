@@ -23,6 +23,14 @@ package org.acumos.bporchestrator.splittercollator.vo;
 import java.io.Serializable;
 
 public class MessageargumentList implements Serializable{
+	@Override
+	public String toString() {
+		return "MessageargumentList [role=" + role + ", type=" + type + ", name=" + name + ", tag=" + tag
+				+ ", complexType=" + complexType + "]";
+	}
+
+
+
 	private static final long serialVersionUID = 1L;
 	
 	private String role;

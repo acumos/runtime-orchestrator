@@ -21,8 +21,20 @@
 package org.acumos.bporchestrator.splittercollator.vo;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 public class CollatorMap implements Serializable {
+
+	@Override
+	public String toString() {
+		return "CollatorMap [collator_type=" + collator_type + ", output_message_signature=" + output_message_signature
+				+ ", map_inputs=" + Arrays.toString(map_inputs) + ", map_outputs=" + Arrays.toString(map_outputs) + "]";
+	}
+
+	public CollatorMap() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 
 	private static final long serialVersionUID = -6615382514857867003L;
 	

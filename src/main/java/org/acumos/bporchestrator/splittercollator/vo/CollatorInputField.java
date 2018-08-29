@@ -24,6 +24,18 @@ import java.io.Serializable;
 
 public class CollatorInputField implements Serializable {
 
+	public CollatorInputField() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public String toString() {
+		return "CollatorInputField [source_name=" + source_name + ", message_signature=" + message_signature
+				+ ", parameter_name=" + parameter_name + ", parameter_type=" + parameter_type + ", parameter_tag="
+				+ parameter_tag + ", mapped_to_field=" + mapped_to_field + ", error_indicator=" + error_indicator + "]";
+	}
+
 	private static final long serialVersionUID = 718850551686460066L;
 	
 	private String source_name;
