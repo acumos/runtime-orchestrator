@@ -53,7 +53,7 @@ public class BpControllerTest extends AbstractControllerTest {
 	private static Logger logger = LoggerFactory.getLogger(BpControllerTest.class);
 
 	@Test
-	public void bpControllerTest() throws Exception {
+	public void bpControllerTest1() throws Exception {
 		try {
 
 			// Test /putBlueprint PUT end point
@@ -62,7 +62,250 @@ public class BpControllerTest extends AbstractControllerTest {
 			bp.setName("Runtime Orchestrator");
 			bp.setVersion("1.0.0");
 
-			// Creating Input Port list with 1 input port and add to the blueprint
+			// Creating Input Port list with 1 input port and add to the
+			// blueprint
+
+			InputPort inp1 = new InputPort();
+
+			OperationSignature ios1 = new OperationSignature();
+			ios1.setOperationName("classify");
+
+			inp1.setContainerName("image_classifier1");
+			inp1.setOperationSignature(ios1);
+
+			List<InputPort> inputportslist = new ArrayList<>();
+			inputportslist.add(inp1);
+
+			bp.setInputPorts(inputportslist);
+
+			// Creating node1 and add to the blueprint
+			Node node1 = new Node();
+
+			node1.setContainerName("image_classifier1");
+			node1.setNodeType("MLModel");
+			node1.setImage("someAI-nexus01:8001/image_classifier:1");
+			node1.setProtoUri("www.somewhere.com/protourilink");
+
+			OperationSignatureList test_osl1 = new OperationSignatureList();
+			OperationSignature test_os_a = new OperationSignature();
+
+			test_os_a.setOperationName("classify");
+			test_os_a.setInputMessageName("someinputmsg");
+			test_os_a.setOutputMessageName("someoutputmsg");
+
+			test_osl1.setOperationSignature(test_os_a);
+
+			ConnectedTo conto = new ConnectedTo();
+			conto.setContainerName("image_mood_classifier1");
+			OperationSignature test_os_b = new OperationSignature();
+			test_os_b.setOperationName("predict");
+			conto.setOperationSignature(test_os_b);
+
+			ArrayList<ConnectedTo> listofconnto1 = new ArrayList<ConnectedTo>();
+			listofconnto1.add(conto);
+			test_osl1.setConnectedTo(listofconnto1);
+
+			ArrayList<OperationSignatureList> lofosl1 = new ArrayList<OperationSignatureList>();
+			lofosl1.add(test_osl1);
+			node1.setOperationSignatureList(lofosl1);
+
+			// Creating node2 and add to the blueprint
+			Node node2 = new Node();
+
+			node2.setContainerName("image_mood_classifier1");
+			node2.setNodeType("MLModel");
+			node2.setImage("someAI-nexus01:8001/image_mood_classifier:1");
+			node2.setProtoUri("www.somewhere.com/protourilink2");
+
+			OperationSignatureList test_osl2 = new OperationSignatureList();
+			OperationSignature test_os_c = new OperationSignature();
+
+			test_os_c.setOperationName("predict");
+			test_os_c.setInputMessageName("someotherinputmsg");
+			test_os_c.setOutputMessageName("someotheroutputmsg");
+
+			test_osl2.setOperationSignature(test_os_c);
+
+			ConnectedTo conto2 = new ConnectedTo();
+			conto2.setContainerName("null");
+			OperationSignature test_os_d = new OperationSignature();
+			test_os_d.setOperationName("someotheroperation");
+			conto2.setOperationSignature(test_os_d);
+
+			ArrayList<ConnectedTo> listofconnto2 = new ArrayList<ConnectedTo>();
+			listofconnto2.add(conto2);
+			test_osl2.setConnectedTo(listofconnto2);
+
+			ArrayList<OperationSignatureList> lofosl2 = new ArrayList<OperationSignatureList>();
+			lofosl2.add(test_osl2);
+			node2.setOperationSignatureList(lofosl2);
+
+			// Creating node3 and add to the blueprint
+			Node node3 = new Node();
+
+			node3.setContainerName("Probe1");
+			node3.setNodeType("Probe");
+			node3.setImage("probeimage");
+			node3.setProtoUri("probeprotouri");
+
+			OperationSignatureList test_osl3 = new OperationSignatureList();
+			OperationSignature test_os_e = new OperationSignature();
+
+			test_os_e.setOperationName("data");
+			test_os_e.setInputMessageName("someotherinputmsg");
+			test_os_e.setOutputMessageName("someotheroutputmsg");
+
+			test_osl3.setOperationSignature(test_os_e);
+
+			ArrayList<ConnectedTo> listofconnto3 = new ArrayList<ConnectedTo>();
+			listofconnto3.add(null);
+			test_osl3.setConnectedTo(listofconnto3);
+
+			ArrayList<OperationSignatureList> lofosl3 = new ArrayList<OperationSignatureList>();
+			lofosl3.add(test_osl3);
+			node2.setOperationSignatureList(lofosl3);
+
+			bp.addNode(node1);
+			bp.addNode(node2);
+			bp.addNode(node3);
+			// bp.addNode(node4);
+
+			// Create list of Probe indicators and add to the blueprint
+
+			ProbeIndicator testpbindicator = new ProbeIndicator();
+			testpbindicator.setValue("true");
+
+			ArrayList<ProbeIndicator> testlistofprobeIndicators = new ArrayList<ProbeIndicator>();
+			testlistofprobeIndicators.add(testpbindicator);
+
+			bp.setProbeIndicator(testlistofprobeIndicators);
+
+			// BELOW STUFF CAN BE ADDED ONCE WE START USING TRAINING CLIENT.
+
+			TrainingClient testtc = new TrainingClient();
+			testtc.setContainerName("trainingclientname");
+			testtc.setImage("some_image");
+
+			DataBroker testdb1 = new DataBroker();
+			testdb1.setName("nameofdatabroker");
+			OperationSignature dbops = new OperationSignature();
+			dbops.setOperationName("getimage");
+
+			List<DataBroker> lodbs = new ArrayList<DataBroker>();
+			lodbs.add(testdb1);
+			testtc.setDataBrokers(lodbs);
+
+			MlModel testmlmodel1 = new MlModel();
+			testmlmodel1.setName("mlmodelname");
+			OperationSignature mlops = new OperationSignature();
+			dbops.setOperationName("predictimage");
+			testmlmodel1.setOperationSignature(mlops);
+
+			List<MlModel> lomlmodels = new ArrayList<MlModel>();
+			lomlmodels.add(testmlmodel1);
+			testtc.setMlModels(lomlmodels);
+
+			List<TrainingClient> listoftesttc = new ArrayList<TrainingClient>();
+			listoftesttc.add(testtc);
+
+			doPut("/putBlueprint", bp, Blueprint.class);
+			logger.info("Done testing /putBlueprint PUT end point");
+
+			// testing /putDockerInfo PUT method
+			logger.info("Testing /putDockerInfo PUT method");
+			DockerInfo docker1 = new DockerInfo();
+			docker1.setContainer("image_classifier1");
+			docker1.setIpAddress("www.somewhere.com");
+			docker1.setPort("8000");
+
+			DockerInfo docker2 = new DockerInfo();
+			docker2.setContainer("image_mood_classifier1");
+			docker2.setIpAddress("www.somewhere.com");
+			docker2.setPort("8001");
+
+			DockerInfo docker3 = new DockerInfo();
+			docker3.setContainer("Probe");
+			docker3.setIpAddress("www.somewhere.com");
+			docker3.setPort("8002");
+
+			DockerInfoList dockerList = new DockerInfoList();
+			dockerList.addDockerInfo(docker1);
+			dockerList.addDockerInfo(docker2);
+			dockerList.addDockerInfo(docker3);
+
+			doPut("/putDockerInfo", dockerList, DockerInfoList.class);
+
+			logger.info("Done testing /putDockerInfo PUT end point");
+
+			// testing the notify method.
+			String sampleString = "This is the model connector";
+			byte[] b = sampleString.getBytes();
+			doPost("/classify", b);
+			logger.info("Done testing /{operation} POST end point i.e notify service method");
+
+		} catch (Exception ex) {
+			logger.error("Controller Tests failed", ex);
+			assert (false);
+		}
+		assert (true);
+	}
+	
+	@Test
+	public void bpControllerTest2() throws Exception {
+		try {
+			
+		//TESTING NO BLUEPRING AVAILABLE
+			
+			// testing /putDockerInfo PUT method
+			logger.info("Testing /putDockerInfo PUT method");
+			DockerInfo docker1 = new DockerInfo();
+			docker1.setContainer("image_classifier1");
+			docker1.setIpAddress("www.somewhere.com");
+			docker1.setPort("8000");
+
+			DockerInfo docker2 = new DockerInfo();
+			docker2.setContainer("image_mood_classifier1");
+			docker2.setIpAddress("www.somewhere.com");
+			docker2.setPort("8001");
+
+			DockerInfo docker3 = new DockerInfo();
+			docker3.setContainer("Probe");
+			docker3.setIpAddress("www.somewhere.com");
+			docker3.setPort("8002");
+
+			DockerInfoList dockerList = new DockerInfoList();
+			dockerList.addDockerInfo(docker1);
+			dockerList.addDockerInfo(docker2);
+			dockerList.addDockerInfo(docker3);
+			
+	
+			doPut("/putDockerInfo", dockerList, DockerInfoList.class);
+
+			logger.info("Done testing /putDockerInfo PUT end point");
+		}
+		catch (Exception ex) {
+			logger.error("Controller Tests failed", ex);
+			assert (false);
+		}
+		assert (true);
+	}
+	
+	
+	
+	@Test
+	public void bpControllerTest3() throws Exception {
+		try {
+			
+			// TESTING NO DOCKERINFO AVAILABLE
+
+			// Test /putBlueprint PUT end point
+			logger.info("Testing /putBlueprint PUT method");
+			Blueprint bp = new Blueprint();
+			bp.setName("Runtime Orchestrator");
+			bp.setVersion("1.0.0");
+
+			// Creating Input Port list with 1 input port and add to the
+			// blueprint
 
 			InputPort inp1 = new InputPort();
 
@@ -172,7 +415,7 @@ public class BpControllerTest extends AbstractControllerTest {
 			// Create list of Probe indicators and add to the blueprint
 
 			ProbeIndicator testpbindicator = new ProbeIndicator();
-			testpbindicator.setValue("false");
+			testpbindicator.setValue("true");
 
 			ArrayList<ProbeIndicator> testlistofprobeIndicators = new ArrayList<ProbeIndicator>();
 			testlistofprobeIndicators.add(testpbindicator);
@@ -180,53 +423,36 @@ public class BpControllerTest extends AbstractControllerTest {
 			bp.setProbeIndicator(testlistofprobeIndicators);
 
 			// BELOW STUFF CAN BE ADDED ONCE WE START USING TRAINING CLIENT.
-			/*
-			 * 
-			 * TrainingClient testtc = new TrainingClient();
-			 * testtc.setContainerName("trainingclientname"); testtc.setImage("some_image");
-			 * 
-			 * 
-			 * 
-			 * DataBroker testdb1 = new DataBroker(); testdb1.setName("nameofdatabroker");
-			 * OperationSignature dbops = new OperationSignature();
-			 * dbops.setOperationName("getimage");
-			 * 
-			 * testtc.setDataBrokers(testdb1);
-			 * 
-			 * 
-			 * 
-			 * MlModel testmlmodel1 = new MlModel(); testmlmodel1.setName("mlmodelname");
-			 * OperationSignature mlops = new OperationSignature();
-			 * dbops.setOperationName("predictimage");
-			 * testmlmodel1.setOperationSignature(mlops);
-			 * 
-			 * testtc.setMlModel(testmlmodel1);
-			 * 
-			 * List<TrainingClient> listoftesttc = new List<TrainingClient>();
-			 * listoftesttc.add(testtc);
-			 * 
-			 */
+
+			TrainingClient testtc = new TrainingClient();
+			testtc.setContainerName("trainingclientname");
+			testtc.setImage("some_image");
+
+			DataBroker testdb1 = new DataBroker();
+			testdb1.setName("nameofdatabroker");
+			OperationSignature dbops = new OperationSignature();
+			dbops.setOperationName("getimage");
+
+			List<DataBroker> lodbs = new ArrayList<DataBroker>();
+			lodbs.add(testdb1);
+			testtc.setDataBrokers(lodbs);
+
+			MlModel testmlmodel1 = new MlModel();
+			testmlmodel1.setName("mlmodelname");
+			OperationSignature mlops = new OperationSignature();
+			dbops.setOperationName("predictimage");
+			testmlmodel1.setOperationSignature(mlops);
+
+			List<MlModel> lomlmodels = new ArrayList<MlModel>();
+			lomlmodels.add(testmlmodel1);
+			testtc.setMlModels(lomlmodels);
+
+			List<TrainingClient> listoftesttc = new ArrayList<TrainingClient>();
+			listoftesttc.add(testtc);
 
 			doPut("/putBlueprint", bp, Blueprint.class);
 			logger.info("Done testing /putBlueprint PUT end point");
 
-			// testing /putDockerInfo PUT method
-			logger.info("Testing /putDockerInfo PUT method");
-			DockerInfo docker1 = new DockerInfo();
-			docker1.setContainer("image_classifier1");
-			docker1.setIpAddress("www.somewhere.com");
-			docker1.setPort("8000");
-
-			DockerInfo docker2 = new DockerInfo();
-			docker2.setContainer("image_mood_classifier1");
-			docker2.setIpAddress("www.somewhere.com");
-			docker2.setPort("8001");
-
-			DockerInfoList dockerList = new DockerInfoList();
-			dockerList.addDockerInfo(docker1);
-			dockerList.addDockerInfo(docker2);
-
-			doPut("/putDockerInfo", dockerList, DockerInfoList.class);
 
 			logger.info("Done testing /putDockerInfo PUT end point");
 
@@ -234,13 +460,26 @@ public class BpControllerTest extends AbstractControllerTest {
 			String sampleString = "This is the model connector";
 			byte[] b = sampleString.getBytes();
 			doPost("/classify", b);
-			logger.info("Done testing /{operation} POST end point i.e notify service method");
-
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			logger.error("Controller Tests failed", ex);
 			assert (false);
 		}
 		assert (true);
 	}
+
+	
+	
+	@Test
+	public void bpControllerTest4() throws Exception {
+		try {
+		}
+		catch (Exception ex) {
+			logger.error("Controller Tests failed", ex);
+			assert (false);
+		}
+		assert (true);
+	}
+
 
 }

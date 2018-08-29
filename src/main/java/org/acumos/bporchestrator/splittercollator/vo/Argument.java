@@ -27,6 +27,8 @@ import java.io.Serializable;
 
 
 public class Argument implements Serializable{
+	
+
 	private static final long serialVersionUID = -5934864309832203668L;
 	
 	private String name;
@@ -93,5 +95,15 @@ public class Argument implements Serializable{
 		this.complexType = complexType;
 	}
 
+	
+	public Argument() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	@Override
+	public String toString() {
+		return "Argument [name=" + name + ", role=" + role + ", tag=" + tag + ", type=" + type + ", complexType="
+				+ complexType + "]";
+	}
 	
 }

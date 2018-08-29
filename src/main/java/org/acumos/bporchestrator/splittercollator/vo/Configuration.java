@@ -21,6 +21,7 @@
 package org.acumos.bporchestrator.splittercollator.vo;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 public class Configuration implements Serializable, Cloneable  {
 
@@ -38,6 +39,17 @@ public class Configuration implements Serializable, Cloneable  {
 	 */
 	public CollatorMapInput[] getMap_inputs() {
 		return map_inputs;
+	}
+
+	@Override
+	public String toString() {
+		return "Configuration [protobufFileStr=" + protobufFileStr + ", map_inputs=" + Arrays.toString(map_inputs)
+				+ ", map_outputs=" + Arrays.toString(map_outputs) + "]";
+	}
+
+	public Configuration() {
+		super();
+		// TODO Auto-generated constructor stub
 	}
 
 	/**

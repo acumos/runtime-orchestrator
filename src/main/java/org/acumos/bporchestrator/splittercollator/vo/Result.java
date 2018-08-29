@@ -21,6 +21,10 @@
 package org.acumos.bporchestrator.splittercollator.vo;
 
 public class Result {
+	@Override
+	public String toString() {
+		return "Result [status=" + status + ", message=" + message + "]";
+	}
 	private int status;
 	private Object message;
 	

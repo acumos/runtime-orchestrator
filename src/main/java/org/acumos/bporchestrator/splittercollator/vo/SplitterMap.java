@@ -22,9 +22,19 @@
 package org.acumos.bporchestrator.splittercollator.vo;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 public class SplitterMap implements Serializable {
 
+	public SplitterMap() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	@Override
+	public String toString() {
+		return "SplitterMap [splitter_type=" + splitter_type + ", input_message_signature=" + input_message_signature
+				+ ", map_inputs=" + Arrays.toString(map_inputs) + ", map_outputs=" + Arrays.toString(map_outputs) + "]";
+	}
 	private static final long serialVersionUID = -2099602526865715137L;
 	
 	private String splitter_type;

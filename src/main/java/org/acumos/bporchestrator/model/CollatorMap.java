@@ -26,6 +26,7 @@ import org.acumos.bporchestrator.splittercollator.vo.CollatorMapOutput;
 
 public class CollatorMap implements Serializable {
 
+
 	/**
 	 * 
 	 */
@@ -66,6 +67,12 @@ public class CollatorMap implements Serializable {
 
 	public void setOutput_message_signature(String output_message_signature) {
 		this.output_message_signature = output_message_signature;
+	}
+	
+	
+	public CollatorMap() {
+		super();
+		// TODO Auto-generated constructor stub
 	}
 
 	/*

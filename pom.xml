@@ -124,6 +124,7 @@
 			<artifactId>protobuf-dynamic</artifactId>
 			<version>0.9.4</version>
 		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -218,6 +219,7 @@
 				</executions>
 			</plugin>
 
+
 			<!-- https://stackoverflow.com/questions/39126226/fabric8-springboot-full-example -->
 			<plugin>
 				<groupId>io.fabric8</groupId>
@@ -252,14 +254,14 @@
 					</images>
 				</configuration>
 				<!-- build Docker images in install phase, push in deploy phase -->
-				<!-- <executions>
+				<executions>
 					<execution>
 						<goals>
 							<goal>build</goal>
 							<goal>push</goal>
 						</goals>
 					</execution>
-				</executions> -->
+				</executions>
 			</plugin>
 
 		</plugins>

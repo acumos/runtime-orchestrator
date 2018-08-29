@@ -37,6 +37,14 @@ public class ComplexType implements Serializable {
 	public String getMessageName() {
 		return messageName;
 	}
+	@Override
+	public String toString() {
+		return "ComplexType [messageName=" + messageName + ", messageargumentList=" + messageargumentList + "]";
+	}
+	public ComplexType() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 	/**
 	 * @param messageName the messageName to set
 	 */

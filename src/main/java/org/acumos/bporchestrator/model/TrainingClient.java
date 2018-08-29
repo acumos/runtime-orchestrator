@@ -42,6 +42,7 @@ public class TrainingClient implements Serializable {
 	 * 
 	 */
 	public TrainingClient() {
+		super();
 	}
 
 	/**
@@ -101,6 +102,12 @@ public class TrainingClient implements Serializable {
 	@JsonProperty("ml_models")
 	public void setMlModels(List<MlModel> mlModels) {
 		this.mlModels = mlModels;
+	}
+
+	@Override
+	public String toString() {
+		return "TrainingClient [containerName=" + containerName + ", image=" + image + ", dataBrokers=" + dataBrokers
+				+ ", mlModels=" + mlModels + "]";
 	}
 
 }

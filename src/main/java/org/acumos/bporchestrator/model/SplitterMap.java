@@ -20,11 +20,17 @@
 package org.acumos.bporchestrator.model;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 import org.acumos.bporchestrator.splittercollator.vo.SplitterMapInput;
 import org.acumos.bporchestrator.splittercollator.vo.SplitterMapOutput;
 
 public class SplitterMap implements Serializable {
+
+	public SplitterMap() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 
 	private static final long serialVersionUID = 7470791845990288358L;
 	
@@ -63,6 +69,12 @@ public class SplitterMap implements Serializable {
 
 	public void setMap_outputs(SplitterMapOutput[] map_outputs) {
 		this.map_outputs = map_outputs;
+	}
+
+	@Override
+	public String toString() {
+		return "SplitterMap [splitter_type=" + splitter_type + ", input_message_signature=" + input_message_signature
+				+ ", map_inputs=" + Arrays.toString(map_inputs) + ", map_outputs=" + Arrays.toString(map_outputs) + "]";
 	}
 
 	/*
