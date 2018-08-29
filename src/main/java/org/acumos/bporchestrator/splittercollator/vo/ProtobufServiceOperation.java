@@ -25,6 +25,10 @@ import java.util.List;
 
 public class ProtobufServiceOperation implements Serializable {
 
+	public ProtobufServiceOperation() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 	private static final long serialVersionUID = -508292588013129426L;
 	
 	

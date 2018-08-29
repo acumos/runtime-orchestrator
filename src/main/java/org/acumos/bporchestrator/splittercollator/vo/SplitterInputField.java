@@ -25,6 +25,15 @@ import java.io.Serializable;
 
 public class SplitterInputField implements Serializable{
 
+	public SplitterInputField() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	@Override
+	public String toString() {
+		return "SplitterInputField [parameter_name=" + parameter_name + ", parameter_type=" + parameter_type
+				+ ", parameter_tag=" + parameter_tag + ", parameter_role=" + parameter_role + "]";
+	}
 	private static final long serialVersionUID = 5530807834979193156L;
 	
 	private String parameter_name;

@@ -25,6 +25,11 @@ import java.io.Serializable;
 public class ProtobufMessageField implements Serializable {
 
 	
+	public ProtobufMessageField() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
 	/**
 	 * 
 	 */

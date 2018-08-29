@@ -25,6 +25,17 @@ import java.io.Serializable;
 
 public class SplitterOutputField implements Serializable {
 
+	public SplitterOutputField() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	@Override
+	public String toString() {
+		return "SplitterOutputField [target_name=" + target_name + ", message_signature=" + message_signature
+				+ ", parameter_tag=" + parameter_tag + ", parameter_name=" + parameter_name + ", parameter_type="
+				+ parameter_type + ", parameter_role=" + parameter_role + ", mapped_to_field=" + mapped_to_field
+				+ ", error_indicator=" + error_indicator + "]";
+	}
 	private static final long serialVersionUID = -4275181023124297430L;
 	
 	private String target_name;

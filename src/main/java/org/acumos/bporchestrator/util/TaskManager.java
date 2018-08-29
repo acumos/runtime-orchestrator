@@ -22,7 +22,7 @@ package org.acumos.bporchestrator.util;
 
 import java.util.List;
 
-import org.acumos.bporchestrator.controller.FinalResults;
+
 import org.acumos.bporchestrator.model.Blueprint;
 import org.acumos.bporchestrator.model.DockerInfoList;
 
@@ -34,24 +34,9 @@ public class TaskManager {
 
 	private static Blueprint blueprint = null;
 	private static DockerInfoList dockerList = null;
-	private static FinalResults fr = null;
-	private static List listOfSockeTimoutModels = null;
 	private static int[][] sourceDestinatioNodeMappingTable;
 
-	/**
-	 * @return the listofsocketimoutmodels
-	 */
-	public static List getListofsocketimoutmodels() {
-		return listOfSockeTimoutModels;
-	}
 
-	/**
-	 * @param listofsocketimoutmodels
-	 *            the listofsocketimoutmodels to set
-	 */
-	public static void setListofsocketimoutmodels(List listofsocketimoutmodels) {
-		TaskManager.listOfSockeTimoutModels = listofsocketimoutmodels;
-	}
 
 	/*
 	 * private Constructor for a utility class
@@ -91,12 +76,6 @@ public class TaskManager {
 		TaskManager.dockerList = dockerList;
 	}
 
-	public static FinalResults getFinalResults() {
-		return fr;
-	}
 
-	public static void setFinalResults(FinalResults fr) {
-		TaskManager.fr = fr;
-	}
 
 }

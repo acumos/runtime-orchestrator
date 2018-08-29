@@ -39,6 +39,15 @@ public class CollatorOutputField implements Serializable {
 	public String getParameter_name() {
 		return parameter_name;
 	}
+	public CollatorOutputField() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	@Override
+	public String toString() {
+		return "CollatorOutputField [parameter_tag=" + parameter_tag + ", parameter_name=" + parameter_name
+				+ ", parameter_type=" + parameter_type + "]";
+	}
 	public void setParameter_name(String parameter_name) {
 		this.parameter_name = parameter_name;
 	}

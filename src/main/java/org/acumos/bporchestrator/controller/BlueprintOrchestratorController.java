@@ -91,88 +91,7 @@ public class BlueprintOrchestratorController {
 	static volatile boolean probePresent = false;
 	static volatile HttpHeaders mcResponseHeaders = new HttpHeaders();
 
-	// Dummy Method to check Splitter directly.
-	@ApiOperation(value = "operation on the first node in the chain", response = byte.class, responseContainer = "Page")
-	@RequestMapping(path = "/split", method = RequestMethod.POST)
-	public <T> ResponseEntity<T> notifysplitter(
-			@ApiParam(value = "Inital request to start deploying... This binary stream is in protobuf format.", required = false) @Valid @RequestBody byte[] binaryStream,
-			@ApiParam(value = "This operation should match with one of the input operation signatures in blueprint.json", required = true) String split)
-			throws Exception {
 
-		ExecutorService service6 = Executors.newFixedThreadPool(50);
-		Blueprint blueprint = TaskManager.getBlueprint();
-		Node spNode = blueprint.getNodebyContainer("Splitter1");
-
-		// call all its children on separate threads.
-		SplitterMap modelSplitterMap = spNode.getSplitterMap();
-
-		spNode.setNodeOutput(spNode.getImmediateAncestors().get(0).getNodeOutput());
-
-		// set the outputAvailable for the splitter inside it
-		spNode.setOutputAvailable(true);
-
-		// Convert between SplitterMap objects.
-		org.acumos.bporchestrator.splittercollator.vo.SplitterMap splitterMap = new org.acumos.bporchestrator.splittercollator.vo.SplitterMap();
-		splitterMap.setSplitter_type(modelSplitterMap.getSplitter_type());
-		splitterMap.setInput_message_signature(modelSplitterMap.getInput_message_signature());
-		splitterMap.setMap_inputs(modelSplitterMap.getMap_inputs());
-		splitterMap.setMap_outputs(modelSplitterMap.getMap_outputs());
-
-		SplitterProtobufService dummyprotoservice = new SplitterProtobufServiceImpl();
-
-		try {
-			logger.info("Calling Parameter based Splitter's setconf with splittermap {}", splitterMap);
-			dummyprotoservice.setConf(splitterMap);
-		} catch (Exception e) {
-			logger.error("Exception {} in calling setConf for Parameter Based Splitter", e);
-			logger.error("SplitterMap value was {}", splitterMap);
-		}
-
-		Map<String, Object> spOutput = new HashMap<String, Object>();
-		try {
-
-			spOutput = dummyprotoservice.parameterBasedSplitData(binaryStream);
-			logger.info("Splitter output is {}", spOutput.toString());
-		} catch (Exception e) {
-			logger.info("Exception {} in calling parameterBasedSplitData for Splitter", e);
-			logger.error("Input List was ", spNode.getImmediateAncestors().get(0).getNodeOutput());
-
-		}
-
-		List<ConnectedTo> listOfNodesConnectedToSplitter = findconnectedto(spNode,
-				spNode.getOperationSignatureList().get(0).getOperationSignature().getOperationName());
-
-		for (ConnectedTo connectedTo : listOfNodesConnectedToSplitter) {
-
-			String connectedToContainer = connectedTo.getContainerName();
-			Node connectedToNode = blueprint.getNodebyContainer(connectedToContainer);
-
-			NewThreadAttributes newThreadAttributes = new NewThreadAttributes();
-			// set the all the required attributes.
-
-			// Print out the protobuf representation.
-			if (connectedToContainer.equalsIgnoreCase("concatenate1")) {
-				String protobufRep = dummyprotoservice.readProtobufFormat("concatenate1_ConcatenateInput",
-						(byte[]) (spOutput.get(connectedToContainer)));
-
-				logger.info("Protobuf is ::::::: {}", protobufRep);
-			}
-			newThreadAttributes.setpNode(spNode);
-			newThreadAttributes.setsNode(connectedToNode);
-			newThreadAttributes.setOut((byte[]) (spOutput.get(connectedToContainer)));
-			newThreadAttributes.setId(1);
-
-			// create a thread with the
-			// newThreadAttributes
-			// objects
-			logger.info("Starting a new thread  with Node {} as predecessor and {} as successor",
-					spNode.getContainerName(), connectedToNode.getContainerName());
-			service6.execute(new NewModelCaller(newThreadAttributes));
-
-		}
-		return (ResponseEntity<T>) new ResponseEntity<>(spOutput, HttpStatus.OK);
-
-	}
 
 	/**
 	 * The MC is triggerred by a /{operation} request. The requester also sends
@@ -201,7 +120,7 @@ public class BlueprintOrchestratorController {
 
 		ExecutorService service3 = Executors.newFixedThreadPool(10);
 		finalOutput = null;
-		byte[] finalResults = null;
+	
 		boolean singleModel = false;
 		Blueprint blueprint = TaskManager.getBlueprint();
 		DockerInfoList dockerList = TaskManager.getDockerList();
@@ -216,18 +135,6 @@ public class BlueprintOrchestratorController {
 
 		}
 
-		// clear the connecttimeout models list
-		if (TaskManager.getListofsocketimoutmodels() != null && !TaskManager.getListofsocketimoutmodels().isEmpty()) {
-			TaskManager.getListofsocketimoutmodels().clear();
-		}
-
-		// clear the Final results
-		if (TaskManager.getFinalResults() != null && (TaskManager.getFinalResults().getMsgname() != null)) {
-			FinalResults f0 = TaskManager.getFinalResults();
-			f0.setMsgname("Begin");
-			f0.setFinalresults(null);
-			TaskManager.setFinalResults(f0);
-		}
 
 		// Probe related.
 		String probeContName = "Probe";
@@ -252,12 +159,12 @@ public class BlueprintOrchestratorController {
 					(Arrays.toString(binaryStream)).substring(0, 20));
 			if (blueprint == null) {
 				logger.error("notify: Empty blueprint JSON");
-				return (ResponseEntity<T>) new ResponseEntity<>(finalResults, HttpStatus.PARTIAL_CONTENT);
+				return (ResponseEntity<T>) new ResponseEntity<>("Empty blueprint JSON", HttpStatus.PARTIAL_CONTENT);
 
 			}
 			if (dockerList == null) {
 				logger.error("notify: Need Docker Information... Exiting");
-				return (ResponseEntity<T>) new ResponseEntity<>(finalResults, HttpStatus.PARTIAL_CONTENT);
+				return (ResponseEntity<T>) new ResponseEntity<>("Need Docker Information", HttpStatus.PARTIAL_CONTENT);
 			}
 
 			List<InputPort> inps = blueprint.getInputPorts();
@@ -1590,7 +1497,7 @@ public class BlueprintOrchestratorController {
 			e1.printStackTrace();
 		}
 
-		return probeUrl;
+		return probeUrl; 
 
 	}
 

@@ -24,6 +24,13 @@ import java.io.Serializable;
 
 public class MappingTable implements Serializable {
 
+	
+
 	private final static long serialVersionUID = 7972774088897598369L;
 
+	
+	public MappingTable() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 }

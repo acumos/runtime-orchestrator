@@ -25,6 +25,16 @@ import java.io.Serializable;
 
 public class SplitterMapOutput implements Serializable{
 
+	public SplitterMapOutput() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public String toString() {
+		return "SplitterMapOutput [output_field=" + output_field + "]";
+	}
+
 	private static final long serialVersionUID = -142963644521061377L;
 	
 	private SplitterOutputField output_field;
