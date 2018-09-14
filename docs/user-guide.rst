@@ -32,3 +32,5 @@ After the deployer pushes the configuration JSON files, the data source will inv
 In case of the databroker being present, the deployer will invoke /putBlueprint and /putDockerInfo and the Blueprint Orchestrator will pull data from the Data Broker and pass data to subsequent nodes as defined by the blueprint.json.
 
 The Runtime Orchestrator by default launches on port 8555.
+
+Any application can request predictions from a composite solution/ solution where the Orchestrator is involved in by sending a HTTP POST request to the endpoint http://{hostname}:8555/{operation_of_the_first_model_in_the_solution}

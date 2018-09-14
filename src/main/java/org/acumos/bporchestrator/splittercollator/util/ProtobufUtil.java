@@ -50,7 +50,6 @@ public class ProtobufUtil {
 
 	private static ObjectMapper mapper = new ObjectMapper();
 
-
 	public static Protobuf parseProtobuf(String protobufStr) {
 		Scanner scanner = new Scanner(protobufStr);
 		Protobuf protobuf = new Protobuf();

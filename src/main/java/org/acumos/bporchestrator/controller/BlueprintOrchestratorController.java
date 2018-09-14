@@ -91,8 +91,6 @@ public class BlueprintOrchestratorController {
 	static volatile boolean probePresent = false;
 	static volatile HttpHeaders mcResponseHeaders = new HttpHeaders();
 
-
-
 	/**
 	 * The MC is triggerred by a /{operation} request. The requester also sends
 	 * the protobuf binary message.
@@ -120,7 +118,7 @@ public class BlueprintOrchestratorController {
 
 		ExecutorService service3 = Executors.newFixedThreadPool(10);
 		finalOutput = null;
-	
+
 		boolean singleModel = false;
 		Blueprint blueprint = TaskManager.getBlueprint();
 		DockerInfoList dockerList = TaskManager.getDockerList();
@@ -134,7 +132,6 @@ public class BlueprintOrchestratorController {
 			n.setBeingProcessedByAThread(false);
 
 		}
-
 
 		// Probe related.
 		String probeContName = "Probe";
@@ -726,7 +723,6 @@ public class BlueprintOrchestratorController {
 					output = contactDataBroker(databrokerurl, dataBrokerContName);
 					if ((output != null) && (output.length != 0)) {
 
-						
 						// set the all the required attributes.
 						DBThreadAttributes dbAttributes = new DBThreadAttributes();
 						dbAttributes.setOut(output);
@@ -873,7 +869,7 @@ public class BlueprintOrchestratorController {
 	 * HTTPURLConnection into the memory then return the contents of the memory.
 	 * 
 	 */
-	private byte[] httpGet(String url) throws Exception {
+	public byte[] httpGet(String url) throws Exception {
 		HttpURLConnection con = null;
 		InputStream in = null;
 		ByteArrayOutputStream out = new ByteArrayOutputStream(8192);
@@ -1465,7 +1461,7 @@ public class BlueprintOrchestratorController {
 
 	}
 
-	private boolean splitterSuccessorsOutputAvailable(List<ConnectedTo> listOfNodesConnectedToSplitter) {
+	public boolean splitterSuccessorsOutputAvailable(List<ConnectedTo> listOfNodesConnectedToSplitter) {
 		Blueprint blueprint = TaskManager.getBlueprint();
 
 		for (ConnectedTo connectedTo : listOfNodesConnectedToSplitter) {
@@ -1480,7 +1476,7 @@ public class BlueprintOrchestratorController {
 		return true;
 	}
 
-	private String constructProbeUrl(String prbCont, String prbOp) {
+	public String constructProbeUrl(String prbCont, String prbOp) {
 
 		String probeUrl = "";
 
@@ -1497,7 +1493,7 @@ public class BlueprintOrchestratorController {
 			e1.printStackTrace();
 		}
 
-		return probeUrl; 
+		return probeUrl;
 
 	}
 
