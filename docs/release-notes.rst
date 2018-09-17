@@ -26,10 +26,13 @@ The server is deployed within a Docker image.
 Version 2.0.11 14th September 2018
 ------------------------
 * Added some more Junit tests
+* ACUMOS-1720
 
 Version 2.0.10 12th September 2018
 ------------------------
 * Added some Junit tests
+* ACUMOS-1720
+
 
 Version 2.0.9 29th August 2018
 ------------------------
