@@ -23,6 +23,11 @@ Runtime Orchestrator Release Notes
 
 The server is deployed within a Docker image.
 
+Version 3.0.0 23rd January 2018
+------------------------
+* Probe container name changed to lower case for Kubernetes deployments
+* ACUMOS-1791
+
 Version 2.0.11 14th September 2018
 ------------------------
 * Added some more Junit tests

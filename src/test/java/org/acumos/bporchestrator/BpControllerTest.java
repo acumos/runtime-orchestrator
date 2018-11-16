@@ -155,7 +155,7 @@ public class BpControllerTest extends AbstractControllerTest {
 			// Creating node3 and add to the blueprint
 			Node node3 = new Node();
 
-			node3.setContainerName("Probe1");
+			node3.setContainerName("probe");
 			node3.setNodeType("Probe");
 			node3.setImage("probeimage");
 			node3.setProtoUri("probeprotouri");
@@ -236,7 +236,7 @@ public class BpControllerTest extends AbstractControllerTest {
 			docker2.setPort("8001");
 
 			DockerInfo docker3 = new DockerInfo();
-			docker3.setContainer("Probe");
+			docker3.setContainer("probe");
 			docker3.setIpAddress("www.somewhere.com");
 			docker3.setPort("8002");
 
@@ -281,7 +281,7 @@ public class BpControllerTest extends AbstractControllerTest {
 			docker2.setPort("8001");
 
 			DockerInfo docker3 = new DockerInfo();
-			docker3.setContainer("Probe");
+			docker3.setContainer("probe");
 			docker3.setIpAddress("www.somewhere.com");
 			docker3.setPort("8002");
 
@@ -393,7 +393,7 @@ public class BpControllerTest extends AbstractControllerTest {
 			// Creating node3 and add to the blueprint
 			Node node3 = new Node();
 
-			node3.setContainerName("Probe1");
+			node3.setContainerName("probe");
 			node3.setNodeType("Probe");
 			node3.setImage("probeimage");
 			node3.setProtoUri("probeprotouri");
@@ -578,7 +578,7 @@ public class BpControllerTest extends AbstractControllerTest {
 			// Creating node3 and add to the blueprint
 			Node node3 = new Node();
 
-			node3.setContainerName("Probe1");
+			node3.setContainerName("probe");
 			node3.setNodeType("Probe");
 			node3.setImage("probeimage");
 			node3.setProtoUri("probeprotouri");
@@ -659,7 +659,7 @@ public class BpControllerTest extends AbstractControllerTest {
 			docker2.setPort("8001");
 
 			DockerInfo docker3 = new DockerInfo();
-			docker3.setContainer("Probe");
+			docker3.setContainer("probe");
 			docker3.setIpAddress("www.somewhere.com");
 			docker3.setPort("8002");
 
@@ -673,10 +673,10 @@ public class BpControllerTest extends AbstractControllerTest {
 			logger.info("Done testing /putDockerInfo PUT end point");
 
 			org.acumos.bporchestrator.controller.BlueprintOrchestratorController bpcont = new org.acumos.bporchestrator.controller.BlueprintOrchestratorController();
-			bpcont.traverseEachNode(node1, node2, "sampledata".getBytes(), 0, "Probe", "data");
+			bpcont.traverseEachNode(node1, node2, "sampledata".getBytes(), 0, "probe", "data");
 
 			org.acumos.bporchestrator.controller.BlueprintOrchestratorController bpcont2 = new org.acumos.bporchestrator.controller.BlueprintOrchestratorController();
-			bpcont2.constructProbeUrl("Probe", "data");
+			bpcont2.constructProbeUrl("probe", "data");
 
 			org.acumos.bporchestrator.controller.BlueprintOrchestratorController bpcont3 = new org.acumos.bporchestrator.controller.BlueprintOrchestratorController();
 
@@ -717,7 +717,7 @@ public class BpControllerTest extends AbstractControllerTest {
 			newThreadAttributes.setsNode(node2);
 			newThreadAttributes.setOut("sampledata".getBytes());
 			newThreadAttributes.setId(0);
-			newThreadAttributes.setProbeCont("Probe");
+			newThreadAttributes.setProbeCont("probe");
 			newThreadAttributes.setProbeOp("data");
 
 			servicetest.execute(new NewModelCaller(newThreadAttributes));
@@ -742,7 +742,9 @@ public class BpControllerTest extends AbstractControllerTest {
 
 					, org.acumos.bporchestrator.splittercollator.vo.SplitterMap.class);
 
-			comap = mapper.readValue("{\r\n        \"collator_type\": \"Array-based\",\r\n        \"output_message_signature\": \"{\\\"messageName\\\":\\\"ComputeResultList\\\",\\\"messageargumentList\\\":[{\\\"role\\\":\\\"repeated\\\",\\\"complexType\\\":{\\\"messageName\\\":\\\"ComputeResult\\\",\\\"messageargumentList\\\":[{\\\"role\\\":\\\"\\\",\\\"name\\\":\\\"f\\\",\\\"tag\\\":\\\"1.1\\\",\\\"type\\\":\\\"double\\\"},{\\\"role\\\":\\\"\\\",\\\"name\\\":\\\"s\\\",\\\"tag\\\":\\\"1.2\\\",\\\"type\\\":\\\"string\\\"}]},\\\"name\\\":\\\"l\\\",\\\"tag\\\":\\\"1\\\",\\\"type\\\":\\\"ComputeResult\\\"}]}\"\r\n      }", org.acumos.bporchestrator.splittercollator.vo.CollatorMap.class);
+			comap = mapper.readValue(
+					"{\r\n        \"collator_type\": \"Array-based\",\r\n        \"output_message_signature\": \"{\\\"messageName\\\":\\\"ComputeResultList\\\",\\\"messageargumentList\\\":[{\\\"role\\\":\\\"repeated\\\",\\\"complexType\\\":{\\\"messageName\\\":\\\"ComputeResult\\\",\\\"messageargumentList\\\":[{\\\"role\\\":\\\"\\\",\\\"name\\\":\\\"f\\\",\\\"tag\\\":\\\"1.1\\\",\\\"type\\\":\\\"double\\\"},{\\\"role\\\":\\\"\\\",\\\"name\\\":\\\"s\\\",\\\"tag\\\":\\\"1.2\\\",\\\"type\\\":\\\"string\\\"}]},\\\"name\\\":\\\"l\\\",\\\"tag\\\":\\\"1\\\",\\\"type\\\":\\\"ComputeResult\\\"}]}\"\r\n      }",
+					org.acumos.bporchestrator.splittercollator.vo.CollatorMap.class);
 
 			ProtobufUtil.parseProtoStr(comap);
 			ProtobufUtil.parseProtoStrForSplit(spmap);

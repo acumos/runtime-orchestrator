@@ -134,7 +134,7 @@ public class BlueprintOrchestratorController {
 		}
 
 		// Probe related.
-		String probeContName = "Probe";
+		String probeContName = "probe";
 		String probeOperation = "data";
 		String probeUrl = null;
 
@@ -613,7 +613,7 @@ public class BlueprintOrchestratorController {
 
 			// Probe related.
 
-			String probeContName = "Probe";
+			String probeContName = "probe";
 			String probeOperation = "data";
 			String probeurl = null;
 			probePresent = false;
