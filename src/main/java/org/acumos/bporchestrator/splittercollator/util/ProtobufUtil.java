@@ -42,6 +42,7 @@ import org.acumos.bporchestrator.splittercollator.vo.SplitterMap;
 import org.acumos.bporchestrator.splittercollator.vo.SplitterMapOutput;
 import org.acumos.bporchestrator.splittercollator.vo.SplitterOutputField;
 
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -215,7 +216,7 @@ public class ProtobufUtil {
 				messageSignature = collatorInputField.getMessage_signature();
 				msg = mapper.readValue(messageSignature, Message.class);
 				args = msg.getMessageargumentList();
-				msgName = sourceName + "_" + msg.getMessageName();
+				msgName = sourceName + Constants.SEPARATOR + msg.getMessageName();
 				if (messageNames.trim().equals("") || !messageNames.contains(msgName)) {
 					addProtobufMessage(msgName, args, messages);
 					messageNames = messageNames + msgName + ",";
@@ -443,7 +444,7 @@ public class ProtobufUtil {
 				messageSignature = splitterOutputField.getMessage_signature();
 				msg = mapper.readValue(messageSignature, Message.class);
 				args = msg.getMessageargumentList();
-				msgName = targetName + "_" + msg.getMessageName();
+				msgName = targetName + Constants.SEPARATOR + msg.getMessageName();
 				if (messageNames.trim().equals("") || !messageNames.contains(msgName)) {
 					addProtobufMessage(msgName, args, messages);
 					messageNames = messageNames + msgName + ",";

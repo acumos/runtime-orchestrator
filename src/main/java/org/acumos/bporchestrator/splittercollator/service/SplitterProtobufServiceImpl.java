@@ -183,7 +183,7 @@ public class SplitterProtobufServiceImpl implements SplitterProtobufService {
 					}
 				}
 				outDynamsg = outputMsgBuilder.build();
-				result.put(outputMessageName.split("\\_")[0], outDynamsg.toByteArray());
+				result.put(outputMessageName.split("\\"+Constants.SEPARATOR)[0], outDynamsg.toByteArray());
 			}
 
 		}
@@ -213,8 +213,8 @@ public class SplitterProtobufServiceImpl implements SplitterProtobufService {
 				targetName = outputField.getTarget_name();
 				messageSignature = outputField.getMessage_signature();
 				msg = mapper.readValue(messageSignature, Message.class);
-				if (targetName.equals(outputMessageName.split("\\_")[0])
-						&& msg.getMessageName().equals(outputMessageName.split("\\_")[1])) {
+				if (targetName.equals(outputMessageName.split("\\"+Constants.SEPARATOR)[0])
+						&& msg.getMessageName().equals(outputMessageName.split("\\"+Constants.SEPARATOR)[1])) {
 					inputFieldDesc = parentInpuMsgDesc.findFieldByNumber(Integer.parseInt(mappedToField));
 					inputFieldValue = inputDynamsg.getField(inputFieldDesc);
 				}
