@@ -23,6 +23,11 @@ Runtime Orchestrator Release Notes
 
 The server is deployed within a Docker image.
 
+Version 2.0.12 5th February 2018
+------------------------
+Change in the splitter to handle images
+ACUMOS-2457
+
 Version 2.0.11 14th September 2018
 ------------------------
 * Added some more Junit tests
