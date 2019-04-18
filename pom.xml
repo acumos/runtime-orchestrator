@@ -55,6 +55,7 @@
 			<artifactId>swagger-jersey2-jaxrs</artifactId>
 			<version>1.5.9</version>
 		</dependency>
+		<!-- For Dynamic protobuf message construction -->
 		<dependency>
 			<groupId>com.google.protobuf</groupId>
 			<artifactId>protobuf-java</artifactId>
@@ -66,7 +67,6 @@
 			<artifactId>httpclient</artifactId>
 			<version>4.5.5</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
 			<artifactId>cxf-spring-boot-starter-jaxrs</artifactId>
@@ -102,7 +102,6 @@
 			<artifactId>slf4j-api</artifactId>
 			<!-- spring sets the <version>1.7.25</version> -->
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-autoconfigure</artifactId>
@@ -112,21 +111,12 @@
 			<artifactId>eelf-core</artifactId>
 			<version>1.0.0</version>
 		</dependency>
-		<!-- For Dynamic protobuf message construction -->
-		<dependency>
-			<groupId>com.google.protobuf</groupId>
-			<artifactId>protobuf-java</artifactId>
-			<version>3.3.1</version>
-		</dependency>
-
 		<dependency>
 			<groupId>com.github.os72</groupId>
 			<artifactId>protobuf-dynamic</artifactId>
 			<version>0.9.4</version>
 		</dependency>
-
 	</dependencies>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -149,7 +139,6 @@
 					<emptyLineAfterHeader>true</emptyLineAfterHeader>
 				</configuration>
 			</plugin>
-
 			<!-- Require Java 1.8 -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -160,7 +149,6 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
-
 			<!-- Add the build number to the manifest. Spring-Boot uses a complex 
 				packaging process that makes access to the original Manifest.MF very difficult. 
 				However, Java provides access to the implementation version for a package, 
@@ -180,7 +168,6 @@
 					</archive>
 				</configuration>
 			</plugin>
-
 			<!-- Build a single jar with all dependencies -->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -218,8 +205,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
-
 			<!-- https://stackoverflow.com/questions/39126226/fabric8-springboot-full-example -->
 			<plugin>
 				<groupId>io.fabric8</groupId>
@@ -245,6 +230,11 @@
 								<assembly>
 									<descriptorRef>artifact</descriptorRef>
 								</assembly>
+								<runCmds>
+									<!-- Ensure logs dir exists and is world writable -->
+									<runCmd>mkdir /maven/logs</runCmd>
+									<runCmd>chmod -R 777 /maven</runCmd>
+								</runCmds>
 								<cmd>
 									<!-- CDATA prevents Eclipse formatter from breaking line -->
 									<shell><![CDATA[java -Xms128m -Xmx512m -Djava.security.egd=file:/dev/./urandom -jar /maven/${project.artifactId}-${project.version}.${project.packaging}]]></shell>
@@ -263,8 +253,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
 		</plugins>
 	</build>
-
 </project>
