@@ -807,7 +807,10 @@ public class BlueprintOrchestratorController {
 		URL obj = new URL(url);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 		con.setRequestMethod("POST");
-		con.setRequestProperty("Content-Type", "application/octet-stream");
+		// Support new model runner requirement for correct mime types
+		// assumes protobuf method is used not json
+		con.setRequestProperty("Content-Type", "application/vnd.google.protobuf");
+		con.setRequestProperty("Accept", "application/vnd.google.protobuf");
 
 		if ((headersBeingSent != null) && !headersBeingSent.isEmpty()) {
 			String multipleHeaderValue;
@@ -1507,9 +1510,14 @@ public class BlueprintOrchestratorController {
 		String op = n.getOperationSignatureList().get(0).getOperationSignature().getOperationName();
 
 		URIBuilder builder = new URIBuilder();
+		/*builder.setScheme("http").setHost(dInfo.getIpAddress()).setPort(new Integer(dInfo.getPort()).intValue())
+				.setPath("/" + op);*/
+		
+		// comment the above line and uncomment the below line for new model API
+		
 		builder.setScheme("http").setHost(dInfo.getIpAddress()).setPort(new Integer(dInfo.getPort()).intValue())
-				.setPath("/" + op);
-
+		.setPath("/model/methods/" +op);
+		
 		try {
 			finalUrl = builder.build().toURL().toString();
 		} catch (MalformedURLException | URISyntaxException e1) {
