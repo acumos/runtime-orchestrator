@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e4c4c598_3757b9b2",
+        "filename": "docs/release-notes.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 290
+      },
+      "writtenOn": "2019-05-22T19:39:01Z",
+      "side": 1,
+      "message": "I see this version but pom is not updated with the same version number.",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 14
+      },
+      "revId": "e78bf0c62232319dc5e7674ebfffa32a0eb88d6f",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4d0e1361_d20b931e",
+        "filename": "src/main/java/org/acumos/bporchestrator/controller/BlueprintOrchestratorController.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1516,
+      "author": {
+        "id": 290
+      },
+      "writtenOn": "2019-05-22T19:39:01Z",
+      "side": 1,
+      "message": "We need to make this configurable based on docker info to know if model is using new model runner or older model runner. We have this information as part of docker image.",
+      "revId": "e78bf0c62232319dc5e7674ebfffa32a0eb88d6f",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    }
+  ]
+}
