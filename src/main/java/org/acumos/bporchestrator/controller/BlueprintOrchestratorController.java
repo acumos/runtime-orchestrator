@@ -1506,9 +1506,17 @@ public class BlueprintOrchestratorController {
 		DockerInfo dInfo = dockerList.findDockerInfoByContainer(n.getContainerName());
 		String op = n.getOperationSignatureList().get(0).getOperationSignature().getOperationName();
 
+	
 		URIBuilder builder = new URIBuilder();
+		/*builder.setScheme("http").setHost(dInfo.getIpAddress()).setPort(new Integer(dInfo.getPort()).intValue())
+				.setPath("/" + op);*/
+		
+		// comment the above line and uncomment the below line
+		
 		builder.setScheme("http").setHost(dInfo.getIpAddress()).setPort(new Integer(dInfo.getPort()).intValue())
-				.setPath("/" + op);
+		.setPath("/model/methods/" +op);
+		
+
 
 		try {
 			finalUrl = builder.build().toURL().toString();
