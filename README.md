@@ -24,4 +24,4 @@ This repository holds the server of the Runtime Blueprint Orchestrator
 for the Acumos machine-learning platform deployment. 
 
 Please see the documentation in the "docs" folder.
-
+* Added a new branch for stage and release of version 2.0.12
