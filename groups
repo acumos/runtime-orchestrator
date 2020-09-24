@@ -2,4 +2,3 @@
 #
 42f0c83244389e408b42fa668348002012ecba46                                               	GitHub Replication
 68e8dad61f96892551865c472dc79f279c6cbb40                                               	saml/acumos-gerrit-runtime-orchestrator-committers
-ldap:cn=acumos-gerrit-runtime-orchestrator-committers,ou=Groups,dc=freestandards,dc=org	ldap/acumos-gerrit-runtime-orchestrator-committers
